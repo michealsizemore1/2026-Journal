@@ -6259,14 +6259,26 @@ function exportBackup(){
   Promise.all([getAllBookDocuments(),getAllBookCovers()]).then(function(results){
     if(results[0]&&results[0].length)d['__idb_book_documents']=JSON.stringify(results[0]);
     if(results[1]&&results[1].length)d['__idb_book_covers']=JSON.stringify(results[1]);
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));
-    a.download='planner_backup_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+    var json=JSON.stringify(d,null,2);
+    var filename='planner_backup_'+new Date().toISOString().slice(0,10)+'.json';
+    // Use File System Access API (Save As dialog) if available
+    if(window.showSaveFilePicker){
+      window.showSaveFilePicker({suggestedName:filename,types:[{description:'JSON Backup',accept:{'application/json':['.json']}}]})
+      .then(function(fh){return fh.createWritable();})
+      .then(function(w){return w.write(json).then(function(){return w.close();});})
+      .catch(function(err){if(err.name!=='AbortError'){fallbackDownload(json,filename);}});
+    } else {
+      fallbackDownload(json,filename);
+    }
   }).catch(function(){
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}));
-    a.download='planner_backup_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+    var json=JSON.stringify(d,null,2);
+    fallbackDownload(json,'planner_backup_'+new Date().toISOString().slice(0,10)+'.json');
   });
+}
+function fallbackDownload(content,filename){
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type:'application/json'}));
+  a.download=filename;a.click();
 }
 function importBackup(ev){
   const file=ev.target.files[0];if(!file)return;
