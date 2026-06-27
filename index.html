@@ -19,9 +19,9 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 .date-nav button{background:rgba(255,255,255,0.2);border:none;color:white;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem;}
 #currentDate{font-size:0.95rem;min-width:130px;text-align:center;}
 .hdr-btn{background:rgba(255,255,255,0.2);border:none;color:white;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:0.88rem;white-space:nowrap;}
-.tabs{display:flex;background:#f8f9fa;border-bottom:1px solid #e9ecef;overflow-x:auto;scrollbar-width:none;}
+.tabs{display:flex;flex-wrap:wrap;background:#f8f9fa;border-bottom:1px solid #e9ecef;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab-btn{padding:11px 16px;border:none;background:none;cursor:pointer;font-size:0.92rem;color:#6c757d;white-space:nowrap;border-bottom:3px solid transparent;flex-shrink:0;}
+.tab-btn{padding:10px 13px;border:none;background:none;cursor:pointer;font-size:0.86rem;color:#6c757d;white-space:nowrap;border-bottom:3px solid transparent;flex-shrink:0;}
 .tab-btn.active{color:#667eea;border-bottom-color:#667eea;font-weight:600;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
@@ -159,6 +159,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   .header{padding:10px 12px;gap:6px;}
   .header h1{font-size:1rem;}
   .hdr-btn{padding:8px 10px;font-size:0.8rem;}
+  .tabs{flex-wrap:nowrap;}
   .tab-btn{padding:12px 10px;font-size:0.78rem;}
   .streak-bar{padding:6px 12px;gap:8px;}
   .daily-grid{grid-template-columns:1fr;}
@@ -385,9 +386,9 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <button class="tab-btn" onclick="switchTab('review',event)">Review</button>
   <button class="tab-btn" onclick="switchTab('habits',event)">&#x1F501; Habits</button>
   <button class="tab-btn" onclick="switchTab('meditate',event)">&#x1F9D8; Meditate</button>
+  <button class="tab-btn" onclick="switchTab('bible',event)">&#x1F4D6; Bible</button>
   <button class="tab-btn" onclick="switchTab('library',event)">&#x1F4DA; Library</button>
   <button class="tab-btn" onclick="switchTab('activities',event)">&#x1F3C3; Activities</button>
-  <button class="tab-btn" onclick="switchTab('bible',event)">&#x1F4D6; Bible</button>
   <button class="tab-btn" onclick="switchTab('skill-log',event)">&#x1F6E0;&#xFE0F; Skills</button>
   <button class="tab-btn" onclick="switchTab('thinking',event)">&#x1F9E0; Thinking</button>
 </div>
@@ -996,6 +997,17 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
         style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F9D8; Body Scan</button>
     </div>
     <div id="meditAIResult" style="display:none;background:#faf5ff;border:1px solid #d8b4fe;border-radius:9px;padding:14px;font-size:0.88rem;color:#3b0764;line-height:1.6;white-space:pre-wrap;"></div>
+    <!-- Meditation Archive -->
+    <div style="margin-top:12px;">
+      <div onclick="toggleMeditArchive()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#f3e8ff;border:1px solid #d8b4fe;border-radius:8px;padding:9px 12px;">
+        <span style="font-size:0.82rem;font-weight:700;color:#7c3aed;">&#x1F4C1; Meditation Archive</span>
+        <span id="meditArchiveArrow" style="font-size:0.8rem;color:#7c3aed;">&#x25B6;</span>
+      </div>
+      <div id="meditArchivePanel" style="display:none;border:1px solid #d8b4fe;border-top:none;border-radius:0 0 8px 8px;background:#faf5ff;padding:10px 12px;">
+        <div id="meditArchiveList" style="font-size:0.83rem;color:#3b0764;"></div>
+        <div id="meditArchiveEmpty" style="font-size:0.82rem;color:#94a3b8;text-align:center;padding:10px 0;">No sessions saved yet. Tap <strong>Save to Meditation Archive</strong> after generating a guide.</div>
+      </div>
+    </div>
   </div>
 
   <!-- Timer + Breathing Grid -->
@@ -6177,8 +6189,8 @@ function audibleSummarize(){
     res.style.display='block';
     res.innerHTML='<div style="white-space:pre-wrap;line-height:1.6;color:#78350f;">'+escHtml(text)+'</div>'
       +'<div style="display:flex;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid #fde68a;flex-wrap:wrap;">'
-      +'<button id="bibleArchiveSaveBtn" onclick="saveBibleReadingToArchive(this)" style="background:#e67e22;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;">&#x1F4C1; Save to Bible Archive</button>'
-      +'<button onclick="archiveAIResp(\'audibleAIResult\')" style="background:#8e44ad;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:0.78rem;cursor:pointer;">&#x2B07; General Archive</button>'
+      +'<button id="bibleArchiveSaveBtn" onclick="saveBibleReadingToArchive(this)" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(217,119,6,0.35);letter-spacing:.01em;">&#x1F4C1; Save to Bible Archive</button>'
+      +'<button onclick="archiveAIResp(\'audibleAIResult\')" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(91,33,182,0.35);letter-spacing:.01em;">&#x2B07; General Archive</button>'
       +'</div>';
     _aiLastShown['audibleAIResult']={text:text,lbl:'Bible Reading — '+label};
   },function(err){res.textContent='Error: '+err;});
@@ -6253,6 +6265,63 @@ function deleteBibleArchiveEntry(idx){
   renderBibleArchive();
 }
 
+/* --- Meditation Archive --- */
+var _meditPending={};
+function saveToMeditArchive(btn){
+  var p=_meditPending||{};
+  if(!p.text){if(btn){btn.textContent='Nothing to save';setTimeout(function(){btn.textContent='📁 Save to Meditation Archive';},2000);}return;}
+  var arch=JSON.parse(localStorage.getItem('meditation_archive')||'[]');
+  arch.unshift({label:p.label||'Meditation Guide',text:p.text,type:p.type||'',date:p.date||new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),ts:new Date().toISOString()});
+  while(arch.length>200)arch.pop();
+  localStorage.setItem('meditation_archive',JSON.stringify(arch));
+  if(btn){btn.textContent='✓ Saved!';btn.disabled=true;btn.style.background='#16a34a';}
+  if(document.getElementById('meditArchivePanel')&&document.getElementById('meditArchivePanel').style.display!=='none'){renderMeditArchive();}
+}
+function toggleMeditArchive(){
+  var panel=document.getElementById('meditArchivePanel');
+  var arrow=document.getElementById('meditArchiveArrow');
+  if(!panel)return;
+  var open=panel.style.display==='none';
+  panel.style.display=open?'block':'none';
+  if(arrow)arrow.innerHTML=open?'&#x25BC;':'&#x25B6;';
+  if(open)renderMeditArchive();
+}
+function renderMeditArchive(){
+  var arch=JSON.parse(localStorage.getItem('meditation_archive')||'[]');
+  var list=document.getElementById('meditArchiveList');
+  var empty=document.getElementById('meditArchiveEmpty');
+  if(!list)return;
+  if(!arch.length){list.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty)empty.style.display='none';
+  var typeIcons={reflection:'🌿',prayer:'🙏',lectio:'📖',gratitude:'💛',body:'🧘'};
+  list.innerHTML=arch.map(function(e,i){
+    return '<div style="border:1px solid #e9d5ff;border-radius:8px;margin-bottom:8px;overflow:hidden;">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;background:#f3e8ff;padding:7px 10px;gap:6px;flex-wrap:wrap;">'
+      +'<span style="font-weight:700;font-size:0.82rem;color:#6d28d9;">'+(typeIcons[e.type]||'✨')+' '+escHtml(e.label)+'</span>'
+      +'<span style="font-size:0.75rem;color:#7c3aed;white-space:nowrap;">'+escHtml(e.date)+'</span>'
+      +'<div style="display:flex;gap:5px;margin-left:auto;">'
+      +'<button onclick="toggleMeditArchiveItem(this,'+i+')" style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:6px;padding:3px 9px;font-size:0.72rem;cursor:pointer;white-space:nowrap;">&#x25B6; Expand</button>'
+      +'<button onclick="deleteMeditArchiveEntry('+i+')" style="background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5;border-radius:6px;padding:3px 8px;font-size:0.72rem;cursor:pointer;">&#x1F5D1;</button>'
+      +'</div></div>'
+      +'<div id="meditArchItem_'+i+'" style="display:none;padding:10px 12px;font-size:0.82rem;color:#3b0764;white-space:pre-wrap;line-height:1.6;background:#faf5ff;">'+escHtml(e.text)+'</div>'
+      +'</div>';
+  }).join('');
+}
+function toggleMeditArchiveItem(btn,idx){
+  var div=document.getElementById('meditArchItem_'+idx);
+  if(!div)return;
+  var open=div.style.display==='none';
+  div.style.display=open?'block':'none';
+  btn.innerHTML=open?'&#x25BC; Collapse':'&#x25B6; Expand';
+}
+function deleteMeditArchiveEntry(idx){
+  if(!confirm('Delete this entry?'))return;
+  var arch=JSON.parse(localStorage.getItem('meditation_archive')||'[]');
+  arch.splice(idx,1);
+  localStorage.setItem('meditation_archive',JSON.stringify(arch));
+  renderMeditArchive();
+}
+
 function meditSaveAudible(){
   var book=document.getElementById('audibleBook');
   var ch=document.getElementById('audibleChapter');
@@ -6286,7 +6355,18 @@ function meditAIPrompt(type){
     body:'Create a gentle Christian body scan meditation opening with: "'+verse+'"\n\nGuide awareness slowly from head to toe, inviting the person to release tension and offer each part of their body to God. Include a breath prayer at each major body region. Peaceful, slow, restorative. Under 250 words.'
   };
   var prompt=prompts[type]||prompts.reflection;
-  aiCall(prompt,800,function(text){aiShow('meditAIResult',text,'Meditation Guide');},function(err){res.textContent='Error: '+err;});
+  var typeLabels={reflection:'Daily Reflection',prayer:'Guided Prayer',lectio:'Lectio Divina',gratitude:'Gratitude Focus',body:'Body Scan'};
+  var typeLabel=typeLabels[type]||'Meditation Guide';
+  aiCall(prompt,800,function(text){
+    _meditPending={text:text,type:type,label:typeLabel,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
+    res.style.display='block';
+    res.innerHTML='<div style="white-space:pre-wrap;line-height:1.6;color:#3b0764;">'+escHtml(text)+'</div>'
+      +'<div style="display:flex;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid #d8b4fe;flex-wrap:wrap;">'
+      +'<button id="meditArchiveSaveBtn" onclick="saveToMeditArchive(this)" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(109,40,217,0.35);letter-spacing:.01em;">&#x1F4C1; Save to Meditation Archive</button>'
+      +'<button onclick="archiveAIResp(\'meditAIResult\')" style="background:linear-gradient(135deg,#4c1d95,#3b0764);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(59,7,100,0.35);letter-spacing:.01em;">&#x2B07; General Archive</button>'
+      +'</div>';
+    _aiLastShown['meditAIResult']={text:text,lbl:'Meditation — '+typeLabel};
+  },function(err){res.textContent='Error: '+err;});
 }
 
 /* --- Session Logging --- */
