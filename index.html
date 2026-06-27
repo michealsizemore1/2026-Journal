@@ -6505,6 +6505,7 @@ function switchTab(tab,e){
   if(tab==='meditate'){meditInitTab();}
   if(tab==='dashboard'){renderBPChart();renderWeightChart();renderMilesChart();}
   if(tab==='weekly'){renderGoals();}
+  localStorage.setItem('last_active_tab',tab);
 }
 /* ========= PERSONAL JOURNAL ARCHIVE ========= */
 function jaOpenDB(){
@@ -6761,6 +6762,14 @@ function jaSearch(){
 }
 
 window.addEventListener('load',function(){jaRenderList();});
+window.addEventListener('load',function(){
+  var lastTab=localStorage.getItem('last_active_tab');
+  var validTabs=['daily','weekly','monthly','yearly','dashboard','review','habits','meditate','bible','library','activities','skill-log','thinking'];
+  if(lastTab&&lastTab!=='daily'&&validTabs.indexOf(lastTab)!==-1){
+    var btn=document.querySelector('[onclick*="switchTab(\''+lastTab+'\'"]');
+    if(btn)btn.click();
+  }
+});
 /* ========= END PERSONAL JOURNAL ARCHIVE ========= */
 
 /* ========= OTHER FILE UPLOADS ========= */
