@@ -375,7 +375,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     </div>
   </div>
   <button class="hdr-btn" onclick="openSettings()">&#x2699;&#xFE0F; AI Key</button>
-  <button class="hdr-btn" onclick="manualRepairDates()" style="background:#fff3e0;color:#e67e22;" title="Fix entries on wrong day">&#x1F527; Repair Dates</button>
 </div>
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('daily',event)">Daily</button>
@@ -692,6 +691,28 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <span id="issuesCopyConfirm" style="font-size:0.78rem;color:#16a34a;display:none;">✓ Copied!</span>
       <span style="margin-left:auto;font-size:0.75rem;color:#aaa;" id="issuesCount"></span>
     </div>
+  </div>
+
+  <!-- Personal Journal Archive -->
+  <div class="section-title" style="color:#0f766e;margin-top:22px;">&#x1F4DA; Personal Journal Archive</div>
+  <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:14px 16px;">
+    <div style="font-size:0.78rem;color:#134e4a;margin-bottom:10px;">Upload old journal files to keep them searchable in one place. Supports .txt, .md, .docx, and text-based .pdf files.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
+      <input type="file" id="jaFileInput" accept=".txt,.md,.docx,.pdf,.html,.htm" multiple style="display:none" onchange="jaUpload(event)">
+      <button type="button" onclick="document.getElementById('jaFileInput').click()" style="background:#0f766e;color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:0.85rem;font-weight:600;cursor:pointer;">&#x1F4C2; Upload Journal Files</button>
+      <span id="jaUploadStatus" style="font-size:0.78rem;color:#0f766e;display:none;"></span>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
+      <input type="text" id="jaSearchInput" placeholder="Search your journals..." oninput="jaSearch()" style="flex:1;border:1px solid #99f6e4;border-radius:7px;padding:7px 10px;font-size:0.88rem;outline:none;box-sizing:border-box;">
+      <button type="button" onclick="jaSearch()" style="background:#0f766e;color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:0.85rem;cursor:pointer;">&#x1F50D;</button>
+      <button type="button" onclick="document.getElementById('jaSearchInput').value='';jaSearch();" style="background:#e2e8f0;color:#555;border:none;border-radius:7px;padding:7px 10px;font-size:0.82rem;cursor:pointer;">&#x2715;</button>
+    </div>
+    <div id="jaSearchResults" style="display:none;margin-bottom:12px;"></div>
+    <div id="jaFileList" style="display:none;">
+      <div style="font-size:0.75rem;font-weight:700;color:#0f766e;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Uploaded Journals</div>
+      <div id="jaFileListInner"></div>
+    </div>
+    <div id="jaEmpty" style="font-size:0.82rem;color:#94a3b8;text-align:center;padding:10px 0;">No journals uploaded yet.</div>
   </div>
 </div>
 </div>
@@ -6222,6 +6243,226 @@ function switchTab(tab,e){
   if(tab==='dashboard'){renderBPChart();renderWeightChart();renderMilesChart();}
   if(tab==='weekly'){renderGoals();}
 }
+/* ========= PERSONAL JOURNAL ARCHIVE ========= */
+function jaOpenDB(){
+  return new Promise(function(resolve,reject){
+    var req=indexedDB.open('JournalArchiveDB',1);
+    req.onupgradeneeded=function(e){
+      var db=e.target.result;
+      if(!db.objectStoreNames.contains('journals')){
+        db.createObjectStore('journals',{keyPath:'id',autoIncrement:true});
+      }
+    };
+    req.onsuccess=function(e){resolve(e.target.result);};
+    req.onerror=function(e){reject(e.target.error);};
+  });
+}
+
+function jaExtractText(file){
+  return new Promise(function(resolve){
+    var name=file.name.toLowerCase();
+    var readAsText=function(){
+      var r=new FileReader();
+      r.onload=function(e){resolve(e.target.result||'');};
+      r.onerror=function(){resolve('');};
+      r.readAsText(file);
+    };
+    if(name.endsWith('.txt')||name.endsWith('.md')||name.endsWith('.html')||name.endsWith('.htm')){
+      readAsText();
+    } else if(name.endsWith('.docx')){
+      var doExtract=function(){
+        var r=new FileReader();
+        r.onload=function(e){
+          if(window.mammoth){
+            mammoth.extractRawText({arrayBuffer:e.target.result})
+              .then(function(res){resolve(res.value||'');})
+              .catch(function(){resolve('');});
+          } else { resolve(''); }
+        };
+        r.onerror=function(){resolve('');};
+        r.readAsArrayBuffer(file);
+      };
+      if(window.mammoth){ doExtract(); }
+      else {
+        var s=document.createElement('script');
+        s.src='https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+        s.onload=doExtract;
+        s.onerror=function(){resolve('');};
+        document.head.appendChild(s);
+      }
+    } else if(name.endsWith('.pdf')){
+      var r2=new FileReader();
+      r2.onload=function(e){
+        try{
+          var bytes=new Uint8Array(e.target.result);
+          var raw='';
+          for(var i=0;i<bytes.length;i++)raw+=String.fromCharCode(bytes[i]);
+          var text='';
+          // Extract text between BT...ET blocks (works for text-based PDFs)
+          var blocks=raw.match(/BT[\s\S]*?ET/g)||[];
+          blocks.forEach(function(b){
+            var parts=b.match(/\(([^)]*)\)\s*T[jJ]/g)||[];
+            parts.forEach(function(p){
+              var m=p.match(/\(([^)]*)\)/);
+              if(m)text+=m[1].replace(/\\n/g,' ').replace(/\\\(/g,'(').replace(/\\\)/g,')')+' ';
+            });
+          });
+          // Also try TJ arrays
+          var tjBlocks=raw.match(/\[([^\]]*)\]\s*TJ/g)||[];
+          tjBlocks.forEach(function(b){
+            var parts=b.match(/\(([^)]*)\)/g)||[];
+            parts.forEach(function(p){text+=p.slice(1,-1)+' ';});
+          });
+          resolve(text.trim()||'[PDF — text extraction limited for scanned documents]');
+        }catch(e2){resolve('[PDF — text extraction failed]');}
+      };
+      r2.onerror=function(){resolve('');};
+      r2.readAsArrayBuffer(file);
+    } else {
+      readAsText();
+    }
+  });
+}
+
+function jaUpload(event){
+  var files=Array.from(event.target.files||[]);
+  if(!files.length)return;
+  var status=document.getElementById('jaUploadStatus');
+  status.style.display='inline';
+  status.textContent='Processing '+files.length+' file'+(files.length>1?'s':'')+'...';
+  event.target.value='';
+
+  jaOpenDB().then(function(db){
+    var promises=files.map(function(file){
+      return jaExtractText(file).then(function(text){
+        return new Promise(function(resolve,reject){
+          var r=new FileReader();
+          r.onload=function(e){
+            var record={name:file.name,type:file.type||'text/plain',text:text,data:e.target.result,uploadDate:new Date().toISOString(),size:file.size};
+            var tx=db.transaction('journals','readwrite');
+            var req=tx.objectStore('journals').add(record);
+            req.onsuccess=function(){resolve();};
+            req.onerror=function(){reject();};
+          };
+          r.onerror=function(){reject();};
+          r.readAsDataURL(file);
+        });
+      });
+    });
+    return Promise.all(promises);
+  }).then(function(){
+    status.textContent='✓ '+files.length+' file'+(files.length>1?'s':'')+' uploaded!';
+    setTimeout(function(){status.style.display='none';},3000);
+    jaRenderList();
+  }).catch(function(err){
+    status.textContent='Upload failed — try again.';
+    console.error(err);
+  });
+}
+
+function jaRenderList(){
+  jaOpenDB().then(function(db){
+    var tx=db.transaction('journals','readonly');
+    var req=tx.objectStore('journals').getAll();
+    req.onsuccess=function(e){
+      var records=e.target.result||[];
+      var listDiv=document.getElementById('jaFileList');
+      var inner=document.getElementById('jaFileListInner');
+      var empty=document.getElementById('jaEmpty');
+      if(!records.length){
+        if(listDiv)listDiv.style.display='none';
+        if(empty)empty.style.display='block';
+        return;
+      }
+      if(empty)empty.style.display='none';
+      if(listDiv)listDiv.style.display='block';
+      inner.innerHTML=records.map(function(r){
+        var dt=new Date(r.uploadDate).toLocaleDateString();
+        var kb=Math.round((r.size||0)/1024);
+        var icon=r.name.endsWith('.pdf')?'📄':r.name.endsWith('.docx')?'📝':r.name.endsWith('.md')?'📋':'📃';
+        var words=r.text?r.text.split(/\s+/).filter(Boolean).length:0;
+        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #ccfbf1;">'
+          +'<span style="font-size:1.1rem;">'+icon+'</span>'
+          +'<div style="flex:1;min-width:0;">'
+          +'<div style="font-size:0.85rem;font-weight:600;color:#134e4a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+r.name+'</div>'
+          +'<div style="font-size:0.72rem;color:#94a3b8;">'+dt+' · '+(words?words.toLocaleString()+' words':'no text extracted')+' · '+kb+'KB</div>'
+          +'</div>'
+          +'<a href="'+r.data+'" download="'+r.name+'" style="background:#e0f2fe;color:#0369a1;border:none;border-radius:5px;padding:4px 10px;font-size:0.75rem;cursor:pointer;text-decoration:none;white-space:nowrap;">&#x2B07; Save</a>'
+          +'<button onclick="jaDelete('+r.id+')" style="background:#fee2e2;color:#b91c1c;border:none;border-radius:5px;padding:4px 8px;font-size:0.75rem;cursor:pointer;">&#x1F5D1;</button>'
+          +'</div>';
+      }).join('');
+    };
+  });
+}
+
+function jaDelete(id){
+  if(!confirm('Delete this journal file?'))return;
+  jaOpenDB().then(function(db){
+    var tx=db.transaction('journals','readwrite');
+    tx.objectStore('journals').delete(id);
+    tx.oncomplete=function(){jaRenderList();var sr=document.getElementById('jaSearchResults');if(sr)sr.style.display='none';};
+  });
+}
+
+function jaSearch(){
+  var query=(document.getElementById('jaSearchInput').value||'').trim().toLowerCase();
+  var resultsDiv=document.getElementById('jaSearchResults');
+  if(!query){resultsDiv.style.display='none';return;}
+  jaOpenDB().then(function(db){
+    var tx=db.transaction('journals','readonly');
+    var req=tx.objectStore('journals').getAll();
+    req.onsuccess=function(e){
+      var records=e.target.result||[];
+      var hits=[];
+      records.forEach(function(r){
+        if(!r.text)return;
+        var text=r.text;
+        var lower=text.toLowerCase();
+        var idx=lower.indexOf(query);
+        if(idx===-1)return;
+        // Count occurrences
+        var count=0,pos=0;
+        while((pos=lower.indexOf(query,pos))!==-1){count++;pos+=query.length;}
+        // Build excerpts (up to 3)
+        var excerpts=[];
+        var start=0;
+        var found=lower.indexOf(query,start);
+        while(found!==-1&&excerpts.length<3){
+          var from=Math.max(0,found-80);
+          var to=Math.min(text.length,found+query.length+80);
+          var snippet=text.slice(from,to).replace(/\n/g,' ');
+          // Highlight the match
+          var hiLow=snippet.toLowerCase();
+          var qIdx=hiLow.indexOf(query);
+          if(qIdx!==-1){
+            snippet=(from>0?'…':'')+snippet.slice(0,qIdx)+'<mark style="background:#fef08a;border-radius:2px;">'+snippet.slice(qIdx,qIdx+query.length)+'</mark>'+snippet.slice(qIdx+query.length)+(to<text.length?'…':'');
+          }
+          excerpts.push(snippet);
+          start=found+query.length;
+          found=lower.indexOf(query,start+100);
+        }
+        hits.push({name:r.name,count:count,excerpts:excerpts});
+      });
+      if(!hits.length){
+        resultsDiv.style.display='block';
+        resultsDiv.innerHTML='<div style="font-size:0.85rem;color:#94a3b8;text-align:center;padding:10px;">No results found for "'+query+'"</div>';
+        return;
+      }
+      resultsDiv.style.display='block';
+      resultsDiv.innerHTML='<div style="font-size:0.75rem;font-weight:700;color:#0f766e;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;">Found in '+hits.length+' journal'+(hits.length>1?'s':'')+' — '+hits.reduce(function(a,h){return a+h.count;},0)+' matches</div>'
+        +hits.map(function(h){
+          return '<div style="background:#fff;border:1px solid #99f6e4;border-radius:8px;padding:10px 12px;margin-bottom:8px;">'
+            +'<div style="font-size:0.85rem;font-weight:700;color:#134e4a;margin-bottom:6px;">&#x1F4C4; '+h.name+' <span style="font-weight:400;color:#64748b;font-size:0.75rem;">('+h.count+' match'+(h.count>1?'es':'')+')</span></div>'
+            +h.excerpts.map(function(ex){return '<div style="font-size:0.82rem;color:#334155;line-height:1.55;margin-bottom:4px;padding:4px 8px;background:#f0fdfa;border-radius:4px;">'+ex+'</div>';}).join('')
+            +'</div>';
+        }).join('');
+    };
+  });
+}
+
+window.addEventListener('load',function(){jaRenderList();});
+/* ========= END PERSONAL JOURNAL ARCHIVE ========= */
+
 function copyToNextDay(){
   save(); // save current day first
   var notes=(document.getElementById('jNotes').value||'').trim();
