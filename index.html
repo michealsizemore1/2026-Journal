@@ -481,12 +481,20 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <div class="priority-item" id="pt0"><div class="tri-check" data-key="pt0c" onclick="triClickPriority(this,'pt0')"></div><input type="text" id="pt0t" placeholder="Task 1..."></div>
       <div class="priority-item" id="pt1"><div class="tri-check" data-key="pt1c" onclick="triClickPriority(this,'pt1')"></div><input type="text" id="pt1t" placeholder="Task 2..."></div>
       <div class="priority-item" id="pt2"><div class="tri-check" data-key="pt2c" onclick="triClickPriority(this,'pt2')"></div><input type="text" id="pt2t" placeholder="Task 3..."></div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+        <button type="button" onclick="copyItemsToNextDay(['pt0','pt1','pt2'],'copyTasksConfirm')" style="background:#4f46e5;color:#fff;border:none;border-radius:7px;padding:5px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;">&#x27A1;&#xFE0F; Copy Tasks to Tomorrow</button>
+        <span id="copyTasksConfirm" style="font-size:0.78rem;color:#16a34a;display:none;">✓ Copied!</span>
+      </div>
     </div>
     <div class="section">
       <div class="section-title purple">&#x1F3AF; Daily Goals</div>
       <div class="priority-item" id="dg0"><div class="tri-check" data-key="dg0c" onclick="triClickPriority(this,'dg0')"></div><input type="text" id="dg0t" placeholder="Goal 1..."></div>
       <div class="priority-item" id="dg1"><div class="tri-check" data-key="dg1c" onclick="triClickPriority(this,'dg1')"></div><input type="text" id="dg1t" placeholder="Goal 2..."></div>
       <div class="priority-item" id="dg2"><div class="tri-check" data-key="dg2c" onclick="triClickPriority(this,'dg2')"></div><input type="text" id="dg2t" placeholder="Goal 3..."></div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+        <button type="button" onclick="copyItemsToNextDay(['dg0','dg1','dg2'],'copyGoalsConfirm')" style="background:#7c3aed;color:#fff;border:none;border-radius:7px;padding:5px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;">&#x27A1;&#xFE0F; Copy Goals to Tomorrow</button>
+        <span id="copyGoalsConfirm" style="font-size:0.78rem;color:#16a34a;display:none;">✓ Copied!</span>
+      </div>
     </div>
     <div class="section">
       <div class="section-title teal">&#x1F50D; Daily Review</div>
@@ -6258,68 +6266,67 @@ function jaOpenDB(){
   });
 }
 
+var JA_TEXT_LIMIT=5*1024*1024; // index first 5MB of text for search
+
 function jaExtractText(file){
   return new Promise(function(resolve){
     var name=file.name.toLowerCase();
-    var readAsText=function(){
+    // For plain text types, read a slice (up to 5MB) for search indexing
+    var readSliceAsText=function(){
+      var slice=file.size>JA_TEXT_LIMIT?file.slice(0,JA_TEXT_LIMIT):file;
       var r=new FileReader();
-      r.onload=function(e){resolve(e.target.result||'');};
+      r.onload=function(e){resolve((e.target.result||'')+(file.size>JA_TEXT_LIMIT?' [search index limited to first 5MB]':''));};
       r.onerror=function(){resolve('');};
-      r.readAsText(file);
+      r.readAsText(slice);
     };
     if(name.endsWith('.txt')||name.endsWith('.md')||name.endsWith('.html')||name.endsWith('.htm')){
-      readAsText();
+      readSliceAsText();
     } else if(name.endsWith('.docx')){
+      // Limit DOCX to 50MB for mammoth extraction; larger files skip text extraction
+      if(file.size>50*1024*1024){resolve('[File too large for automatic text extraction — file stored and downloadable]');return;}
       var doExtract=function(){
         var r=new FileReader();
         r.onload=function(e){
           if(window.mammoth){
             mammoth.extractRawText({arrayBuffer:e.target.result})
-              .then(function(res){resolve(res.value||'');})
+              .then(function(res){var t=res.value||'';resolve(t.slice(0,JA_TEXT_LIMIT)+(t.length>JA_TEXT_LIMIT?' [truncated for search]':''));})
               .catch(function(){resolve('');});
-          } else { resolve(''); }
+          } else {resolve('');}
         };
         r.onerror=function(){resolve('');};
         r.readAsArrayBuffer(file);
       };
-      if(window.mammoth){ doExtract(); }
-      else {
+      if(window.mammoth){doExtract();}
+      else{
         var s=document.createElement('script');
         s.src='https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
-        s.onload=doExtract;
-        s.onerror=function(){resolve('');};
+        s.onload=doExtract;s.onerror=function(){resolve('');};
         document.head.appendChild(s);
       }
     } else if(name.endsWith('.pdf')){
+      // Only attempt text extraction on PDFs under 20MB to avoid timeout
+      if(file.size>20*1024*1024){resolve('[Large PDF stored — text search not available for scanned/image PDFs]');return;}
+      var slice2=file.slice(0,Math.min(file.size,JA_TEXT_LIMIT));
       var r2=new FileReader();
       r2.onload=function(e){
         try{
           var bytes=new Uint8Array(e.target.result);
-          var raw='';
-          for(var i=0;i<bytes.length;i++)raw+=String.fromCharCode(bytes[i]);
+          var raw='';for(var i=0;i<bytes.length;i++)raw+=String.fromCharCode(bytes[i]);
           var text='';
-          // Extract text between BT...ET blocks (works for text-based PDFs)
           var blocks=raw.match(/BT[\s\S]*?ET/g)||[];
           blocks.forEach(function(b){
             var parts=b.match(/\(([^)]*)\)\s*T[jJ]/g)||[];
-            parts.forEach(function(p){
-              var m=p.match(/\(([^)]*)\)/);
-              if(m)text+=m[1].replace(/\\n/g,' ').replace(/\\\(/g,'(').replace(/\\\)/g,')')+' ';
-            });
+            parts.forEach(function(p){var m=p.match(/\(([^)]*)\)/);if(m)text+=m[1].replace(/\\n/g,' ').replace(/\\\(/g,'(').replace(/\\\)/g,')')+' ';});
           });
-          // Also try TJ arrays
           var tjBlocks=raw.match(/\[([^\]]*)\]\s*TJ/g)||[];
-          tjBlocks.forEach(function(b){
-            var parts=b.match(/\(([^)]*)\)/g)||[];
-            parts.forEach(function(p){text+=p.slice(1,-1)+' ';});
-          });
-          resolve(text.trim()||'[PDF — text extraction limited for scanned documents]');
-        }catch(e2){resolve('[PDF — text extraction failed]');}
+          tjBlocks.forEach(function(b){var ps=b.match(/\(([^)]*)\)/g)||[];ps.forEach(function(p){text+=p.slice(1,-1)+' ';});});
+          resolve(text.trim()||'[PDF stored — text extraction limited; scanned PDFs are not searchable]');
+        }catch(e2){resolve('[PDF stored]');}
       };
       r2.onerror=function(){resolve('');};
-      r2.readAsArrayBuffer(file);
+      r2.readAsArrayBuffer(slice2);
     } else {
-      readAsText();
+      readSliceAsText();
     }
   });
 }
@@ -6329,35 +6336,55 @@ function jaUpload(event){
   if(!files.length)return;
   var status=document.getElementById('jaUploadStatus');
   status.style.display='inline';
-  status.textContent='Processing '+files.length+' file'+(files.length>1?'s':'')+'...';
   event.target.value='';
 
-  jaOpenDB().then(function(db){
-    var promises=files.map(function(file){
-      return jaExtractText(file).then(function(text){
-        return new Promise(function(resolve,reject){
-          var r=new FileReader();
-          r.onload=function(e){
-            var record={name:file.name,type:file.type||'text/plain',text:text,data:e.target.result,uploadDate:new Date().toISOString(),size:file.size};
-            var tx=db.transaction('journals','readwrite');
-            var req=tx.objectStore('journals').add(record);
-            req.onsuccess=function(){resolve();};
-            req.onerror=function(){reject();};
-          };
-          r.onerror=function(){reject();};
-          r.readAsDataURL(file);
-        });
+  // Process files one at a time to avoid memory issues with large files
+  var processed=0;
+  function processNext(){
+    if(processed>=files.length){
+      status.textContent='✓ '+files.length+' file'+(files.length>1?'s':'')+' uploaded!';
+      setTimeout(function(){status.style.display='none';},3000);
+      jaRenderList();
+      return;
+    }
+    var file=files[processed];
+    var mb=(file.size/1024/1024).toFixed(1);
+    status.textContent='Processing '+(processed+1)+' of '+files.length+': '+file.name+' ('+mb+' MB)...';
+    jaExtractText(file).then(function(text){
+      jaOpenDB().then(function(db){
+        // Store the raw File/Blob directly — no base64 conversion, works for any size
+        var record={name:file.name,type:file.type||'application/octet-stream',text:text,blob:file,uploadDate:new Date().toISOString(),size:file.size};
+        var tx=db.transaction('journals','readwrite');
+        var req=tx.objectStore('journals').add(record);
+        req.onsuccess=function(){processed++;processNext();};
+        req.onerror=function(e){console.error('Store error',e);status.textContent='Error saving '+file.name;};
       });
+    }).catch(function(err){
+      console.error(err);
+      status.textContent='Error processing '+file.name;
     });
-    return Promise.all(promises);
-  }).then(function(){
-    status.textContent='✓ '+files.length+' file'+(files.length>1?'s':'')+' uploaded!';
-    setTimeout(function(){status.style.display='none';},3000);
-    jaRenderList();
-  }).catch(function(err){
-    status.textContent='Upload failed — try again.';
-    console.error(err);
+  }
+  processNext();
+}
+
+function jaDownload(id){
+  jaOpenDB().then(function(db){
+    var tx=db.transaction('journals','readonly');
+    var req=tx.objectStore('journals').get(id);
+    req.onsuccess=function(e){
+      var r=e.target.result;if(!r)return;
+      var blob=r.blob||(r.data?dataURLtoBlob(r.data):null);
+      if(!blob){alert('File data not found.');return;}
+      var url=URL.createObjectURL(blob instanceof Blob?blob:new Blob([blob],{type:r.type}));
+      var a=document.createElement('a');a.href=url;a.download=r.name;a.click();
+      setTimeout(function(){URL.revokeObjectURL(url);},5000);
+    };
   });
+}
+function dataURLtoBlob(dataURL){
+  var arr=dataURL.split(','),mime=arr[0].match(/:(.*?);/)[1],b=atob(arr[1]),n=b.length,u=new Uint8Array(n);
+  for(var i=0;i<n;i++)u[i]=b.charCodeAt(i);
+  return new Blob([u],{type:mime});
 }
 
 function jaRenderList(){
@@ -6369,25 +6396,21 @@ function jaRenderList(){
       var listDiv=document.getElementById('jaFileList');
       var inner=document.getElementById('jaFileListInner');
       var empty=document.getElementById('jaEmpty');
-      if(!records.length){
-        if(listDiv)listDiv.style.display='none';
-        if(empty)empty.style.display='block';
-        return;
-      }
+      if(!records.length){if(listDiv)listDiv.style.display='none';if(empty)empty.style.display='block';return;}
       if(empty)empty.style.display='none';
       if(listDiv)listDiv.style.display='block';
       inner.innerHTML=records.map(function(r){
         var dt=new Date(r.uploadDate).toLocaleDateString();
-        var kb=Math.round((r.size||0)/1024);
+        var mb=(r.size/1024/1024);var sizeStr=mb>=1?mb.toFixed(1)+' MB':Math.round(r.size/1024)+' KB';
         var icon=r.name.endsWith('.pdf')?'📄':r.name.endsWith('.docx')?'📝':r.name.endsWith('.md')?'📋':'📃';
-        var words=r.text?r.text.split(/\s+/).filter(Boolean).length:0;
+        var words=r.text&&!r.text.startsWith('[')?r.text.split(/\s+/).filter(Boolean).length:0;
         return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #ccfbf1;">'
           +'<span style="font-size:1.1rem;">'+icon+'</span>'
           +'<div style="flex:1;min-width:0;">'
           +'<div style="font-size:0.85rem;font-weight:600;color:#134e4a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+r.name+'</div>'
-          +'<div style="font-size:0.72rem;color:#94a3b8;">'+dt+' · '+(words?words.toLocaleString()+' words':'no text extracted')+' · '+kb+'KB</div>'
+          +'<div style="font-size:0.72rem;color:#94a3b8;">'+dt+' · '+(words?words.toLocaleString()+' words indexed':'not indexed')+' · '+sizeStr+'</div>'
           +'</div>'
-          +'<a href="'+r.data+'" download="'+r.name+'" style="background:#e0f2fe;color:#0369a1;border:none;border-radius:5px;padding:4px 10px;font-size:0.75rem;cursor:pointer;text-decoration:none;white-space:nowrap;">&#x2B07; Save</a>'
+          +'<button onclick="jaDownload('+r.id+')" style="background:#e0f2fe;color:#0369a1;border:none;border-radius:5px;padding:4px 10px;font-size:0.75rem;cursor:pointer;white-space:nowrap;">&#x2B07; Save</button>'
           +'<button onclick="jaDelete('+r.id+')" style="background:#fee2e2;color:#b91c1c;border:none;border-radius:5px;padding:4px 8px;font-size:0.75rem;cursor:pointer;">&#x1F5D1;</button>'
           +'</div>';
       }).join('');
@@ -6462,6 +6485,29 @@ function jaSearch(){
 
 window.addEventListener('load',function(){jaRenderList();});
 /* ========= END PERSONAL JOURNAL ARCHIVE ========= */
+
+function copyItemsToNextDay(ids,confirmId){
+  save();
+  var tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
+  var tKey='planner_'+dk(tomorrow);
+  var tData={};try{tData=JSON.parse(localStorage.getItem(tKey)||'{}');}catch(e){}
+  var copied=0;
+  ids.forEach(function(id){
+    var el=document.getElementById(id+'t');
+    var txt=el?el.value.trim():'';
+    var chk=document.querySelector('[data-key="'+id+'c"]');
+    var state=chk?chk.dataset.state||'':'';
+    if(!txt||state==='green')return; // skip empty or already completed
+    if(!tData[id+'t']||!tData[id+'t'].trim()){tData[id+'t']=txt;}
+    else{tData[id+'t']=tData[id+'t']+'\n'+txt;}
+    tData[id+'c']='';
+    copied++;
+  });
+  if(!copied){alert('Nothing to copy — all items are either empty or already completed.');return;}
+  localStorage.setItem(tKey,JSON.stringify(tData));
+  var conf=document.getElementById(confirmId);
+  if(conf){conf.style.display='inline';setTimeout(function(){conf.style.display='none';},2500);}
+}
 
 function copyToNextDay(){
   save(); // save current day first
