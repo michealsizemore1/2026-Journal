@@ -980,6 +980,24 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <div style="font-size:0.68rem;color:#7c3aed;margin-top:5px;">&#x1F4A1; Let the word dwell in you. Read slowly, pause, listen, and respond.</div>
   </div>
 
+  <!-- AI Prayer & Meditation Guide -->
+  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+    <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;margin-bottom:10px;">&#x2728; AI PRAYER &amp; MEDITATION GUIDE</div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
+      <button onclick="meditAIPrompt('reflection')"
+        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F33F; Daily Reflection</button>
+      <button onclick="meditAIPrompt('prayer')"
+        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F64F; Guided Prayer</button>
+      <button onclick="meditAIPrompt('lectio')"
+        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F4D6; Lectio Divina</button>
+      <button onclick="meditAIPrompt('gratitude')"
+        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F49B; Gratitude Focus</button>
+      <button onclick="meditAIPrompt('body')"
+        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F9D8; Body Scan</button>
+    </div>
+    <div id="meditAIResult" style="display:none;background:#faf5ff;border:1px solid #d8b4fe;border-radius:9px;padding:14px;font-size:0.88rem;color:#3b0764;line-height:1.6;white-space:pre-wrap;"></div>
+  </div>
+
   <!-- Timer + Breathing Grid -->
   <div id="meditMainGrid" style="margin-bottom:14px;">
 
@@ -1467,24 +1485,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
           <div id="bibleArchiveEmpty" style="font-size:0.82rem;color:#94a3b8;text-align:center;padding:10px 0;">No summaries saved yet. Tap <strong>Save to Archive</strong> after summarizing.</div>
         </div>
       </div>
-    </div>
-
-    <!-- AI Prayer & Meditation Guide -->
-    <div class="section" style="margin-bottom:10px;">
-      <div class="section-title" style="color:#6d4c41;background:linear-gradient(135deg,#fff8f0,#fdebd0);border-left:4px solid #e67e22;">&#x2728; AI Prayer &amp; Meditation Guide</div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
-        <button onclick="meditAIPrompt('reflection')"
-          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F33F; Daily Reflection</button>
-        <button onclick="meditAIPrompt('prayer')"
-          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F64F; Guided Prayer</button>
-        <button onclick="meditAIPrompt('lectio')"
-          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F4D6; Lectio Divina</button>
-        <button onclick="meditAIPrompt('gratitude')"
-          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F49B; Gratitude Focus</button>
-        <button onclick="meditAIPrompt('body')"
-          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F9D8; Body Scan</button>
-      </div>
-      <div id="meditAIResult" style="display:none;background:#faf5ff;border:1px solid #d8b4fe;border-radius:9px;padding:14px;font-size:0.88rem;color:#3b0764;line-height:1.6;white-space:pre-wrap;"></div>
     </div>
 
     <!-- Session Notes & Gratitude -->
