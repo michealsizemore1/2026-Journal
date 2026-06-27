@@ -6342,9 +6342,14 @@ function jaUpload(event){
   var processed=0;
   function processNext(){
     if(processed>=files.length){
-      status.textContent='✓ '+files.length+' file'+(files.length>1?'s':'')+' uploaded!';
-      setTimeout(function(){status.style.display='none';},3000);
+      status.textContent='✓ '+files.length+' file'+(files.length>1?'s':'')+' uploaded! Scroll down to see your files.';
+      setTimeout(function(){status.style.display='none';},4000);
       jaRenderList();
+      // Scroll the file list into view after a short delay
+      setTimeout(function(){
+        var el=document.getElementById('jaFileList');
+        if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+      },400);
       return;
     }
     var file=files[processed];
@@ -6404,16 +6409,33 @@ function jaRenderList(){
         var mb=(r.size/1024/1024);var sizeStr=mb>=1?mb.toFixed(1)+' MB':Math.round(r.size/1024)+' KB';
         var icon=r.name.endsWith('.pdf')?'📄':r.name.endsWith('.docx')?'📝':r.name.endsWith('.md')?'📋':'📃';
         var words=r.text&&!r.text.startsWith('[')?r.text.split(/\s+/).filter(Boolean).length:0;
-        return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #ccfbf1;">'
+        var note=(r.note||'').replace(/"/g,'&quot;');
+        return '<div style="padding:8px 0;border-bottom:1px solid #ccfbf1;">'
+          +'<div style="display:flex;align-items:center;gap:8px;">'
           +'<span style="font-size:1.1rem;">'+icon+'</span>'
           +'<div style="flex:1;min-width:0;">'
           +'<div style="font-size:0.85rem;font-weight:600;color:#134e4a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+r.name+'</div>'
           +'<div style="font-size:0.72rem;color:#94a3b8;">'+dt+' · '+(words?words.toLocaleString()+' words indexed':'not indexed')+' · '+sizeStr+'</div>'
           +'</div>'
-          +'<button onclick="jaDownload('+r.id+')" style="background:#e0f2fe;color:#0369a1;border:none;border-radius:5px;padding:4px 10px;font-size:0.75rem;cursor:pointer;white-space:nowrap;">&#x2B07; Save</button>'
-          +'<button onclick="jaDelete('+r.id+')" style="background:#fee2e2;color:#b91c1c;border:none;border-radius:5px;padding:4px 8px;font-size:0.75rem;cursor:pointer;">&#x1F5D1;</button>'
+          +'<button onclick="jaDownload('+r.id+')" style="background:#e0f2fe;color:#0369a1;border:none;border-radius:5px;padding:4px 10px;font-size:0.75rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">&#x2B07; Save</button>'
+          +'<button onclick="jaDelete('+r.id+')" style="background:#fee2e2;color:#b91c1c;border:none;border-radius:5px;padding:4px 8px;font-size:0.75rem;cursor:pointer;flex-shrink:0;">&#x1F5D1;</button>'
+          +'</div>'
+          +'<textarea id="janote_'+r.id+'" rows="2" placeholder="Add a note about this journal..." onblur="jaSaveNote('+r.id+',this.value)" style="width:100%;box-sizing:border-box;margin-top:6px;border:1px solid #99f6e4;border-radius:6px;padding:6px 8px;font-size:0.82rem;font-family:inherit;resize:vertical;outline:none;background:#fff;color:#134e4a;">'+note+'</textarea>'
           +'</div>';
       }).join('');
+    };
+  });
+}
+
+function jaSaveNote(id,value){
+  jaOpenDB().then(function(db){
+    var tx=db.transaction('journals','readwrite');
+    var store=tx.objectStore('journals');
+    var req=store.get(id);
+    req.onsuccess=function(e){
+      var r=e.target.result;if(!r)return;
+      r.note=value;
+      store.put(r);
     };
   });
 }
