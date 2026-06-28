@@ -6297,7 +6297,7 @@ function renderMeditArchive(){
   if(!list)return;
   if(!arch.length){list.innerHTML='';if(empty)empty.style.display='block';return;}
   if(empty)empty.style.display='none';
-  var typeIcons={reflection:'🌿',prayer:'🙏',lectio:'📖',gratitude:'💛',body:'🧘'};
+  var typeIcons={reflection:'🌿',prayer:'🙏',lectio:'📖',gratitude:'💛',body:'🧘',verse:'📜'};
   list.innerHTML=arch.map(function(e,i){
     return '<div style="border:1px solid #e9d5ff;border-radius:8px;margin-bottom:8px;overflow:hidden;">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;background:#f3e8ff;padding:7px 10px;gap:6px;flex-wrap:wrap;">'
@@ -6351,8 +6351,12 @@ function meditVerseSummary(){
   box.textContent='⏳ Looking up this verse...';
   var prompt='Give me a brief, devotional explanation of this Bible verse:\n\n"'+verse+'"\n\nInclude:\n1. The historical/biblical context in 1-2 sentences\n2. The core spiritual meaning (2-3 sentences)\n3. One practical way to apply it today\n\nKeep the tone warm, encouraging, and grounded in Christian faith. Under 200 words.';
   aiCall(prompt,500,function(text){
+    _meditPending={text:text,type:'verse',label:'Verse Explanation',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
     box.style.display='block';
-    box.innerHTML='<div style="white-space:pre-wrap;line-height:1.6;">'+escHtml(text)+'</div>';
+    box.innerHTML='<div style="white-space:pre-wrap;line-height:1.6;">'+escHtml(text)+'</div>'
+      +'<div style="margin-top:9px;padding-top:8px;border-top:1px solid #c4b5fd;">'
+      +'<button id="meditVerseArchiveBtn" onclick="saveToMeditArchive(this)" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:0.76rem;font-weight:700;cursor:pointer;box-shadow:0 2px 5px rgba(109,40,217,0.3);">&#x1F4C1; Save to Meditation Archive</button>'
+      +'</div>';
   },function(err){box.textContent='Error: '+err;});
 }
 
