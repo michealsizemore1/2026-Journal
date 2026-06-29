@@ -845,8 +845,12 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <button class="clear-btn" onclick="clearPage('review')">&#x1F5D1; Clear Review</button>
   </div>
   <div id="revStats" class="review-stats"></div>
-  <button class="ai-btn" onclick="aiReviewAnalysis()">&#x2728; AI Review Analysis</button>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+    <button class="ai-btn" onclick="aiReviewAnalysis()" style="margin-bottom:0;">&#x2728; AI Review Analysis</button>
+    <button class="ai-btn" onclick="aiWeeklyTakeaways()" style="margin-bottom:0;background:linear-gradient(135deg,#7c3aed,#5b21b6);">&#x1F4D3; AI Weekly Takeaways</button>
+  </div>
   <div id="aiReviewBox" class="ai-box"></div>
+  <div id="aiTakeawaysBox" class="ai-box"></div>
   <div class="review-grid">
     <div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
@@ -3074,6 +3078,50 @@ let revOff2=0;
 function renderReview(){const ws=wkStart(revOff2),we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('revLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const r=localStorage.getItem('review_'+dk(ws)),rv=r?JSON.parse(r):{};['revWins','revImprove','revFocus','revLessons'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=rv[id]||'';});let logged=0,bible=0,prayer=0,ex=0,steps=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r2=localStorage.getItem('planner_'+dk(d));if(!r2)continue;logged++;const dd=JSON.parse(r2);if(dd.spChronBible==='green')bible++;if(dd.spPrayer==='green')prayer++;if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green')ex++;steps+=parseFloat(dd.exSteps)||0;}document.getElementById('revStats').innerHTML=[{l:'Days Logged',v:logged+'/7'},{l:'Bible Days',v:bible+'/7'},{l:'Prayer Days',v:prayer+'/7'},{l:'Exercise Days',v:ex+'/7'},{l:'Total Steps',v:Math.round(steps).toLocaleString()}].map(({l,v})=>'<div class="review-stat"><strong>'+v+'</strong>'+l+'</div>').join('');}
 function saveReview(){const ws=wkStart(revOff2),d={};['revWins','revImprove','revFocus','revLessons'].forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});localStorage.setItem('review_'+dk(ws),JSON.stringify(d));const btn=document.querySelector('[onclick="saveReview()"]');if(btn){btn.textContent='Saved!';btn.style.background='#27ae60';setTimeout(()=>{btn.textContent='Save Review';btn.style.background='#667eea';},2000);}}
 function changeRevOff(n){revOff2+=n;renderReview();}
+function aiWeeklyTakeaways(){
+  const box=document.getElementById('aiTakeawaysBox');
+  if(!box)return;
+  box.style.display='block';box.textContent='⏳ Reading your journal for the week...';
+  const ws=wkStart(revOff2);
+  const we=new Date(ws);we.setDate(ws.getDate()+6);
+  const weekLabel=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const entries=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(ws);d.setDate(ws.getDate()+i);
+    const raw=localStorage.getItem('planner_'+dk(d));
+    if(!raw)continue;
+    const dd=JSON.parse(raw);
+    const dayLabel=d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    const parts=[];
+    if(dd.jAccomplish)parts.push('Accomplishments: '+dd.jAccomplish);
+    if(dd.jNotes)parts.push('Notes: '+dd.jNotes);
+    if(dd.jImprov)parts.push('Areas to improve: '+dd.jImprov);
+    if(dd.jGratitude)parts.push('Gratitude: '+dd.jGratitude);
+    if(dd.jIssues)parts.push('Issues/struggles: '+dd.jIssues);
+    if(dd.jRunLog)parts.push('Run log: '+dd.jRunLog);
+    if(dd.spMeditationText)parts.push('Meditation/reflection: '+dd.spMeditationText);
+    if(dd.spSermonText)parts.push('Sermon notes: '+dd.spSermonText);
+    if(dd.ctMentalModelsText)parts.push('Mental models: '+dd.ctMentalModelsText);
+    if(parts.length)entries.push('--- '+dayLabel+' ---\n'+parts.join('\n'));
+  }
+  if(!entries.length){
+    box.innerHTML='<div style="color:#b91c1c;font-weight:600;">⚠️ No journal entries found for this week. Add notes on the Daily tab first.</div>';
+    return;
+  }
+  const prompt='You are a thoughtful life coach reviewing a personal journal. Here are the journal entries for the week of '+weekLabel+':\n\n'
+    +entries.join('\n\n')
+    +'\n\nBased on everything written, provide:\n\n'
+    +'1. TOP 3-5 KEY TAKEAWAYS — The most important lessons, patterns, or insights that emerge from the week\n'
+    +'2. RECURRING THEMES — Any topics or emotions that appear multiple days\n'
+    +'3. ONE GROWTH OPPORTUNITY — The single most impactful thing to focus on next week\n'
+    +'4. AN ENCOURAGING WORD — A brief, genuine word of encouragement based on what was shared\n\n'
+    +'Be specific and personal — reference actual things written in the journal. Be warm and insightful, not generic. Under 350 words.';
+  const key=localStorage.getItem('ai_key');
+  if(!key){box.textContent='⚠️ Add your AI key first (⚙️ AI Key button).';return;}
+  aiCall(prompt,900,function(text){
+    aiShow('aiTakeawaysBox',text,'Weekly Takeaways — '+weekLabel);
+  },function(err){box.textContent='Error: '+err;});
+}
 // ── Daily Bread AI ────────────────────────────────────────
 function aiDailyBread(){
   const key=localStorage.getItem('ai_key');
