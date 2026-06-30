@@ -1295,7 +1295,8 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
         <button id="chartPwBtn" onclick="setChartMode('power')">Power</button>
       </div>
     </div>
-    <canvas id="actChart" height="160" style="width:100%;display:block;"></canvas>
+    <div id="actChartBars" style="display:flex;align-items:flex-end;gap:2px;height:120px;padding:0 2px;overflow:hidden;"></div>
+    <div id="actChartLabels" style="display:flex;gap:2px;padding:2px 2px 0;overflow:hidden;"></div>
   </div>
 
   <!-- Personal Records -->
@@ -6568,7 +6569,7 @@ function switchTab(tab,e){
   if(tab==='weekly')renderWeekly();if(tab==='monthly')renderMonthly();
   if(tab==='yearly')renderYearly();if(tab==='dashboard')renderDashboard();
   if(tab==='review')renderReview();if(tab==='library')renderLibrary();
-  if(tab==='activities'){_actFirstLoad=true;collapseAllActs();loadCurrentPlan();refreshTrainingPreview();setTimeout(()=>drawActChart(getActivities()),600);}
+  if(tab==='activities'){_actFirstLoad=true;collapseAllActs();loadCurrentPlan();refreshTrainingPreview();}
   if(tab==='bible')renderBibleTab();
   if(tab==='skill-log')renderSkillLog();
   if(tab==='thinking'){if(typeof mmStart==='function')mmStart();}
@@ -7337,6 +7338,14 @@ function cycleActSource(id){
   saveActivities(acts);
   renderActivities();
 }
+function setActSource(id,src){
+  var acts=getActivities();
+  var act=acts.find(function(a){return a.id===id;});
+  if(!act)return;
+  act.source=src;
+  saveActivities(acts);
+  renderActivities();
+}
 function editActivity(id){
   const act=getActivities().find(a=>a.id===id);if(!act)return;
   editingActivityId=id;
@@ -7606,12 +7615,11 @@ function calcStreakAndLoad(acts){
       return`<div class="act-load-week" title="${lbl}: ${vals[i].toFixed(1)} mi"><div class="act-load-bar-inner" style="height:${h}px;background:${isThisWk?'#e67e22':'#f0c080'};"></div><div class="act-load-lbl">${i%3===0?lbl.split('/')[0]:''}</div></div>`;
     }).join('');
   }
-  drawActChart(acts,null,null); // let chart build its own wider window
+  drawActChart(acts);
 }
 
-function drawActChart(acts,weekMap,weeks){
-  // Always rebuild from acts so distances are properly parsed as numbers
-  weekMap={};
+function drawActChart(acts){
+  const weekMap={};
   acts.forEach(a=>{
     if(!a.date)return;
     const d=new Date(a.date+'T00:00:00');if(isNaN(d.getTime()))return;
@@ -7619,48 +7627,41 @@ function drawActChart(acts,weekMap,weeks){
     const wk=mon.toISOString().slice(0,10);
     if(!weekMap[wk])weekMap[wk]={count:0,miles:0,power:0,powerCount:0};
     weekMap[wk].count++;
-    weekMap[wk].miles+=parseFloat(a.distance)||0;  // parseFloat handles string distances
+    weekMap[wk].miles+=parseFloat(a.distance)||0;
     const pw=parseFloat(a.power)||0;
     if(pw>0){weekMap[wk].power+=pw;weekMap[wk].powerCount++;}
   });
   const today2=new Date();const dow=(today2.getDay()+6)%7;
   const thisMonday=new Date(today2);thisMonday.setDate(today2.getDate()-dow);
-  weeks=[];for(let i=25;i>=0;i--){const d2=new Date(thisMonday);d2.setDate(thisMonday.getDate()-i*7);weeks.push(d2.toISOString().slice(0,10));}
+  const weeks=[];
+  for(let i=25;i>=0;i--){const d2=new Date(thisMonday);d2.setDate(thisMonday.getDate()-i*7);weeks.push(d2.toISOString().slice(0,10));}
   const mode=actChartMode;
   const vals=weeks.map(w=>mode==='miles'?(weekMap[w]?.miles||0):((weekMap[w]?.powerCount||0)>0?Math.round(weekMap[w].power/weekMap[w].powerCount):0));
   const wrap=document.getElementById('actChartWrap');
   const hasData=acts.length>0;
   if(wrap)wrap.style.display=hasData?'block':'none';
   if(!hasData)return;
-  const canvas=document.getElementById('actChart');if(!canvas)return;
-  const doDraw=()=>{
-    requestAnimationFrame(()=>{
-      const W=Math.max(canvas.parentElement?canvas.parentElement.clientWidth-24:0,canvas.offsetWidth||0,300);
-      if(W<10)return; // layout not ready yet, the 400ms retry will catch it
-      const H=160;canvas.width=W;canvas.height=H;
-      const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);
-      const bw=Math.max(3,Math.floor((W-20)/weeks.length)-2);
-      const maxV=Math.max(...vals,1);
-      const barArea=H-30;
-      vals.forEach((v,i)=>{
-        const x=10+i*(bw+2);const bh=v>0?Math.max(4,Math.round((v/maxV)*barArea*0.85)):0;const y=barArea-bh;
-        const isThisWk=(i===weeks.length-1);
-        if(bh>0){
-          ctx.fillStyle=isThisWk?'#e67e22':((weekMap[weeks[i]]?.count||0)>0?'#f0a050':'#e8e8e8');
-          ctx.fillRect(x,y,bw,bh);
-          if(bw>=8){ctx.fillStyle='#555';ctx.font='bold 8px sans-serif';ctx.textAlign='center';
-            ctx.fillText(mode==='miles'?v.toFixed(1):v,x+bw/2,Math.max(8,y-2));}
-        }else{
-          ctx.fillStyle='#f0f0f0';ctx.fillRect(x,barArea-4,bw,4);
-        }
-        if(i%4===0||i===weeks.length-1){ctx.fillStyle='#bbb';ctx.font='8px sans-serif';ctx.textAlign='center';
-          const lbl=new Date(weeks[i]+'T00:00:00').toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
-          ctx.fillText(lbl,x+bw/2,H-6);}
-      });
-    });
-  };
-  setTimeout(doDraw,100);
-  setTimeout(doDraw,500); // second pass after full layout settle
+  const barsEl=document.getElementById('actChartBars');
+  const lblsEl=document.getElementById('actChartLabels');
+  if(!barsEl||!lblsEl)return;
+  const maxV=Math.max(...vals,1);
+  const unit=mode==='miles'?'mi':'W';
+  barsEl.innerHTML=weeks.map((w,i)=>{
+    const v=vals[i];
+    const pct=v>0?Math.max(4,Math.round((v/maxV)*100)):0;
+    const isThisWk=(i===weeks.length-1);
+    const bg=isThisWk?'#e67e22':(v>0?'#f0a050':'#e8e8e8');
+    const lbl=v>0?'<div style="font-size:7px;color:#555;text-align:center;margin-bottom:2px;font-weight:700;white-space:nowrap;">'+(mode==='miles'?v.toFixed(1):v)+'</div>':'';
+    return'<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;">'
+      +lbl
+      +'<div title="'+w+': '+v+' '+unit+'" style="width:80%;background:'+bg+';height:'+pct+'%;border-radius:2px 2px 0 0;min-height:'+(v>0?'4px':'0')+'"></div>'
+      +'</div>';
+  }).join('');
+  lblsEl.innerHTML=weeks.map((w,i)=>{
+    const show=(i%4===0||i===weeks.length-1);
+    const lbl=show?new Date(w+'T00:00:00').toLocaleDateString('en-US',{month:'numeric',day:'numeric'}):'';
+    return'<div style="flex:1;font-size:7px;color:#bbb;text-align:center;white-space:nowrap;overflow:hidden;min-width:0;">'+lbl+'</div>';
+  }).join('');
 }
 
 // Render
@@ -7841,6 +7842,10 @@ function renderActivities(){
       +'<button onclick="saveNoteInline('+a.id+')" style="font-size:0.75rem;padding:3px 10px;border-radius:6px;border:none;background:#e67e22;color:white;cursor:pointer;">Save</button>'
       +'<button onclick="toggleNoteEdit('+a.id+')" style="font-size:0.75rem;padding:3px 10px;border-radius:6px;border:none;background:#f0f0f0;color:#555;cursor:pointer;">Cancel</button>'
       +'</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:5px;margin-top:8px;flex-wrap:wrap;">'
+      +'<span style="font-size:0.72rem;color:#888;font-weight:600;">Source:</span>'
+      +['manual','garmin','stryd'].map(function(s){var cur=(a.source||'manual')===s;return'<button onclick="event.stopPropagation();setActSource('+a.id+',\''+s+'\')" style="font-size:0.72rem;padding:3px 9px;border-radius:10px;border:1px solid '+(cur?'#667eea':'#ddd')+';background:'+(cur?'#667eea':'#fff')+';color:'+(cur?'#fff':'#888')+';cursor:pointer;font-weight:'+(cur?'700':'400')+';">'+s.charAt(0).toUpperCase()+s.slice(1)+'</button>';}).join('')
       +'</div>'
       +'<div style="display:flex;gap:4px;margin-top:6px;">'
       +journalBtn
