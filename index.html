@@ -7585,82 +7585,104 @@ function togglePRs(){
 }
 
 function calcStreakAndLoad(acts){
-  const weekMap={};
-  acts.forEach(a=>{
-    if(!a.date)return;
-    const d=new Date(a.date+'T00:00:00');if(isNaN(d.getTime()))return;
-    const dow=(d.getDay()+6)%7;
-    const mon=new Date(d);mon.setDate(d.getDate()-dow);
-    const wk=mon.toISOString().slice(0,10);
-    if(!weekMap[wk])weekMap[wk]={count:0,miles:0,power:0,powerCount:0};
-    weekMap[wk].count++;weekMap[wk].miles+=a.distance||0;
-    if(a.power>0){weekMap[wk].power+=a.power;weekMap[wk].powerCount++;}
+  var now=new Date();
+  var todayStr=localDateStr(now);
+  var todayEp=epDay(todayStr);
+  var todayDow=(now.getDay()+6)%7;
+  var thisMon=todayEp-todayDow;
+  var N=12;
+  var wkMiles=new Array(N).fill(0);
+  var wkCount=new Array(N).fill(0);
+  acts.forEach(function(a){
+    if(!a.date||typeof a.date!=='string')return;
+    var ep=epDay(a.date);
+    var aDate=new Date(a.date+'T12:00:00');
+    var aDow=(aDate.getDay()+6)%7;
+    var aMon=ep-aDow;
+    var weeksAgo=Math.round((thisMon-aMon)/7);
+    var slot=N-1-weeksAgo;
+    if(slot<0||slot>=N)return;
+    wkMiles[slot]+=parseFloat(a.distance)||0;
+    wkCount[slot]++;
   });
-  const today2=new Date();const dow=(today2.getDay()+6)%7;
-  const thisMonday=new Date(today2);thisMonday.setDate(today2.getDate()-dow);
-  const weeks=[];
-  for(let i=11;i>=0;i--){const d=new Date(thisMonday);d.setDate(thisMonday.getDate()-i*7);weeks.push(d.toISOString().slice(0,10));}
-  let streak=0;
-  for(let i=weeks.length-1;i>=0;i--){if(weekMap[weeks[i]]&&weekMap[weeks[i]].count>0)streak++;else break;}
-  const chip=document.getElementById('actStreakChip');
+  var streak=0;
+  for(var i=N-1;i>=0;i--){if(wkCount[i]>0)streak++;else break;}
+  var chip=document.getElementById('actStreakChip');
   if(chip){if(streak>0){chip.textContent='🔥 '+streak+'-week streak';chip.style.display='inline-block';}else chip.style.display='none';}
-  const vals=weeks.map(w=>(weekMap[w]?.miles||0));
-  const maxV=Math.max(...vals,1);
-  const loadBar=document.getElementById('actLoadBar');
+  var maxV=Math.max.apply(null,wkMiles.concat([1]));
+  var loadBar=document.getElementById('actLoadBar');
   if(loadBar){
-    loadBar.innerHTML=weeks.map((w,i)=>{
-      const h=Math.max(2,Math.round((vals[i]/maxV)*34));
-      const isThisWk=(i===weeks.length-1);
-      const lbl=new Date(w+'T00:00:00').toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
-      return`<div class="act-load-week" title="${lbl}: ${vals[i].toFixed(1)} mi"><div class="act-load-bar-inner" style="height:${h}px;background:${isThisWk?'#e67e22':'#f0c080'};"></div><div class="act-load-lbl">${i%3===0?lbl.split('/')[0]:''}</div></div>`;
+    loadBar.innerHTML=wkMiles.map(function(mi,i){
+      var h=Math.max(2,Math.round((mi/maxV)*34));
+      var isThisWk=(i===N-1);
+      var wkEp=thisMon-(N-1-i)*7;
+      var d=new Date(wkEp*86400000);
+      var lbl=(d.getUTCMonth()+1)+'/'+(d.getUTCDate());
+      return'<div class="act-load-week" title="'+lbl+': '+mi.toFixed(1)+' mi"><div class="act-load-bar-inner" style="height:'+h+'px;background:'+(isThisWk?'#e67e22':'#f0c080')+';"></div><div class="act-load-lbl">'+(i%3===0?String(d.getUTCMonth()+1):'')+'</div></div>';
     }).join('');
   }
   drawActChart(acts);
 }
 
+function localDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+// Treat YYYY-MM-DD as UTC midnight → integer day number (no timezone ambiguity)
+function epDay(dateStr){var p=dateStr.split('-');return Math.floor(Date.UTC(+p[0],+p[1]-1,+p[2])/86400000);}
 function drawActChart(acts){
-  const weekMap={};
-  acts.forEach(a=>{
-    if(!a.date)return;
-    const d=new Date(a.date+'T00:00:00');if(isNaN(d.getTime()))return;
-    const dow=(d.getDay()+6)%7;const mon=new Date(d);mon.setDate(d.getDate()-dow);
-    const wk=mon.toISOString().slice(0,10);
-    if(!weekMap[wk])weekMap[wk]={count:0,miles:0,power:0,powerCount:0};
-    weekMap[wk].count++;
-    weekMap[wk].miles+=parseFloat(a.distance)||0;
-    const pw=parseFloat(a.power)||0;
-    if(pw>0){weekMap[wk].power+=pw;weekMap[wk].powerCount++;}
-  });
-  const today2=new Date();const dow=(today2.getDay()+6)%7;
-  const thisMonday=new Date(today2);thisMonday.setDate(today2.getDate()-dow);
-  const weeks=[];
-  for(let i=25;i>=0;i--){const d2=new Date(thisMonday);d2.setDate(thisMonday.getDate()-i*7);weeks.push(d2.toISOString().slice(0,10));}
-  const mode=actChartMode;
-  const vals=weeks.map(w=>mode==='miles'?(weekMap[w]?.miles||0):((weekMap[w]?.powerCount||0)>0?Math.round(weekMap[w].power/weekMap[w].powerCount):0));
-  const barsEl=document.getElementById('actChartBars');
-  const lblsEl=document.getElementById('actChartLabels');
+  var barsEl=document.getElementById('actChartBars');
+  var lblsEl=document.getElementById('actChartLabels');
   if(!barsEl||!lblsEl)return;
-  if(!acts.length){
-    barsEl.innerHTML='<div style="color:#bbb;font-size:0.8rem;padding:20px;text-align:center;width:100%;">No activity data yet</div>';
+  if(!acts||!acts.length){
+    barsEl.innerHTML='<div style="color:#bbb;font-size:0.82rem;padding:20px;text-align:center;width:100%;">No activities yet</div>';
     lblsEl.innerHTML='';return;
   }
-  const maxV=Math.max(...vals,1);
-  const unit=mode==='miles'?'mi':'W';
-  const BAR_MAX=100; // px — parent is 120px, leaving 20px for value labels
-  barsEl.innerHTML=weeks.map((w,i)=>{
-    const v=vals[i];
-    const bh=v>0?Math.max(4,Math.round((v/maxV)*BAR_MAX)):0;
-    const isThisWk=(i===weeks.length-1);
-    const bg=isThisWk?'#e67e22':(v>0?'#f0a050':'#e8e8e8');
-    const valLbl=v>0?'<div style="font-size:7px;color:#555;text-align:center;line-height:1.1;font-weight:700;">'+(mode==='miles'?v.toFixed(1):v)+'</div>':'';
+  // Today's local date string → epoch day (UTC-midnight basis)
+  var now=new Date();
+  var todayStr=localDateStr(now);
+  var todayEp=epDay(todayStr);
+  // Day-of-week offset to Monday (0=Mon…6=Sun), using local time
+  var todayDow=(now.getDay()+6)%7;
+  var thisMon=todayEp-todayDow; // epoch day of this Monday
+  var N=26;
+  var milesArr=new Array(N).fill(0);
+  var pwrSum=new Array(N).fill(0);
+  var pwrCnt=new Array(N).fill(0);
+  acts.forEach(function(a){
+    if(!a.date||typeof a.date!=='string')return;
+    var ep=epDay(a.date);
+    // Compute this activity's Monday epoch
+    var aDate=new Date(a.date+'T12:00:00');
+    var aDow=(aDate.getDay()+6)%7;
+    var aMon=ep-aDow;
+    var weeksAgo=Math.round((thisMon-aMon)/7);
+    var slot=N-1-weeksAgo;
+    if(slot<0||slot>=N)return;
+    milesArr[slot]+=parseFloat(a.distance)||0;
+    var pw=parseFloat(a.power)||0;
+    if(pw>0){pwrSum[slot]+=pw;pwrCnt[slot]++;}
+  });
+  var mode=actChartMode;
+  var vals=mode==='miles'?milesArr:pwrSum.map(function(s,i){return pwrCnt[i]>0?Math.round(s/pwrCnt[i]):0;});
+  var maxV=Math.max.apply(null,vals.concat([1]));
+  var BAR_MAX=100;
+  var unit=mode==='miles'?'mi':'W';
+  barsEl.innerHTML=vals.map(function(v,i){
+    var bh=v>0?Math.max(4,Math.round((v/maxV)*BAR_MAX)):0;
+    var isThisWk=(i===N-1);
+    var bg=isThisWk?'#e67e22':(v>0?'#f0a050':'#e8e8e8');
+    var valLbl=v>0?'<div style="font-size:7px;color:#555;text-align:center;line-height:1.1;font-weight:700;">'+(mode==='miles'?v.toFixed(1):v)+'</div>':'';
     return'<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;height:100%;">'
       +valLbl
-      +'<div title="'+w+': '+v+' '+unit+'" style="width:80%;background:'+bg+';height:'+bh+'px;border-radius:2px 2px 0 0;flex-shrink:0;"></div>'
+      +'<div style="width:80%;background:'+bg+';height:'+bh+'px;border-radius:2px 2px 0 0;flex-shrink:0;"></div>'
       +'</div>';
   }).join('');
-  lblsEl.innerHTML=weeks.map((w,i)=>{
-    const show=(i%4===0||i===weeks.length-1);
-    const lbl=show?new Date(w+'T00:00:00').toLocaleDateString('en-US',{month:'numeric',day:'numeric'}):'';
+  lblsEl.innerHTML=vals.map(function(_,i){
+    var show=(i%4===0||i===N-1);
+    var lbl='';
+    if(show){
+      var wkMon=thisMon-(N-1-i)*7;
+      var d=new Date(wkMon*86400000);
+      lbl=(d.getUTCMonth()+1)+'/'+(d.getUTCDate());
+    }
     return'<div style="flex:1;font-size:7px;color:#bbb;text-align:center;white-space:nowrap;overflow:hidden;min-width:0;">'+lbl+'</div>';
   }).join('');
 }
