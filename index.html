@@ -6568,7 +6568,7 @@ function switchTab(tab,e){
   if(tab==='weekly')renderWeekly();if(tab==='monthly')renderMonthly();
   if(tab==='yearly')renderYearly();if(tab==='dashboard')renderDashboard();
   if(tab==='review')renderReview();if(tab==='library')renderLibrary();
-  if(tab==='activities'){_actFirstLoad=true;collapseAllActs();loadCurrentPlan();refreshTrainingPreview();}
+  if(tab==='activities'){_actFirstLoad=true;collapseAllActs();loadCurrentPlan();refreshTrainingPreview();setTimeout(()=>drawActChart(getActivities()),600);}
   if(tab==='bible')renderBibleTab();
   if(tab==='skill-log')renderSkillLog();
   if(tab==='thinking'){if(typeof mmStart==='function')mmStart();}
@@ -7326,6 +7326,17 @@ function saveActivity(){
   }
   saveActivities(acts);cancelAddActivity();renderActivities();
 }
+function cycleActSource(id){
+  var acts=getActivities();
+  var act=acts.find(function(a){return a.id===id;});
+  if(!act)return;
+  var sources=['manual','garmin','stryd'];
+  var cur=(act.source||'manual').toLowerCase();
+  var next=sources[(sources.indexOf(cur)+1)%sources.length];
+  act.source=next;
+  saveActivities(acts);
+  renderActivities();
+}
 function editActivity(id){
   const act=getActivities().find(a=>a.id===id);if(!act)return;
   editingActivityId=id;
@@ -7623,31 +7634,33 @@ function drawActChart(acts,weekMap,weeks){
   if(!hasData)return;
   const canvas=document.getElementById('actChart');if(!canvas)return;
   const doDraw=()=>{
-    const W=Math.max(canvas.parentElement?canvas.parentElement.clientWidth-24:0,canvas.offsetWidth||0,280);
-    const H=160;canvas.width=W;canvas.height=H;
-    const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);
-    const bw=Math.max(3,Math.floor((W-20)/weeks.length)-2);
-    const maxV=Math.max(...vals,1);
-    const barArea=H-30;
-    vals.forEach((v,i)=>{
-      const x=10+i*(bw+2);const bh=v>0?Math.max(4,Math.round((v/maxV)*barArea*0.85)):0;const y=barArea-bh;
-      const isThisWk=(i===weeks.length-1);
-      if(bh>0){
-        ctx.fillStyle=isThisWk?'#e67e22':((weekMap[weeks[i]]?.count||0)>0?'#f0a050':'#e8e8e8');
-        ctx.fillRect(x,y,bw,bh);
-        if(bw>=8){ctx.fillStyle='#555';ctx.font='bold 8px sans-serif';ctx.textAlign='center';
-          ctx.fillText(mode==='miles'?v.toFixed(1):v,x+bw/2,Math.max(8,y-2));}
-      }else{
-        // empty week — light grey placeholder
-        ctx.fillStyle='#f0f0f0';ctx.fillRect(x,barArea-4,bw,4);
-      }
-      if(i%4===0||i===weeks.length-1){ctx.fillStyle='#bbb';ctx.font='8px sans-serif';ctx.textAlign='center';
-        const lbl=new Date(weeks[i]+'T00:00:00').toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
-        ctx.fillText(lbl,x+bw/2,H-6);}
+    requestAnimationFrame(()=>{
+      const W=Math.max(canvas.parentElement?canvas.parentElement.clientWidth-24:0,canvas.offsetWidth||0,300);
+      if(W<10)return; // layout not ready yet, the 400ms retry will catch it
+      const H=160;canvas.width=W;canvas.height=H;
+      const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);
+      const bw=Math.max(3,Math.floor((W-20)/weeks.length)-2);
+      const maxV=Math.max(...vals,1);
+      const barArea=H-30;
+      vals.forEach((v,i)=>{
+        const x=10+i*(bw+2);const bh=v>0?Math.max(4,Math.round((v/maxV)*barArea*0.85)):0;const y=barArea-bh;
+        const isThisWk=(i===weeks.length-1);
+        if(bh>0){
+          ctx.fillStyle=isThisWk?'#e67e22':((weekMap[weeks[i]]?.count||0)>0?'#f0a050':'#e8e8e8');
+          ctx.fillRect(x,y,bw,bh);
+          if(bw>=8){ctx.fillStyle='#555';ctx.font='bold 8px sans-serif';ctx.textAlign='center';
+            ctx.fillText(mode==='miles'?v.toFixed(1):v,x+bw/2,Math.max(8,y-2));}
+        }else{
+          ctx.fillStyle='#f0f0f0';ctx.fillRect(x,barArea-4,bw,4);
+        }
+        if(i%4===0||i===weeks.length-1){ctx.fillStyle='#bbb';ctx.font='8px sans-serif';ctx.textAlign='center';
+          const lbl=new Date(weeks[i]+'T00:00:00').toLocaleDateString('en-US',{month:'numeric',day:'numeric'});
+          ctx.fillText(lbl,x+bw/2,H-6);}
+      });
     });
   };
-  setTimeout(doDraw,80);
-  setTimeout(doDraw,400); // second pass in case layout wasn't ready
+  setTimeout(doDraw,100);
+  setTimeout(doDraw,500); // second pass after full layout settle
 }
 
 // Render
@@ -7810,7 +7823,7 @@ function renderActivities(){
     return '<div class="act-card '+(a.type||'other').toLowerCase()+'" style="border-left-color:'+tc+';'+marginLeft+'">'
       +'<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;cursor:pointer;" onclick="toggleActCard('+a.id+')">'
       +'<div style="flex:1;min-width:0;">'
-      +'<span class="act-badge '+(a.source||'manual')+'">'+(a.source||'manual')+'</span>'
+      +'<span class="act-badge '+(a.source||'manual')+'" onclick="event.stopPropagation();cycleActSource('+a.id+')" title="Click to change source" style="cursor:pointer;">'+(a.source||'manual')+'</span>'
       +' <span style="font-size:0.75rem;font-weight:700;color:'+tc+';text-transform:uppercase;">'+escHtml(a.type||'')+'</span>'
       +'<div class="act-title">'+escHtml(a.title||'Activity')+'</div>'
       +dateHtml
