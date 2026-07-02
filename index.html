@@ -1249,6 +1249,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
         </select>
       </div>
       <div><label class="act-label">Title / Name</label><input type="text" id="actTitle" class="act-input" placeholder="e.g. Morning Run"></div>
+      <div><label class="act-label">Code / ID</label><input type="text" id="actCode" class="act-input" placeholder="e.g. 293WZ3"></div>
       <div><label class="act-label">Distance (miles)</label><input type="number" id="actDistance" class="act-input" placeholder="0.0" step="0.01"></div>
       <div><label class="act-label">Duration (HH:MM:SS)</label><input type="text" id="actDuration" class="act-input" placeholder="0:25:30"></div>
       <div><label class="act-label">Avg Pace (MM:SS/mi)</label><input type="text" id="actPace" class="act-input" placeholder="8:30"></div>
@@ -7292,7 +7293,7 @@ function toggleAddActivity(){
 }
 function cancelAddActivity(){document.getElementById('addActivityForm').style.display='none';editingActivityId=null;}
 function clearActForm(){
-  ['actDate','actType','actTitle','actDistance','actDuration','actPace','actPower','actHR','actCadence','actCalories','actElevGain','actNotes'].forEach(id=>{
+  ['actDate','actType','actTitle','actCode','actDistance','actDuration','actPace','actPower','actHR','actCadence','actCalories','actElevGain','actNotes'].forEach(id=>{
     const e=document.getElementById(id);if(e)e.value='';
   });
   document.getElementById('actSource').value='manual';
@@ -7303,6 +7304,7 @@ function getActFormValues(){
     date:document.getElementById('actDate').value,
     type:document.getElementById('actType').value,
     title:(document.getElementById('actTitle').value||'').trim(),
+    activityCode:(document.getElementById('actCode').value||'').trim(),
     distance:parseFloat(document.getElementById('actDistance').value)||0,
     duration:(document.getElementById('actDuration').value||'').trim(),
     pace:(document.getElementById('actPace').value||'').trim(),
@@ -7355,6 +7357,7 @@ function editActivity(id){
   document.getElementById('actDate').value=act.date||'';
   document.getElementById('actType').value=act.type||'Run';
   document.getElementById('actTitle').value=act.title||'';
+  document.getElementById('actCode').value=act.activityCode||'';
   document.getElementById('actDistance').value=act.distance||'';
   document.getElementById('actDuration').value=act.duration||'';
   document.getElementById('actPace').value=act.pace||'';
@@ -7366,7 +7369,7 @@ function editActivity(id){
   document.getElementById('actNotes').value=act.notes||'';
   document.getElementById('actSource').value=act.source||'manual';
   f.style.display='block';
-  f.scrollIntoView({behavior:'smooth',block:'nearest'});
+  setTimeout(function(){f.scrollIntoView({behavior:'smooth',block:'start'});},50);
 }
 function deleteActivity(id){
   if(!confirm('Delete this activity?'))return;
@@ -7838,6 +7841,7 @@ function renderActivities(){
     if(a.cadence)stats.push('<span class="act-stat">&#x1F9B5; <strong>'+a.cadence+'</strong> spm</span>');
     if(a.calories)stats.push('<span class="act-stat">&#x1F525; <strong>'+a.calories+'</strong> cal</span>');
     if(a.elevGain)stats.push('<span class="act-stat">&#x26F0; <strong>'+a.elevGain+'</strong> ft</span>');
+    if(a.activityCode)stats.push('<span class="act-stat">&#x1F194; <strong>'+escHtml(a.activityCode)+'</strong></span>');
     var collapsed=actCollapsed.has(a.id);
     var chevron=collapsed?'&#x25B6;':'&#x25BC;';
     var bodyDisplay=collapsed?'none':'block';
@@ -7852,7 +7856,8 @@ function renderActivities(){
       +'<div class="act-title">'+escHtml(a.title||'Activity')+'</div>'
       +dateHtml
       +'</div>'
-      +'<div style="display:flex;gap:4px;align-items:center;flex-shrink:0;">'
+      +'<div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">'
+      +'<button onclick="event.stopPropagation();editActivity('+a.id+')" style="font-size:0.72rem;padding:3px 9px;border-radius:6px;border:1px solid #e0d4fb;background:#f3e8ff;color:#7c3aed;cursor:pointer;font-weight:600;white-space:nowrap;">✏️ Edit</button>'
       +'<span id="actChev_'+a.id+'" style="color:#aaa;font-size:0.75rem;">'+chevron+'</span>'
       +'</div>'
       +'</div>'
