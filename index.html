@@ -2341,7 +2341,7 @@ function loadTodayWorkout(){
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:350,messages:[{role:'user',content:prompt}]})
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,messages:[{role:'user',content:prompt}]})
   }).then(r=>r.json()).then(data=>{
     if(btn){btn.disabled=false;btn.style.display='none';}
     if(data.error){if(body)body.textContent='Error: '+data.error.message;return;}
@@ -2961,7 +2961,7 @@ function aiMotivate(){
     +(notes?'Their journal note: "'+notes+'"\n':'')
     +(wkRunNote?'Weekly Run Analysis: '+wkRunNote+'\n':'')
     +'Write a short (3-5 sentence) personalized motivational message for the rest of their day. Be warm, specific to what they have done, and encouraging about what is ahead. Do not use generic platitudes.';
-  aiCall(prompt,300,
+  aiCall(prompt,2000,
     text=>{aiBtnState(btn,false);aiShow('aiDailyBox',text);},
     err=>{aiBtnState(btn,false);aiShow('aiDailyBox','Error: '+err);}
   );
@@ -2988,7 +2988,7 @@ function aiGoals(){
     lines.push('Week -'+w+': '+wMiles.toFixed(1)+' miles, Bible '+wBible+'/7, Exercise '+wEx+'/7, Audiobook '+wAudio+'/7, Fin.Videos '+wFin+'/7');
   }
   const prompt='You are a goal-setting coach. Here is someone\'s last 3 weeks of habit data:\n'+lines.join('\n')+'\n\nBased on these patterns, suggest 3-5 specific, achievable goals for this coming week across fitness, spirituality, and personal growth. Be concrete (e.g. specific miles, days, minutes). Keep it concise and actionable.';
-  aiCall(prompt,400,
+  aiCall(prompt,2000,
     text=>{aiBtnState(btn,false);aiShow('aiDailyBox',text);},
     err=>{aiBtnState(btn,false);aiShow('aiDailyBox','Error: '+err);}
   );
@@ -3013,7 +3013,7 @@ function aiJournalInsights(){
   }
   if(!entries.length){aiShow('aiJournalBox','No journal entries found in the last 7 days.');aiBtnState(btn,false);return;}
   const prompt='You are a thoughtful journaling coach. Here are someone\'s journal entries from the last 7 days:\n\n'+entries.join('\n')+'\n\nProvide 3-4 meaningful insights about their patterns, progress, and mindset. Note any recurring themes, wins, or areas where they might grow. Be specific to what they wrote, warm, and constructive.';
-  aiCall(prompt,500,
+  aiCall(prompt,3000,
     text=>{aiBtnState(btn,false);aiShow('aiJournalBox',text);},
     err=>{aiBtnState(btn,false);aiShow('aiJournalBox','Error: '+err);}
   );
@@ -3047,7 +3047,7 @@ function aiWeeklyAnalysis(){
     +'Audiobook: '+fmtM(audioMin)+'\nFinancial videos: '+fmtM(finMin)+'\nSteps: '+Math.round(steps).toLocaleString();
   const prompt='You are a life coach reviewing someone\'s weekly planner data.\n\nWeekly summary:\n'+summary+'\n\nProvide a concise weekly analysis covering: (1) what went well, (2) what could improve, (3) one specific focus for next week. Keep it under 200 words, warm and direct.';
   const box=document.getElementById('aiWeeklyBox');if(box){box.style.display='block';box.textContent='⏳ Analyzing your week...';}
-  aiCall(prompt,400,
+  aiCall(prompt,2000,
     text=>{aiBtnState(btn,false);aiShow('aiWeeklyBox',text);},
     err=>{aiBtnState(btn,false);aiShow('aiWeeklyBox','Error: '+err);}
   );
@@ -3070,7 +3070,7 @@ function aiReviewAnalysis(){
   const content=[wins&&'Wins: '+wins,improve&&'Improve: '+improve,focus&&'Next focus: '+focus,lessons&&'Lessons: '+lessons].filter(Boolean).join('\n');
   const prompt='You are a thoughtful life coach reading someone\'s weekly review for the week of '+wLabel+'.\n\n'+content+'\n\nProvide 3-4 sentences of coaching feedback: affirm a specific win, gently challenge one area to improve, and give one actionable suggestion for their stated focus. Be warm, specific, and concise.';
   const box=document.getElementById('aiReviewBox');if(box){box.style.display='block';box.textContent='⏳ Reading your review...';}
-  aiCall(prompt,350,
+  aiCall(prompt,2000,
     text=>{aiBtnState(btn,false);aiShow('aiReviewBox',text);},
     err=>{aiBtnState(btn,false);aiShow('aiReviewBox','Error: '+err);}
   );
@@ -3120,7 +3120,7 @@ function aiWeeklyTakeaways(){
     +'Be specific and personal — reference actual things written in the journal. Be warm and insightful, not generic. Under 350 words.';
   const key=localStorage.getItem('ai_key');
   if(!key){box.textContent='⚠️ Add your AI key first (⚙️ AI Key button).';return;}
-  aiCall(prompt,900,function(text){
+  aiCall(prompt,4000,function(text){
     aiShow('aiTakeawaysBox',text,'Weekly Takeaways — '+weekLabel);
   },function(err){box.textContent='Error: '+err;});
 }
@@ -3303,7 +3303,7 @@ function aiSearchFood(){
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'x-api-key':key,'anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:prompt}]})
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:600,messages:[{role:'user',content:prompt}]})
   }).then(function(r){return r.json();}).then(function(data){
     var text=(data.content&&data.content[0]&&data.content[0].text)||'';
     if(!text){if(resultsDiv)resultsDiv.innerHTML='<div style="color:#e74c3c;font-size:0.82rem;">No results.</div>';return;}
@@ -3847,7 +3847,7 @@ function aiNutritionCorrelation(){
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:700,messages:[{role:'user',content:prompt}]})
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:3000,messages:[{role:'user',content:prompt}]})
   }).then(function(r){return r.json();}).then(function(data){
     if(data.error)throw new Error(data.error.message);
     var analysis=(data.content[0].text||'').trim();
@@ -3867,7 +3867,7 @@ function fuelFollowUp(){
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:450,messages:[{role:'user',content:fup}]})
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:fup}]})
   }).then(function(r){return r.json();}).then(function(d){
     if(d.error)throw new Error(d.error.message);
     var ans=(d.content[0].text||'').trim();
@@ -5584,7 +5584,7 @@ function aiAutoFillNote(bookId){
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:900,
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2500,
       messages:[{role:'user',content:'You are a reading notes assistant. For the following book and chapter, provide concise reading notes. Return ONLY valid JSON with these keys: "quote" (one powerful key quote or passage), "summary" (2-3 sentence summary of the main idea), "insights" (3 bullet-point key insights/takeaways, each on its own line starting with "• ").\n\n'+context+'\n\nReturn only the JSON object, no other text.'}]})
   }).then(function(r){return r.json();}).then(function(d){
     var text=(d.content&&d.content[0]&&d.content[0].text)||'';
@@ -5994,7 +5994,7 @@ function runAssumptionBuster(){
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1500,
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5000,
       messages:[{role:'user',content:'You are an expert critical thinking coach using the "Assumption Buster" mental model. The user describes a belief, plan, or decision. Your job:\n1. List 5-7 hidden assumptions embedded in this belief/plan\n2. For each assumption, challenge it: What if the opposite were true? What evidence would change your mind?\n3. Identify the 2 most dangerous assumptions\n4. Suggest 1 experiment or question to test the core assumption\n\nBe concise, sharp, and specific. No fluff.\n\nBelief/Plan: '+input}]})
   }).then(function(r){return r.json();}).then(function(d){
     status.style.display='none';
@@ -6016,7 +6016,7 @@ function runSecondOrderThinking(){
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1500,
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5000,
       messages:[{role:'user',content:'You are a strategic thinking coach specializing in Second-Order Thinking. Analyze the following decision/action by mapping its cascading consequences:\n\n1. FIRST-ORDER EFFECTS (immediate, obvious results)\n2. SECOND-ORDER EFFECTS (what happens as a result of the first-order effects?)\n3. THIRD-ORDER EFFECTS (what emerges from the second-order effects?)\n4. UNINTENDED CONSEQUENCES (what might go wrong that most people would miss?)\n5. OPPORTUNITY: What second-order benefit could you deliberately amplify?\n\nBe specific, practical, and insightful. Use bullet points.\n\nDecision/Action: '+input}]})
   }).then(function(r){return r.json();}).then(function(d){
     status.style.display='none';
@@ -6238,7 +6238,7 @@ function audibleSummarize(){
     +'4. One or two standout NLT verses worth meditating on today\n'
     +'5. A short personal reflection or life application\n\n'
     +'Use the New Living Translation (NLT) wording when quoting verses. Keep it warm, clear, and spiritually encouraging. Under 380 words.';
-  aiCall(prompt,900,function(text){
+  aiCall(prompt,4000,function(text){
     // Store pending data for archive save (avoids putting large text in onclick)
     _audiblePending={text:text,label:label,passages:passages,day:day,book:book};
     res.style.display='block';
@@ -6401,7 +6401,7 @@ function meditVerseSummary(){
   box.style.display='block';
   box.textContent='⏳ Looking up this verse...';
   var prompt='Give me a brief, devotional explanation of this Bible verse:\n\n"'+verse+'"\n\nInclude:\n1. The historical/biblical context in 1-2 sentences\n2. The core spiritual meaning (2-3 sentences)\n3. One practical way to apply it today\n\nKeep the tone warm, encouraging, and grounded in Christian faith. Under 200 words.';
-  aiCall(prompt,500,function(text){
+  aiCall(prompt,2000,function(text){
     _meditPending={text:text,type:'verse',label:'Verse Explanation',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
     box.style.display='block';
     box.innerHTML='<div style="white-space:pre-wrap;line-height:1.6;">'+escHtml(text)+'</div>'
@@ -6430,7 +6430,7 @@ function meditAIPrompt(type){
   var prompt=prompts[type]||prompts.reflection;
   var typeLabels={reflection:'Daily Reflection',prayer:'Guided Prayer',lectio:'Lectio Divina',gratitude:'Gratitude Focus',body:'Body Scan'};
   var typeLabel=typeLabels[type]||'Meditation Guide';
-  aiCall(prompt,800,function(text){
+  aiCall(prompt,3000,function(text){
     _meditPending={text:text,type:type,label:typeLabel,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
     res.style.display='block';
     res.innerHTML='<div style="white-space:pre-wrap;line-height:1.6;color:#3b0764;">'+escHtml(text)+'</div>'
@@ -8032,7 +8032,7 @@ function submitAdjustPlan(){
   var currentPlanText=plan.text||'';
   var prompt='You are a running coach. The athlete has an active training plan and wants to adjust it.\n\nCURRENT PLAN:\n'+currentPlanText+'\n\nATHLETE\'S REQUEST:\n'+instruction+'\n\nPlease rewrite the training plan incorporating the requested adjustments. Keep the same format and structure as the original plan. Return only the updated plan text.';
   if(btn){btn.disabled=true;btn.textContent='⏳ Adjusting...';}
-  aiCall(prompt,1200,function(text){
+  aiCall(prompt,5000,function(text){
     plan.text=text;
     plan.adjustedAt=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
     localStorage.setItem('current_training_plan',JSON.stringify(plan));
@@ -8274,7 +8274,7 @@ Be specific with paces (use min/mile), distances, and workout structures. Make t
     },
     body:JSON.stringify({
       model:'claude-haiku-4-5-20251001',
-      max_tokens:2500,
+      max_tokens:6000,
       messages:[{role:'user',content:prompt}]
     })
   }).then(r=>r.json()).then(data=>{
@@ -8705,13 +8705,4 @@ window.addEventListener('beforeunload',function(){try{save();}catch(e){}});
       <label style="font-size:0.8rem;font-weight:700;color:#555;display:block;margin-bottom:4px;">&#x1F3C3; Run Date:</label>
       <input type="date" id="fuelRunDate" style="width:100%;border:1px solid #d0d0ff;border-radius:6px;padding:7px 10px;font-size:0.9rem;box-sizing:border-box;margin-bottom:12px;">
       <label style="font-size:0.8rem;font-weight:700;color:#555;display:block;margin-bottom:4px;">&#x1F4DD; Additional Context <span style="font-weight:400;color:#999;">(optional)</span></label>
-      <textarea id="fuelExtraContext" rows="3" style="width:100%;border:1px solid #d0d0ff;border-radius:6px;padding:7px 10px;font-size:0.85rem;box-sizing:border-box;resize:vertical;font-family:inherit;margin-bottom:16px;" placeholder="e.g. Body weight 175 lbs, goal is marathon pace, felt fatigue in legs, training week 8 of 16, took an iron supplement..."></textarea>
-      <div style="display:flex;gap:8px;">
-        <button onclick="aiNutritionCorrelation()" style="flex:2;background:linear-gradient(135deg,#8e44ad,#6c3483);color:#fff;border:none;border-radius:8px;padding:10px;font-size:0.92rem;font-weight:700;cursor:pointer;">&#x1F9E0; Analyze</button>
-        <button onclick="closeFuelAIModal()" style="flex:1;background:#e9ecef;color:#555;border:none;border-radius:8px;padding:10px;font-size:0.9rem;cursor:pointer;">&#x274C; Cancel</button>
-      </div>
-    </div>
-  </div>
-
-</body>
-</html>
+      <textarea id="fuelExtraContext" rows="3" style="width:100%;border:1px solid #d0d0ff;border-radius:6px;padding:7px 10px;font-size:0.85rem;box-sizing:border-box;resize:vertical;font-family:inherit;ma
