@@ -1454,7 +1454,10 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <div class="section-title" style="color:#6d4c41;background:linear-gradient(135deg,#fff8f0,#fdebd0);border-left:4px solid #e67e22;">&#x1F3A7; Bible &amp; Worship Audio</div>
       <div style="background:#fff8f0;border:1px solid #fdba74;border-radius:10px;padding:12px 14px;margin-bottom:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-          <div style="font-size:0.78rem;font-weight:700;color:#c2410c;">&#x1F3A7; Audible Bible</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <div style="font-size:0.78rem;font-weight:700;color:#c2410c;">&#x1F3A7; Audible Bible</div>
+            <button onclick="nybAutoFill(true)" title="Fill in today's One Year Chronological Bible NLT reading" style="background:#fff3e0;color:#c2410c;border:1px solid #fdba74;border-radius:6px;padding:3px 9px;font-size:0.71rem;font-weight:700;cursor:pointer;white-space:nowrap;">&#x1F4D6; Auto-fill Today</button>
+          </div>
           <div style="display:flex;gap:7px;flex-wrap:wrap;">
             <a href="audible://" target="_blank"
               style="background:#f97316;color:#fff;border:none;border-radius:7px;padding:6px 13px;font-size:0.78rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">&#x25B6; Open Audible App</a>
@@ -6377,6 +6380,192 @@ function deleteMeditArchiveEntry(idx){
   renderMeditArchive();
 }
 
+/* ===== One Year Chronological Bible NLT — 365-day reading schedule ===== */
+var NYB_PLAN={
+'1/1':'Genesis 1-3','1/2':'Genesis 4-7','1/3':'Genesis 8-11','1/4':'Genesis 12-15',
+'1/5':'Genesis 16-18','1/6':'Genesis 19-21','1/7':'Job 1-5','1/8':'Job 6-10',
+'1/9':'Job 11-15','1/10':'Job 16-20','1/11':'Job 21-26','1/12':'Job 27-31',
+'1/13':'Job 32-35','1/14':'Job 36-40','1/15':'Job 41-42; Genesis 22-23',
+'1/16':'Genesis 24-25','1/17':'Genesis 26-27','1/18':'Genesis 28-29',
+'1/19':'Genesis 30-31','1/20':'Genesis 32-34','1/21':'Genesis 35-37',
+'1/22':'Genesis 38-40','1/23':'Genesis 41-42','1/24':'Genesis 43-44',
+'1/25':'Genesis 45-47','1/26':'Genesis 48-50','1/27':'Exodus 1-3; Psalm 88',
+'1/28':'Exodus 4-6','1/29':'Exodus 7-9','1/30':'Exodus 10-12','1/31':'Exodus 13-14',
+'2/1':'Exodus 15-17','2/2':'Exodus 18-20','2/3':'Exodus 21-23','2/4':'Exodus 24-26',
+'2/5':'Exodus 27-28','2/6':'Exodus 29-30','2/7':'Exodus 31-33','2/8':'Exodus 34-35',
+'2/9':'Exodus 36-38','2/10':'Exodus 39-40; Leviticus 1','2/11':'Leviticus 2-4',
+'2/12':'Leviticus 5-7','2/13':'Leviticus 8-9','2/14':'Leviticus 10-12',
+'2/15':'Leviticus 13-14','2/16':'Leviticus 15','2/17':'Leviticus 16-18',
+'2/18':'Leviticus 19-21','2/19':'Leviticus 22-24','2/20':'Leviticus 25',
+'2/21':'Leviticus 26-27','2/22':'Numbers 1-2','2/23':'Numbers 3-4',
+'2/24':'Numbers 5-6','2/25':'Numbers 7-8','2/26':'Numbers 9-10',
+'2/27':'Numbers 11-13','2/28':'Numbers 14-15; Psalm 90','2/29':'Numbers 16-17',
+'3/1':'Numbers 16-17','3/2':'Numbers 18-20','3/3':'Numbers 21-22','3/4':'Numbers 23-25',
+'3/5':'Numbers 26-28','3/6':'Numbers 29-30','3/7':'Numbers 31-32','3/8':'Numbers 33-35',
+'3/9':'Numbers 36; Deuteronomy 1','3/10':'Deuteronomy 2-3','3/11':'Deuteronomy 4-6',
+'3/12':'Deuteronomy 7-9','3/13':'Deuteronomy 10-11','3/14':'Deuteronomy 12',
+'3/15':'Deuteronomy 13-15','3/16':'Deuteronomy 16-19','3/17':'Deuteronomy 20-22',
+'3/18':'Deuteronomy 23-25','3/19':'Deuteronomy 26-27','3/20':'Deuteronomy 28-29',
+'3/21':'Deuteronomy 30-31','3/22':'Deuteronomy 32-34; Joshua 1','3/23':'Joshua 2-4',
+'3/24':'Joshua 5-7','3/25':'Joshua 8-9','3/26':'Joshua 10-11','3/27':'Joshua 12-14',
+'3/28':'Joshua 15-17','3/29':'Joshua 18-20','3/30':'Joshua 21-22',
+'3/31':'Joshua 23-24; Judges 1',
+'4/1':'Judges 2-3','4/2':'Judges 4-6','4/3':'Judges 7-8','4/4':'Judges 9-10',
+'4/5':'Judges 11-13','4/6':'Judges 14-16','4/7':'Judges 17-18','4/8':'Judges 19-20',
+'4/9':'Judges 21; Ruth 1-2','4/10':'Ruth 3-4; 1 Samuel 1','4/11':'1 Samuel 2-4',
+'4/12':'1 Samuel 5-8','4/13':'1 Samuel 9-11','4/14':'1 Samuel 12-13',
+'4/15':'1 Samuel 14-15','4/16':'1 Samuel 16-17; Psalm 9',
+'4/17':'1 Samuel 18; Psalm 11, 19',
+'4/18':'Psalm 59; 1 Samuel 20-21',
+'4/19':'Psalm 17, 34, 35, 56; 1 Samuel 22',
+'4/20':'Psalm 52, 64, 109, 140, 142; 1 Samuel 23',
+'4/21':'Psalm 31, 54, 57, 58, 63; 1 Samuel 24',
+'4/22':'1 Samuel 25-26; Psalm 16',
+'4/23':'1 Samuel 27-29; Psalm 141',
+'4/24':'1 Samuel 30-31; 2 Samuel 1',
+'4/25':'2 Samuel 2-4','4/26':'2 Samuel 5-6; Psalm 68',
+'4/27':'2 Samuel 7-10','4/28':'Psalm 20-21; 2 Samuel 11-12',
+'4/29':'Psalm 32, 33, 51, 103; 2 Samuel 13','4/30':'2 Samuel 14-15',
+'5/1':'Psalm 3, 4, 5, 7; 2 Samuel 16',
+'5/2':'2 Samuel 17; Psalm 42, 43, 55, 62, 70, 71',
+'5/3':'Psalm 143-144; 2 Samuel 18','5/4':'2 Samuel 19-20',
+'5/5':'2 Samuel 21-22; Psalm 18','5/6':'2 Samuel 23-24',
+'5/7':'1 Kings 1','5/8':'1 Kings 2-4','5/9':'Proverbs 1-5',
+'5/10':'Proverbs 6-8; Song of Solomon 1','5/11':'Song of Solomon 2-8',
+'5/12':'Proverbs 9-10; 1 Kings 5-6','5/13':'1 Kings 7',
+'5/14':'1 Kings 8; Proverbs 11','5/15':'Proverbs 12-13; 1 Kings 9',
+'5/16':'1 Kings 10; Proverbs 14-16','5/17':'1 Kings 11; Proverbs 17-18',
+'5/18':'Psalm 60; Ecclesiastes 1-4','5/19':'Ecclesiastes 5-8',
+'5/20':'Ecclesiastes 9-12; Psalm 108','5/21':'1 Kings 12-13; Jonah 1',
+'5/22':'Jonah 2-4; 1 Kings 14; Amos 1','5/23':'Amos 2-6',
+'5/24':'Amos 7-9; 1 Kings 15','5/25':'1 Kings 16-17',
+'5/26':'1 Kings 18-19','5/27':'1 Kings 20-21',
+'5/28':'1 Kings 22; 2 Kings 1','5/29':'2 Kings 2-3',
+'5/30':'2 Kings 4-5','5/31':'2 Kings 6-8',
+'6/1':'2 Kings 9-10','6/2':'2 Kings 11-13','6/3':'2 Kings 14-15',
+'6/4':'2 Kings 16-17','6/5':'2 Kings 18-19; Psalm 44',
+'6/6':'Psalm 73, 75, 76; 2 Kings 20-21','6/7':'2 Kings 22-23',
+'6/8':'2 Kings 24-25','6/9':'1 Chronicles 1-3','6/10':'1 Chronicles 4-6',
+'6/11':'1 Chronicles 7-8','6/12':'1 Chronicles 9-11',
+'6/13':'1 Chronicles 12-14; Psalm 139',
+'6/14':'1 Chronicles 15-16; Psalm 96, 132',
+'6/15':'Psalm 105-106; 1 Chronicles 17',
+'6/16':'Psalm 2, 22, 45, 110, 118; 1 Chronicles 18',
+'6/17':'1 Chronicles 19-21; Psalm 30','6/18':'1 Chronicles 22-25',
+'6/19':'1 Chronicles 26-27; Psalm 12',
+'6/20':'1 Chronicles 28; Psalm 6, 8, 19, 23, 24, 28, 29, 38',
+'6/21':'Psalm 39, 40, 41, 61, 65, 69',
+'6/22':'Psalm 78, 86, 91, 95, 101',
+'6/23':'Psalm 104, 120, 121, 122, 124, 131, 133, 145',
+'6/24':'1 Chronicles 29; Psalm 72; 2 Chronicles 1-2',
+'6/25':'2 Chronicles 3-7; Psalm 47, 97-100',
+'6/26':'Psalm 134, 146-150; 2 Chronicles 8',
+'6/27':'Psalm 135-136; Proverbs 19-21',
+'6/28':'2 Chronicles 8-9; Proverbs 22','6/29':'Proverbs 23-26',
+'6/30':'Proverbs 27-29; 2 Chronicles 10-11',
+'7/1':'2 Chronicles 12-13; Proverbs 30','7/2':'2 Chronicles 14-17; Proverbs 31',
+'7/3':'2 Chronicles 18-19; Psalm 82',
+'7/4':'2 Chronicles 20; Obadiah; Psalm 46, 115',
+'7/5':'2 Chronicles 21-22; Joel 1-2','7/6':'Joel 3; 2 Chronicles 23-24',
+'7/7':'2 Chronicles 25; Isaiah 1-2','7/8':'Isaiah 3-5; 2 Chronicles 26',
+'7/9':'2 Chronicles 27-28; Isaiah 6-7','7/10':'2 Chronicles 29-30',
+'7/11':'2 Chronicles 31-32','7/12':'Isaiah 8-10','7/13':'Isaiah 11-15',
+'7/14':'Isaiah 16-21','7/15':'Isaiah 22-25','7/16':'Isaiah 26-29',
+'7/17':'Isaiah 30-32','7/18':'Isaiah 33-36','7/19':'Isaiah 37-40',
+'7/20':'Isaiah 41-43','7/21':'Isaiah 44-46','7/22':'Isaiah 47-49',
+'7/23':'Isaiah 50-54','7/24':'Isaiah 55-59','7/25':'Isaiah 60-63',
+'7/26':'Isaiah 64-66; Hosea 1','7/27':'Hosea 2-7','7/28':'Hosea 8-13',
+'7/29':'Hosea 14; Micah 1-4','7/30':'Micah 5-7; Nahum 1-3',
+'7/31':'2 Chronicles 33-34',
+'8/1':'Zephaniah 1-3','8/2':'2 Chronicles 35; Habakkuk 1-3',
+'8/3':'2 Chronicles 36; Jeremiah 1-2','8/4':'Jeremiah 3-5',
+'8/5':'Jeremiah 6-7','8/6':'Jeremiah 8-10','8/7':'Jeremiah 11-12',
+'8/8':'Jeremiah 13-15','8/9':'Jeremiah 16-18','8/10':'Jeremiah 19-22',
+'8/11':'Jeremiah 23-24','8/12':'Jeremiah 25-27','8/13':'Jeremiah 28-30',
+'8/14':'Jeremiah 31-32','8/15':'Jeremiah 33-34','8/16':'Jeremiah 35-37',
+'8/17':'Jeremiah 38-39; Psalm 74',
+'8/18':'Psalm 79, 83, 94; Jeremiah 40-41',
+'8/19':'Jeremiah 42-44','8/20':'Jeremiah 45-48','8/21':'Jeremiah 49',
+'8/22':'Jeremiah 50-51','8/23':'Jeremiah 52; Lamentations 1',
+'8/24':'Lamentations 2-3','8/25':'Lamentations 4-5; Daniel 1',
+'8/26':'Daniel 2-3','8/27':'Daniel 4-5',
+'8/28':'Daniel 6-7; Psalm 10, 13, 14',
+'8/29':'Psalm 15, 25, 26, 27, 36, 37',
+'8/30':'Psalm 49, 50, 53, 67, 77, 80, 89',
+'8/31':'Psalm 92, 93, 123, 130, 137; Daniel 8',
+'9/1':'Daniel 9-10; Psalm 102','9/2':'Daniel 11-12; Ezekiel 1',
+'9/3':'Ezekiel 2-5','9/4':'Ezekiel 6-9','9/5':'Ezekiel 10-12',
+'9/6':'Ezekiel 13-15','9/7':'Ezekiel 16-17','9/8':'Ezekiel 18-20',
+'9/9':'Ezekiel 21-22','9/10':'Ezekiel 23-24','9/11':'Ezekiel 25-27',
+'9/12':'Ezekiel 28-30','9/13':'Ezekiel 31-32','9/14':'Ezekiel 33-35',
+'9/15':'Ezekiel 36-38','9/16':'Ezekiel 39-40','9/17':'Ezekiel 41-42',
+'9/18':'Ezekiel 43-44','9/19':'Ezekiel 45-47',
+'9/20':'Ezekiel 48; Psalm 107, 111, 112, 113, 114',
+'9/21':'Ezra 1-3; Psalm 85, 126',
+'9/22':'Psalm 66, 84, 87, 116, 117, 125, 127, 128, 134; Ezra 4',
+'9/23':'Psalm 129; Zechariah 1-5','9/24':'Zechariah 6-9',
+'9/25':'Zechariah 10-14','9/26':'Ezra 5-6; Psalm 48; Esther 1',
+'9/27':'Esther 2-4','9/28':'Esther 5-8',
+'9/29':'Esther 9; Psalm 81, 138, 146-150','9/30':'Ezra 7-9',
+'10/1':'Ezra 10; Nehemiah 1-2','10/2':'Nehemiah 3-5',
+'10/3':'Nehemiah 6-7','10/4':'Nehemiah 8-9','10/5':'Nehemiah 10-12',
+'10/6':'Nehemiah 13; Psalm 1, 119:1-56','10/7':'Psalm 119:57-176; Malachi 1',
+'10/8':'Malachi 2-4; Matthew 1','10/9':'Matthew 2-5',
+'10/10':'Matthew 6-8','10/11':'Matthew 9-10','10/12':'Matthew 11-12',
+'10/13':'Matthew 13-15','10/14':'Matthew 16-18','10/15':'Matthew 19-20',
+'10/16':'Matthew 21-23','10/17':'Matthew 24-25','10/18':'Matthew 26',
+'10/19':'Matthew 27-28','10/20':'Mark 1-3','10/21':'Mark 4-5',
+'10/22':'Mark 6-7','10/23':'Mark 8-9','10/24':'Mark 10-11',
+'10/25':'Mark 12-13','10/26':'Mark 14-16','10/27':'Luke 1',
+'10/28':'Luke 2-3','10/29':'Luke 4-6','10/30':'Luke 7','10/31':'Luke 8-9',
+'11/1':'Luke 10-11','11/2':'Luke 12-13','11/3':'Luke 14-16',
+'11/4':'Luke 17-18','11/5':'Luke 19-20','11/6':'Luke 21-22',
+'11/7':'Luke 23-24','11/8':'John 1-3','11/9':'John 4-5',
+'11/10':'John 6-7','11/11':'John 8-9','11/12':'John 10-11',
+'11/13':'John 12-14','11/14':'John 15-17','11/15':'John 18-19',
+'11/16':'John 20-21; Acts 1','11/17':'Acts 2-4','11/18':'Acts 5-7',
+'11/19':'Acts 8-9','11/20':'Acts 10-11','11/21':'Acts 12-13',
+'11/22':'Acts 14; James 1-3','11/23':'James 4-5; Acts 15; Galatians 1',
+'11/24':'Galatians 2-5','11/25':'Galatians 6; Acts 16; Philippians 1',
+'11/26':'Philippians 2-4; Acts 17',
+'11/27':'1 Thessalonians 1-5; 2 Thessalonians 1',
+'11/28':'2 Thessalonians 2-3; Acts 18; 1 Corinthians 1',
+'11/29':'1 Corinthians 2-6','11/30':'1 Corinthians 7-10',
+'12/1':'1 Corinthians 11-13','12/2':'1 Corinthians 14-16',
+'12/3':'2 Corinthians 1-5','12/4':'2 Corinthians 6-10',
+'12/5':'2 Corinthians 11-13','12/6':'Acts 19-20; Ephesians 1',
+'12/7':'Ephesians 2-6','12/8':'Romans 1-3','12/9':'Romans 4-7',
+'12/10':'Romans 8-10','12/11':'Romans 11-14','12/12':'Romans 15-16; Acts 21',
+'12/13':'Acts 22-24','12/14':'Acts 25-26','12/15':'Acts 27-28; Colossians 1',
+'12/16':'Colossians 2-4; Hebrews 1-2','12/17':'Hebrews 3-7',
+'12/18':'Hebrews 8-10','12/19':'Hebrews 11-13; Titus 1',
+'12/20':'Titus 2-3; Philemon; 1 Timothy 1-3',
+'12/21':'1 Timothy 4-6; 2 Timothy 1-2',
+'12/22':'2 Timothy 3-4; 1 Peter 1-2',
+'12/23':'1 Peter 3-5; 2 Peter 1-2',
+'12/24':'2 Peter 3; 1 John 1-3',
+'12/25':'1 John 4-5; 2 John; 3 John; Jude',
+'12/26':'Revelation 1-3','12/27':'Revelation 4-8',
+'12/28':'Revelation 9-13','12/29':'Revelation 14-17',
+'12/30':'Revelation 18-20','12/31':'Revelation 21-22'
+};
+var NYB_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function nybAutoFill(force){
+  var now=new Date();
+  var key=(now.getMonth()+1)+'/'+now.getDate();
+  var passage=NYB_PLAN[key]||'';
+  var bookEl=document.getElementById('audibleBook');
+  var dayEl=document.getElementById('audibleChapter');
+  var passEl=document.getElementById('audiblePassages');
+  if(!bookEl||!dayEl||!passEl)return;
+  var BOOK_TITLE='The One Year Chronological Bible (NLT)';
+  if(force||!bookEl.value.trim())bookEl.value=BOOK_TITLE;
+  if(force||!dayEl.value.trim())dayEl.value=NYB_MONTHS[now.getMonth()]+' '+now.getDate();
+  if((force||!passEl.value.trim())&&passage)passEl.value=passage;
+  meditSaveAudible();
+}
+/* ===== END One Year Bible plan ===== */
+
 function meditSaveAudible(){
   var book=document.getElementById('audibleBook');
   var ch=document.getElementById('audibleChapter');
@@ -6554,6 +6743,13 @@ function meditInitTab(){
   var ac=document.getElementById('audibleChapter');if(ac)ac.value=localStorage.getItem('audible_chapter')||'';
   var ap=document.getElementById('audiblePassages');if(ap)ap.value=localStorage.getItem('audible_passages')||'';
   var an=document.getElementById('audibleNotes');if(an)an.value=localStorage.getItem('audible_notes')||'';
+  // Auto-fill book/day/passages if all three are empty (first time today)
+  var ab2=document.getElementById('audibleBook');
+  var ac2=document.getElementById('audibleChapter');
+  var ap2=document.getElementById('audiblePassages');
+  if(ab2&&ac2&&ap2&&!ab2.value.trim()&&!ac2.value.trim()&&!ap2.value.trim()){
+    nybAutoFill(false);
+  }
   meditUpdateDisplay();
   renderMeditLog();
 }
