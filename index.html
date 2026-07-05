@@ -1453,9 +1453,11 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <div class="section" style="margin-bottom:10px;">
       <div class="section-title" style="color:#6d4c41;background:linear-gradient(135deg,#fff8f0,#fdebd0);border-left:4px solid #e67e22;">&#x1F3A7; Bible &amp; Worship Audio</div>
       <div style="background:#fff8f0;border:1px solid #fdba74;border-radius:10px;padding:12px 14px;margin-bottom:12px;">
+        <div style="margin-bottom:6px;">
+          <button onclick="nybAutoFill(true)" title="Fill in today's One Year Chronological Bible NLT reading" style="background:#fff3e0;color:#c2410c;border:1px solid #fdba74;border-radius:6px;padding:3px 9px;font-size:0.71rem;font-weight:700;cursor:pointer;white-space:nowrap;">&#x1F4D6; Auto-fill Today</button>
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
           <div>
-            <button onclick="nybAutoFill(true)" title="Fill in today's One Year Chronological Bible NLT reading" style="background:#fff3e0;color:#c2410c;border:1px solid #fdba74;border-radius:6px;padding:3px 9px;font-size:0.71rem;font-weight:700;cursor:pointer;white-space:nowrap;margin-bottom:5px;">&#x1F4D6; Auto-fill Today</button>
             <label style="font-size:0.7rem;color:#92400e;font-weight:600;display:block;margin-bottom:3px;">Book / Title</label>
             <input type="text" id="audibleBook" placeholder="e.g. The One Year Chronological Bible (NLT)"
               oninput="meditSaveAudible()"
