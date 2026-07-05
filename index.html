@@ -1453,17 +1453,8 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <div class="section" style="margin-bottom:10px;">
       <div class="section-title" style="color:#6d4c41;background:linear-gradient(135deg,#fff8f0,#fdebd0);border-left:4px solid #e67e22;">&#x1F3A7; Bible &amp; Worship Audio</div>
       <div style="background:#fff8f0;border:1px solid #fdba74;border-radius:10px;padding:12px 14px;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <div style="font-size:0.78rem;font-weight:700;color:#c2410c;">&#x1F3A7; Audible Bible</div>
-            <button onclick="nybAutoFill(true)" title="Fill in today's One Year Chronological Bible NLT reading" style="background:#fff3e0;color:#c2410c;border:1px solid #fdba74;border-radius:6px;padding:3px 9px;font-size:0.71rem;font-weight:700;cursor:pointer;white-space:nowrap;">&#x1F4D6; Auto-fill Today</button>
-          </div>
-          <div style="display:flex;gap:7px;flex-wrap:wrap;">
-            <a href="audible://" target="_blank"
-              style="background:#f97316;color:#fff;border:none;border-radius:7px;padding:6px 13px;font-size:0.78rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:4px;">&#x25B6; Open Audible App</a>
-            <a href="https://www.audible.com/library/titles" target="_blank"
-              style="background:#fff;border:1px solid #fdba74;border-radius:7px;padding:6px 12px;font-size:0.78rem;color:#c2410c;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;">&#x1F4DA; My Library</a>
-          </div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+          <button onclick="nybAutoFill(true)" title="Fill in today's One Year Chronological Bible NLT reading" style="background:#fff3e0;color:#c2410c;border:1px solid #fdba74;border-radius:6px;padding:3px 9px;font-size:0.71rem;font-weight:700;cursor:pointer;white-space:nowrap;">&#x1F4D6; Auto-fill Today</button>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
           <div>
@@ -1497,7 +1488,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
           <span style="font-size:0.67rem;color:#b45309;">Enter the passages you heard above for an accurate summary.</span>
         </div>
         <div id="audibleAIResult" style="display:none;background:#fff8f0;border:1px solid #fdba74;border-radius:8px;padding:12px;margin-top:8px;font-size:0.87rem;color:#78350f;line-height:1.6;white-space:pre-wrap;"></div>
-        <div style="font-size:0.67rem;color:#b45309;margin-top:6px;">&#x1F4A1; Tap <strong>Open Audible App</strong> to resume listening, then come back to log your notes.</div>
       </div>
 
       <!-- Bible Reading Archive -->
@@ -1513,27 +1503,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       </div>
     </div>
 
-    <!-- Session Notes & Gratitude -->
-    <div class="section" style="margin-bottom:10px;">
-      <div class="section-title" style="color:#6d4c41;background:linear-gradient(135deg,#fff8f0,#fdebd0);border-left:4px solid #e67e22;">&#x1F4DD; Session Notes &amp; Gratitude</div>
-      <textarea id="meditNotes" rows="4" placeholder="What came up during stillness?&#10;What are you grateful for?&#10;Any promptings, impressions, or insights..."
-        oninput="localStorage.setItem('medit_notes_'+meditTodayKey(),this.value)"
-        style="width:100%;border:1px solid #e9ecef;border-radius:8px;padding:9px 12px;font-size:0.88rem;box-sizing:border-box;outline:none;resize:vertical;line-height:1.55;color:#374151;font-family:inherit;"></textarea>
-      <div style="display:flex;gap:8px;margin-top:7px;flex-wrap:wrap;">
-        <button onclick="meditSaveSession(false)"
-          style="background:#e67e22;color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F4BE; Save Session</button>
-        <span style="font-size:0.75rem;color:#888;align-self:center;" id="meditSaveMsg"></span>
-      </div>
-    </div>
 
-    <!-- Session History -->
-    <div class="section" style="margin-bottom:14px;">
-      <div class="section-title" style="color:#6d4c41;background:linear-gradient(135deg,#fff8f0,#fdebd0);border-left:4px solid #e67e22;">&#x1F4C5; Session History</div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
-        <button onclick="renderMeditLog()" style="background:#f3f4f6;color:#555;border:1px solid #d1d5db;border-radius:6px;padding:3px 10px;font-size:0.75rem;cursor:pointer;">&#x21BA; Refresh</button>
-      </div>
-      <div id="meditSessionLog" style="font-size:0.83rem;color:#6b7280;"></div>
-    </div>
 
     <!-- Date Navigation -->
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;background:linear-gradient(135deg,#fff8f0,#fdebd0);border-radius:10px;padding:10px 12px;border:1px solid #f0c080;">
