@@ -5900,7 +5900,6 @@ var MM_CARDS=[
   {name:'Mere Exposure Effect',q:'Are you favoring something simply because you\'ve seen it more? Familiarity isn\'t the same as quality.',ex:'Preferring your hometown\'s pizza to objectively better options because you grew up with it.'},
   {name:'Base Rate Neglect',q:'What\'s the realistic base rate for success in this domain? Are you assuming your situation is special?',ex:'90% of restaurants fail in 5 years. A passionate chef still planning to open one should know this.'},
   {name:'Planning Fallacy',q:'How long do you think this will take? Now add 50%. What\'s the true cost and time if things go normally wrong?',ex:'Software projects routinely take 2x the estimated time — this is universal, not a one-off.'},
-  {name:'Survivorship Bias',q:'Are you only seeing the winners? What about the people who tried the same thing and failed — where are they?',ex:'We celebrate college dropout billionaires and ignore millions of dropouts who struggled.'},
   {name:'Parkinson\'s Law',q:'Work expands to fill the time available. If you gave yourself half the time, what would you cut to still get it done?',ex:'A report due in a week takes a week. The same report due tomorrow somehow gets done tomorrow.'},
   {name:'Lindy Effect',q:'How long has this idea, technology, or practice already survived? Older things with staying power are likely to last longer.',ex:'A book that\'s been read for 100 years will probably be read for another 100. A 1-year-old app may not last.'},
   {name:'Rubber Duck Debugging',q:'Explain your current problem out loud, step by step, as if teaching it to someone unfamiliar. Where does your explanation break down?',ex:'Programmers explain code to a rubber duck — the act of explaining reveals the bug.'},
@@ -8871,4 +8870,13 @@ window.addEventListener('beforeunload',function(){try{save();}catch(e){}});
       <label style="font-size:0.8rem;font-weight:700;color:#555;display:block;margin-bottom:4px;">&#x1F3C3; Run Date:</label>
       <input type="date" id="fuelRunDate" style="width:100%;border:1px solid #d0d0ff;border-radius:6px;padding:7px 10px;font-size:0.9rem;box-sizing:border-box;margin-bottom:12px;">
       <label style="font-size:0.8rem;font-weight:700;color:#555;display:block;margin-bottom:4px;">&#x1F4DD; Additional Context <span style="font-weight:400;color:#999;">(optional)</span></label>
-      <textarea id="fuelExtraContext" rows="3" style="width:100%;border:1px solid #d0d0ff;border-radius:6px;padding:7px 10px;font-size:0.85rem;box-sizing:border-box;resize:vertical;font-family:inherit;ma
+      <textarea id="fuelExtraContext" rows="3" placeholder="e.g. I felt sluggish, it was hot, I didn't sleep well..." style="width:100%;border:1px solid #d0d0ff;border-radius:6px;padding:7px 10px;font-size:0.85rem;box-sizing:border-box;resize:vertical;font-family:inherit;margin-bottom:14px;"></textarea>
+      <div style="display:flex;gap:8px;">
+        <button onclick="aiNutritionCorrelation()" style="flex:1;background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:10px;font-size:0.9rem;font-weight:700;cursor:pointer;">&#x1F9E0; Analyze</button>
+        <button onclick="closeFuelAIModal()" style="flex:1;background:#e9ecef;color:#555;border:none;border-radius:8px;padding:10px;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
