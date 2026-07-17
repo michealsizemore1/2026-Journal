@@ -8909,74 +8909,6 @@ function autoFillWins(){
   if(el){el.value=lines.join('\n');el.dispatchEvent(new Event('input'));}
 }
 // ── Persistent Training Plan ─────────────────────────────────────────────────
-function loadCurrentPlan(){
-  const raw=localStorage.getItem('current_training_plan');
-  const sec=document.getElementById('tpPersistSection');
-  if(!raw||!sec){if(sec)sec.style.display='none';loadArchivedPlans();return;}
-  const plan=JSON.parse(raw);
-  sec.style.display='block';
-  const body=document.getElementById('tpPersistBody');
-  const meta=document.getElementById('tpPersistMeta');
-  if(body)body.textContent=plan.text||'';
-  if(meta)meta.textContent=(plan.dist||'')+(plan.weeks?' • '+plan.weeks+'-week plan':'')+' • Created '+plan.createdAt;
-  loadArchivedPlans();
-}
-
-function deletePlan(){
-  if(!confirm('Delete the current training plan?'))return;
-  localStorage.removeItem('current_training_plan');
-  const sec=document.getElementById('tpPersistSection');
-  if(sec)sec.style.display='none';
-}
-
-function archivePlan(){
-  const raw=localStorage.getItem('current_training_plan');
-  if(!raw)return;
-  const plan=JSON.parse(raw);
-  const archived=JSON.parse(localStorage.getItem('archived_plans')||'[]');
-  archived.unshift({...plan,archivedAt:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
-  localStorage.setItem('archived_plans',JSON.stringify(archived));
-  localStorage.removeItem('current_training_plan');
-  loadCurrentPlan();
-  alert('Plan archived!');
-}
-
-function loadArchivedPlans(){
-  const archived=JSON.parse(localStorage.getItem('archived_plans')||'[]');
-  const el=document.getElementById('archivedPlansList');
-  if(!el)return;
-  if(!archived.length){el.innerHTML='<div style="color:#999;font-size:0.82rem;text-align:center;padding:8px;">No archived plans yet.</div>';return;}
-  el.innerHTML=archived.map((p,i)=>`<div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:10px 12px;margin-bottom:8px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-      <span style="font-size:0.8rem;font-weight:700;color:#495057;">${p.dist||'Plan'} ${p.weeks?'('+p.weeks+' wk)':''}</span>
-      <span style="font-size:0.72rem;color:#adb5bd;">Archived ${p.archivedAt||''}</span>
-    </div>
-    <pre style="font-size:0.75rem;color:#6c757d;white-space:pre-wrap;margin:0;max-height:80px;overflow:hidden;">${(p.text||'').slice(0,200)}${(p.text||'').length>200?'…':''}</pre>
-    <div style="margin-top:6px;display:flex;gap:6px;">
-      <button onclick="restoreArchivedPlan(${i})" style="font-size:0.75rem;padding:3px 8px;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-radius:5px;cursor:pointer;">Restore</button>
-      <button onclick="deleteArchivedPlan(${i})" style="font-size:0.75rem;padding:3px 8px;background:#fce4ec;color:#c62828;border:1px solid #ef9a9a;border-radius:5px;cursor:pointer;">Delete</button>
-    </div>
-  </div>`).join('');
-}
-
-function restoreArchivedPlan(i){
-  const archived=JSON.parse(localStorage.getItem('archived_plans')||'[]');
-  if(!archived[i])return;
-  if(localStorage.getItem('current_training_plan')&&!confirm('Replace current plan with archived one?'))return;
-  localStorage.setItem('current_training_plan',JSON.stringify(archived[i]));
-  archived.splice(i,1);
-  localStorage.setItem('archived_plans',JSON.stringify(archived));
-  loadCurrentPlan();
-}
-
-function deleteArchivedPlan(i){
-  if(!confirm('Delete this archived plan?'))return;
-  const archived=JSON.parse(localStorage.getItem('archived_plans')||'[]');
-  archived.splice(i,1);
-  localStorage.setItem('archived_plans',JSON.stringify(archived));
-  loadArchivedPlans();
-}
-
 /* Tab Section Notes */
 function saveTabNote(tab){
   var el=document.getElementById('tnote-'+tab);
@@ -8985,7 +8917,7 @@ function saveTabNote(tab){
 function loadAllTabNotes(){
   ['daily','weekly','monthly','yearly','dashboard','review','habits','meditate','activities','library','bible','skill-log','nutrition','thinking'].forEach(function(t){
     var el=document.getElementById('tnote-'+t);
-    if(el){var v=localStorage.getItem('tabNote_'+t);if(v!=null)el.value=v;}}
+    if(el){var v=localStorage.getItem('tabNote_'+t);if(v!=null)el.value=v;}
   });
 }
 </script>
