@@ -562,6 +562,36 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <div class="task-row"><div class="tri-check" data-key="exDogWalk" onclick="triClick(this)"></div><label>Dog Walk:</label><input type="text" id="exDogWalkVal" placeholder="Duration/notes..."></div>
       <div class="goal-row"><label>Goal 10,000 steps - Actual:</label><input type="number" id="exSteps" min="0" placeholder="Steps"></div>
     </div>
+    <!-- MEAL PLANNING SECTION -->
+    <div class="section">
+      <div class="section-title orange">&#x1F4CB; Meal Planning</div>
+      <div style="background:#fffdf5;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;">
+        <div style="font-size:0.75rem;color:#92400e;margin-bottom:10px;">Plan what you intend to eat for each meal today. Tap Nutrition below to log actual food items.</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <label style="font-size:0.78rem;font-weight:700;color:#b45309;display:block;margin-bottom:3px;">&#x1F305; Breakfast</label>
+            <textarea id="mpBreakfast" rows="2" placeholder="e.g. Oatmeal with berries, protein shake..." oninput="save()" style="width:100%;border:1px solid #fde68a;border-radius:7px;padding:7px 9px;font-size:0.82rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fff;"></textarea>
+          </div>
+          <div>
+            <label style="font-size:0.78rem;font-weight:700;color:#b45309;display:block;margin-bottom:3px;">&#x1F957; Lunch</label>
+            <textarea id="mpLunch" rows="2" placeholder="e.g. Grilled chicken salad, rice..." oninput="save()" style="width:100%;border:1px solid #fde68a;border-radius:7px;padding:7px 9px;font-size:0.82rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fff;"></textarea>
+          </div>
+          <div>
+            <label style="font-size:0.78rem;font-weight:700;color:#b45309;display:block;margin-bottom:3px;">&#x1F37D;&#xFE0F; Dinner</label>
+            <textarea id="mpDinner" rows="2" placeholder="e.g. Salmon, roasted vegetables, quinoa..." oninput="save()" style="width:100%;border:1px solid #fde68a;border-radius:7px;padding:7px 9px;font-size:0.82rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fff;"></textarea>
+          </div>
+          <div>
+            <label style="font-size:0.78rem;font-weight:700;color:#b45309;display:block;margin-bottom:3px;">&#x1F34E; Snacks</label>
+            <textarea id="mpSnack" rows="2" placeholder="e.g. Apple with almond butter, protein bar..." oninput="save()" style="width:100%;border:1px solid #fde68a;border-radius:7px;padding:7px 9px;font-size:0.82rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fff;"></textarea>
+          </div>
+          <div>
+            <label style="font-size:0.78rem;font-weight:700;color:#27ae60;display:block;margin-bottom:3px;">&#x1F4AA; Sports Nutrition</label>
+            <textarea id="mpSports" rows="2" placeholder="e.g. Pre-run gel, electrolyte drink, recovery shake..." oninput="save()" style="width:100%;border:1px solid #a9dfbf;border-radius:7px;padding:7px 9px;font-size:0.82rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fff;"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="section">
       <div class="section-title orange">&#x1F957; Nutrition</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
@@ -690,9 +720,9 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   </div>
 
   <!-- Issues to Fix -->
-  <div class="section-title" style="color:#b45309;margin-top:18px;">&#x1F6A7; Journal Issues to Fix</div>
+  <div class="section-title" style="color:#b45309;margin-top:18px;">&#x1F6A7; Journal Fix &amp; Updates</div>
   <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;">
-    <div style="font-size:0.78rem;color:#92400e;margin-bottom:8px;">Note anything in the planner that needs to be fixed or improved. Review with AI periodically to batch all fixes at once.</div>
+    <div style="font-size:0.78rem;color:#92400e;margin-bottom:8px;">Note anything in the planner that needs to be fixed, improved, or updated. Review with AI periodically to batch all fixes at once.</div>
     <textarea id="jIssues" placeholder="e.g. Sleep section not saving correctly on Sundays&#10;Food scanner doesn&#39;t show product name when barcode is blurry&#10;Race countdown showing wrong date on July tab..." rows="5" style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:7px;padding:8px 10px;font-size:0.88rem;resize:vertical;outline:none;font-family:inherit;background:#fff;"></textarea>
     <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center;">
       <button type="button" class="mic-btn" style="background:#b45309;" onclick="startVoice('jIssues',this)" title="Voice input">🎤 Mic</button><button id="undo_jIssues" onclick="fieldUndo('jIssues')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jIssues" onclick="fieldRedo('jIssues')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button>
@@ -1808,6 +1838,9 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <button onclick="runAssumptionBuster()" style="background:#1a4a8a;color:#fff;border:none;border-radius:7px;padding:7px 18px;font-size:0.85rem;cursor:pointer;font-weight:600;">&#x1F4A5; Bust Assumptions</button>
     <div id="abStatus" style="display:none;color:#888;font-size:0.8rem;margin-top:8px;">Analyzing...</div>
     <div id="abOutput" style="display:none;margin-top:12px;background:#fff;border:1px solid #c7d8f5;border-radius:8px;padding:12px;font-size:0.85rem;color:#2c3e50;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;"></div>
+    <div id="abSaveRow" style="display:none;margin-top:8px;text-align:right;">
+      <button onclick="saveThinkingEntry('Assumption Buster','abInput','abOutput')" style="background:#1a4a8a;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:0.8rem;cursor:pointer;">&#x1F4BE; Save to Archive</button>
+    </div>
   </div>
 
   <!-- SECOND-ORDER THINKING TRAINER -->
@@ -1819,7 +1852,24 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <button onclick="runSecondOrderThinking()" style="background:#1e6b3a;color:#fff;border:none;border-radius:7px;padding:7px 18px;font-size:0.85rem;cursor:pointer;font-weight:600;">&#x1F4CA; Explore 2nd-Order Effects</button>
     <div id="sotStatus" style="display:none;color:#888;font-size:0.8rem;margin-top:8px;">Thinking deeper...</div>
     <div id="sotOutput" style="display:none;margin-top:12px;background:#fff;border:1px solid #a9dfbf;border-radius:8px;padding:12px;font-size:0.85rem;color:#2c3e50;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;"></div>
+    <div id="sotSaveRow" style="display:none;margin-top:8px;text-align:right;">
+      <button onclick="saveThinkingEntry('Second-Order Thinking','sotInput','sotOutput')" style="background:#1e6b3a;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:0.8rem;cursor:pointer;">&#x1F4BE; Save to Archive</button>
+    </div>
   </div>
+
+  <!-- THINKING ARCHIVE -->
+  <div style="border:1px solid #d0d0d0;border-radius:12px;overflow:hidden;margin-top:4px;">
+    <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.tarch-chev').textContent=this.nextElementSibling.style.display==='none'?'▸':'▾';"
+      style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f5f5f5;cursor:pointer;font-weight:700;color:#444;font-size:0.9rem;">
+      <span>&#x1F5C3;&#xFE0F; Thinking Archive</span>
+      <span class="tarch-chev" style="font-size:0.85rem;color:#888;">▸</span>
+    </div>
+    <div id="thinkingArchivePanel" style="display:none;padding:14px;background:#fafafa;">
+      <div id="thinkingArchiveList" style="font-size:0.85rem;color:#444;"></div>
+      <div id="thinkingArchiveEmpty" style="color:#aaa;font-size:0.83rem;text-align:center;padding:16px;">No saved entries yet. Use the Save to Archive button after an analysis.</div>
+    </div>
+  </div>
+
 </div></div>
 
 
@@ -1941,7 +1991,7 @@ function parseBP(s){if(!s)return{sys:0,dia:0};const m=s.match(/(\d+)\s*\/\s*(\d+
 function buildStars(){const ss=document.getElementById('scoreStars');if(!ss)return;ss.innerHTML='';for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star'+(i<=scoreVal?' active':'');s.textContent='★';s.onclick=()=>{scoreVal=(scoreVal===i)?i-1:i;buildStars();save();};ss.appendChild(s);}}
 
 // All text/number fields
-const TXS=['ebayListedCount','ebaySoldCount','ebayRevenue','ebayActionItems','ebayNotes','spDailyBreadText','spMeditationText','spSermonText','gaFinancialText','gaFinancialTime','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exRunVal','exMiles','exPace','exWatts','exTotalTime','exCalBurned','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jRunLog','jAccomplish','jImprov','jGratitude','jNotes','jIssues','habitIdentity','habitReflection'];
+const TXS=['ebayListedCount','ebaySoldCount','ebayRevenue','ebayActionItems','ebayNotes','spDailyBreadText','spMeditationText','spSermonText','gaFinancialText','gaFinancialTime','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exRunVal','exMiles','exPace','exWatts','exTotalTime','exCalBurned','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jRunLog','jAccomplish','jImprov','jGratitude','jNotes','jIssues','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports'];
 const NMS=['exScore','exSteps','wSleepScore'];
 const PTIDS=['pt0','pt1','pt2','dg0','dg1','dg2'];
 
@@ -5972,6 +6022,7 @@ function runAssumptionBuster(){
     status.style.display='none';
     var text=(d.content&&d.content[0]&&d.content[0].text)||JSON.stringify(d.error||d);
     out.textContent=text;out.style.display='block';
+    var sr=document.getElementById('abSaveRow');if(sr)sr.style.display='block';
   }).catch(function(e){status.style.display='none';out.textContent='Error: '+e.message;out.style.display='block';});
 }
 
@@ -5994,8 +6045,61 @@ function runSecondOrderThinking(){
     status.style.display='none';
     var text=(d.content&&d.content[0]&&d.content[0].text)||JSON.stringify(d.error||d);
     out.textContent=text;out.style.display='block';
+    var sr=document.getElementById('sotSaveRow');if(sr)sr.style.display='block';
   }).catch(function(e){status.style.display='none';out.textContent='Error: '+e.message;out.style.display='block';});
 }
+
+// ── Thinking Archive ─────────────────────────────────────────────────────────
+function saveThinkingEntry(type,inputId,outputId){
+  var input=(document.getElementById(inputId)||{}).value||'';
+  var output=(document.getElementById(outputId)||{}).textContent||'';
+  if(!output.trim()){alert('No output to save yet.');return;}
+  var archive=JSON.parse(localStorage.getItem('thinking_archive')||'[]');
+  var entry={id:Date.now(),type:type,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),input:input.trim(),output:output.trim()};
+  archive.unshift(entry);
+  localStorage.setItem('thinking_archive',JSON.stringify(archive));
+  renderThinkingArchive();
+  // Open archive panel
+  var panel=document.getElementById('thinkingArchivePanel');
+  if(panel&&panel.style.display==='none'){
+    panel.style.display='block';
+    var chev=panel.previousElementSibling&&panel.previousElementSibling.querySelector('.tarch-chev');
+    if(chev)chev.textContent='▾';
+  }
+  alert('Saved to Thinking Archive!');
+}
+
+function renderThinkingArchive(){
+  var list=document.getElementById('thinkingArchiveList');
+  var empty=document.getElementById('thinkingArchiveEmpty');
+  if(!list)return;
+  var archive=JSON.parse(localStorage.getItem('thinking_archive')||'[]');
+  if(!archive.length){list.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty)empty.style.display='none';
+  list.innerHTML=archive.map(function(e){
+    var typeColor=e.type==='Assumption Buster'?'#1a4a8a':'#1e6b3a';
+    return '<div style="border:1px solid #e0e0e0;border-radius:9px;padding:12px;margin-bottom:10px;background:#fff;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+      +'<span style="font-weight:700;color:'+typeColor+';font-size:0.8rem;">'+e.type+'</span>'
+      +'<span style="font-size:0.75rem;color:#aaa;">'+e.date+'</span>'
+      +'</div>'
+      +(e.input?'<div style="font-size:0.78rem;color:#888;margin-bottom:5px;font-style:italic;">📝 '+e.input.slice(0,120)+(e.input.length>120?'…':'')+'</div>':'')
+      +'<div style="font-size:0.82rem;color:#2c3e50;white-space:pre-wrap;line-height:1.5;max-height:180px;overflow-y:auto;">'+e.output+'</div>'
+      +'<div style="text-align:right;margin-top:6px;">'
+      +'<button onclick="deleteThinkingEntry('+e.id+')" style="background:none;border:none;color:#e74c3c;font-size:0.75rem;cursor:pointer;">🗑 Delete</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function deleteThinkingEntry(id){
+  if(!confirm('Delete this archive entry?'))return;
+  var archive=JSON.parse(localStorage.getItem('thinking_archive')||'[]');
+  archive=archive.filter(function(e){return e.id!==id;});
+  localStorage.setItem('thinking_archive',JSON.stringify(archive));
+  renderThinkingArchive();
+}
+
 
 /* ========= MEDITATION TAB JS ========= */
 var _meditTimerSecs=600,_meditTimerTotal=600,_meditTimerInterval=null,_meditRunning=false;
@@ -6738,7 +6842,7 @@ function switchTab(tab,e){
   if(tab==='activities'){_actFirstLoad=true;collapseAllActs();loadCurrentPlan();refreshTrainingPreview();}
   if(tab==='bible')renderBibleTab();
   if(tab==='skill-log')renderSkillLog();
-  if(tab==='thinking'){if(typeof mmStart==='function')mmStart();}
+  if(tab==='thinking'){if(typeof mmStart==='function')mmStart();renderThinkingArchive();}
   if(tab==='habits'){renderCustomHabits();renderHabitScorecard();var dl=document.getElementById('habitTabDate');if(dl)dl.textContent=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});}
   if(tab==='meditate'){meditInitTab();}
   if(tab==='dashboard'){renderBPChart();renderWeightChart();renderMilesChart();}
