@@ -476,6 +476,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   </div>
   <button class="hdr-btn" onclick="openSettings()">&#x2699;&#xFE0F; AI Key</button>
 </div>
+<div id="tabNotesBar" style="padding:6px 14px 0;"><textarea id="tabNoteTA" rows="2" placeholder="Notes..." oninput="saveTabNote()" style="width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:8px;padding:8px 10px;font-size:0.83rem;font-family:inherit;color:#374151;background:#fafafa;resize:vertical;min-height:52px;line-height:1.5;display:block;"></textarea></div>
 <div class="tabs-wrapper">
   <button id="hmToggleBtn" onclick="toggleHamburger(event)" title="More tabs">&#x2630; More</button>
   <div class="tabs">
@@ -556,7 +557,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <div class="streak-item" id="stVideos"><span></span></div>
 </div>
 <div id="tab-daily" class="tab-panel active">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-daily" class="tab-note-ta" rows="2" placeholder="Daily notes..." oninput="saveTabNote('daily')"></textarea></div>
 <div class="tab-toolbar">
   <div style="display:flex;gap:6px;flex-wrap:wrap;">
     <button class="copy-btn" id="copyDayBtn" onclick="copyDay()">&#x1F4CB; Copy Day</button>
@@ -733,7 +733,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 </div>
 </div>
 <div id="tab-weekly" class="tab-panel"><div class="panel">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-weekly" class="tab-note-ta" rows="2" placeholder="Weekly notes..." oninput="saveTabNote('weekly')"></textarea></div>
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
     <div class="week-nav" style="margin-bottom:0;"><button onclick="changeWeekOff(-1)">&#8249; Prev</button><span id="weekLabel"></span><button onclick="changeWeekOff(1)">Next &#8250;</button></div>
     <button class="clear-btn" onclick="clearPage('weekly')">&#x1F5D1; Clear Week</button>
@@ -761,7 +760,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <h2>Spirituality</h2><div id="wSpirituality"></div>
 
 </div></div>
-<div id="tab-monthly" class="tab-panel"><div class="panel"><span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-monthly" class="tab-note-ta" rows="2" placeholder="Monthly notes..." oninput="saveTabNote('monthly')"></textarea></div><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;"><div class="week-nav" style="margin-bottom:0;"><button onclick="changeMonthOff(-1)">&#8249; Prev</button><span id="monthLabel"></span><button onclick="changeMonthOff(1)">Next &#8250;</button></div><button class="clear-btn" onclick="clearPage('monthly')">&#x1F5D1; Clear Month</button></div><div class="heatmap-wrap">
+<div id="tab-monthly" class="tab-panel"><div class="panel"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;"><div class="week-nav" style="margin-bottom:0;"><button onclick="changeMonthOff(-1)">&#8249; Prev</button><span id="monthLabel"></span><button onclick="changeMonthOff(1)">Next &#8250;</button></div><button class="clear-btn" onclick="clearPage('monthly')">&#x1F5D1; Clear Month</button></div><div class="heatmap-wrap">
   <div class="heatmap-title">
     <span>📅 Habit Completion — <span id="hmMonth"></span></span>
     <div class="heatmap-legend">
@@ -786,12 +785,12 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <h2>Spirituality</h2><div id="mSpirituality"></div>
 
 </div></div>
-<div id="tab-yearly" class="tab-panel"><div class="panel"><span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-yearly" class="tab-note-ta" rows="2" placeholder="Yearly notes..." oninput="saveTabNote('yearly')"></textarea></div><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;"><div class="week-nav" style="margin-bottom:0;"><button onclick="changeYearOff(-1)">&#8249; Prev</button><span id="yearLabel"></span><button onclick="changeYearOff(1)">Next &#8250;</button></div><button class="clear-btn" onclick="clearPage('yearly')">&#x1F5D1; Clear Year</button></div><h2>Growth</h2><div id="yGrowth"></div><h2>Fitness</h2><div id="yFitness"></div><h2>Wellness</h2><div id="yWellness"></div>
+<div id="tab-yearly" class="tab-panel"><div class="panel"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;"><div class="week-nav" style="margin-bottom:0;"><button onclick="changeYearOff(-1)">&#8249; Prev</button><span id="yearLabel"></span><button onclick="changeYearOff(1)">Next &#8250;</button></div><button class="clear-btn" onclick="clearPage('yearly')">&#x1F5D1; Clear Year</button></div><h2>Growth</h2><div id="yGrowth"></div><h2>Fitness</h2><div id="yFitness"></div><h2>Wellness</h2><div id="yWellness"></div>
 <h2>Nutrition</h2><div id="yNutrition"></div>
 <h2>Spirituality</h2><div id="ySpirituality"></div>
 
 </div></div>
-<div id="tab-dashboard" class="tab-panel"><div class="panel"><span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-dashboard" class="tab-note-ta" rows="2" placeholder="Dashboard notes..." oninput="saveTabNote('dashboard')"></textarea></div><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;"><div class="week-nav" style="margin-bottom:0;"><button onclick="changeDashOff(-1)">&#8249; Prev</button><span id="dashLabel"></span><button onclick="changeDashOff(1)">Next &#8250;</button></div><button class="clear-btn" onclick="clearPage('dashboard')">&#x1F5D1; Clear Week</button></div><div class="dash-grid" id="dashGrid"></div>
+<div id="tab-dashboard" class="tab-panel"><div class="panel"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;"><div class="week-nav" style="margin-bottom:0;"><button onclick="changeDashOff(-1)">&#8249; Prev</button><span id="dashLabel"></span><button onclick="changeDashOff(1)">Next &#8250;</button></div><button class="clear-btn" onclick="clearPage('dashboard')">&#x1F5D1; Clear Week</button></div><div class="dash-grid" id="dashGrid"></div>
   <div class="bp-chart-wrap">
     <div class="bp-chart-title">
       <span>❤️ Blood Pressure &amp; Pulse — Last 60 Days</span>
@@ -831,7 +830,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   </div>
 </div></div>
 <div id="tab-review" class="tab-panel"><div class="review-section">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-review" class="tab-note-ta" rows="2" placeholder="Review notes..." oninput="saveTabNote('review')"></textarea></div>
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
     <div class="week-nav" style="margin-bottom:0;"><button onclick="changeRevOff(-1)">&#8249; Prev</button><span id="revLabel"></span><button onclick="changeRevOff(1)">Next &#8250;</button></div>
     <button class="clear-btn" onclick="clearPage('review')">&#x1F5D1; Clear Review</button>
@@ -860,7 +858,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 </div>
 <div id="tab-habits" class="tab-panel">
   <div class="panel">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-habits" class="tab-note-ta" rows="2" placeholder="Habits notes..." oninput="saveTabNote('habits')"></textarea></div>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
       <div>
         <h2 style="margin:0;color:#27ae60;font-size:1.15rem;">&#x1F501; Atomic Habits Tracker</h2>
@@ -959,7 +956,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <!-- ===== MEDITATE TAB ===== -->
 <div id="tab-meditate" class="tab-panel">
  <div class="panel">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-meditate" class="tab-note-ta" rows="2" placeholder="Meditate notes..." oninput="saveTabNote('meditate')"></textarea></div>
 
   <!-- Header -->
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
@@ -1069,7 +1065,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <!-- ===== END MEDITATE TAB ===== -->
 
 <div id="tab-library" class="tab-panel"><div class="panel">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-library" class="tab-note-ta" rows="2" placeholder="Library notes..." oninput="saveTabNote('library')"></textarea></div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
     <h2 style="margin:0;font-size:1.1rem;color:#667eea;">&#x1F4DA; Audiobook Library</h2>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -1123,7 +1118,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 </div></div>
 
 <div id="tab-activities" class="tab-panel"><div class="panel">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-activities" class="tab-note-ta" rows="2" placeholder="Activities notes..." oninput="saveTabNote('activities')"></textarea></div>
   <!-- Mileage Summary -->
   <div id="mileageSummaryBar" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
     <div style="flex:1;min-width:120px;background:linear-gradient(135deg,#e8f8f0,#d5f5e3);border:1px solid #a9dfbf;border-radius:10px;padding:10px 12px;text-align:center;">
@@ -1444,7 +1438,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <!-- BIBLE NOTES TAB -->
 <div class="tab-panel" id="tab-bible">
   <div style="padding:12px;max-width:700px;margin:0 auto;">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-bible" class="tab-note-ta" rows="2" placeholder="Bible notes..." oninput="saveTabNote('bible')"></textarea></div>
 
     <!-- Bible & Worship Audio -->
     <div class="section" style="margin-bottom:10px;">
@@ -1716,7 +1709,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   </div>
 </div>
 <div class="tab-panel" id="tab-skill-log"><div class="panel">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-skill-log" class="tab-note-ta" rows="2" placeholder="Skills notes..." oninput="saveTabNote('skill-log')"></textarea></div>
   <!-- Header -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
     <h2 style="margin:0;font-size:1.1rem;color:#8e44ad;">&#x1F6E0;&#xFE0F; Skill Building</h2>
@@ -1787,7 +1779,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 </div></div>
 
 <div class="tab-panel" id="tab-thinking"><div class="panel">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-thinking" class="tab-note-ta" rows="2" placeholder="Thinking notes..." oninput="saveTabNote('thinking')"></textarea></div>
   <h2 style="margin:0 0 16px;font-size:1.1rem;color:#8e44ad;">&#x1F9E0; Thinking Tools</h2>
 
   <!-- MENTAL MODELS FLASHCARD TRAINER -->
@@ -1843,7 +1834,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 
 <!-- ═══════════════════════════════ NUTRITION TAB ═══════════════════════════════ -->
 <div class="tab-panel" id="tab-nutrition"><div class="panel">
-<span class="tab-note-label">Notes</span><div class="tab-note-wrap"><textarea id="tnote-nutrition" class="tab-note-ta" rows="2" placeholder="Nutrition notes..." oninput="saveTabNote('nutrition')"></textarea></div>
 
   <!-- MEAL PLANNING -->
   <div class="section-title orange" style="margin-bottom:10px;">&#x1F4CB; Meal Planning</div>
@@ -6988,6 +6978,7 @@ function hmSwitch(tab,e){
   switchTab(tab,null);
 }
 function switchTab(tab,e){
+  saveTabNote();_currentNoteTab=tab;loadTabNote(tab);
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   // Reset sidebar active state if switching to a main tab
@@ -8910,15 +8901,20 @@ function autoFillWins(){
 }
 // ── Persistent Training Plan ─────────────────────────────────────────────────
 /* Tab Section Notes */
-function saveTabNote(tab){
-  var el=document.getElementById('tnote-'+tab);
-  if(el)localStorage.setItem('tabNote_'+tab,el.value);
+var _currentNoteTab='daily';
+function saveTabNote(){
+  var ta=document.getElementById('tabNoteTA');
+  if(ta)localStorage.setItem('tabNote_'+_currentNoteTab,ta.value);
+}
+function loadTabNote(tab){
+  var ta=document.getElementById('tabNoteTA');
+  if(!ta)return;
+  var v=localStorage.getItem('tabNote_'+tab);
+  ta.value=v!=null?v:'';
+  ta.placeholder=tab.charAt(0).toUpperCase()+tab.slice(1)+' notes...';
 }
 function loadAllTabNotes(){
-  ['daily','weekly','monthly','yearly','dashboard','review','habits','meditate','activities','library','bible','skill-log','nutrition','thinking'].forEach(function(t){
-    var el=document.getElementById('tnote-'+t);
-    if(el){var v=localStorage.getItem('tabNote_'+t);if(v!=null)el.value=v;}
-  });
+  loadTabNote(_currentNoteTab);
 }
 </script>
 </body>
