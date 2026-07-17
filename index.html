@@ -23,7 +23,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 .hamburger-wrap{position:relative;display:inline-flex;align-items:stretch;}
 .hamburger-btn{padding:10px 13px;border:none;background:none;cursor:pointer;font-size:0.86rem;color:#6c757d;white-space:nowrap;border-bottom:3px solid transparent;flex-shrink:0;}
 .hamburger-btn:hover,.hamburger-btn.hm-active{color:#667eea;border-bottom-color:#667eea;font-weight:600;}
-.hamburger-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #e9ecef;border-radius:0 0 8px 8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:2000;min-width:160px;}
+.hamburger-dropdown{display:none;background:#fff;border:1px solid #e9ecef;border-radius:0 0 8px 8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);min-width:170px;}
 .hamburger-dropdown.open{display:block;}
 .hamburger-dropdown button{display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:0.86rem;color:#495057;white-space:nowrap;}
 .hamburger-dropdown button:hover,.hamburger-dropdown button.hm-active{background:#f0f2ff;color:#667eea;font-weight:600;}
@@ -387,24 +387,24 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('daily',event)">Daily</button>
   <button class="tab-btn" onclick="switchTab('weekly',event)">Weekly</button>
+  <button class="hamburger-btn" id="hmBtn" onclick="toggleHamburger(event)">&#x2630; More</button>
   <button class="tab-btn" onclick="switchTab('monthly',event)">Monthly</button>
   <button class="tab-btn" onclick="switchTab('yearly',event)">Yearly</button>
   <button class="tab-btn" onclick="switchTab('dashboard',event)">Dashboard</button>
   <button class="tab-btn" onclick="switchTab('review',event)">Review</button>
-  <div class="hamburger-wrap" id="hmWrap">
-    <button class="hamburger-btn" id="hmBtn" onclick="toggleHamburger(event)">&#x2630; More</button>
-    <div class="hamburger-dropdown" id="hmDropdown">
-      <button id="hm-nutrition" onclick="hmSwitch('nutrition',event)">&#x1F957; Nutrition</button>
-      <button id="hm-habits" onclick="hmSwitch('habits',event)">&#x1F501; Habits</button>
-      <button id="hm-meditate" onclick="hmSwitch('meditate',event)">&#x1F9D8; Meditate</button>
-      <button id="hm-bible" onclick="hmSwitch('bible',event)">&#x1F4D6; Bible</button>
-      <button id="hm-library" onclick="hmSwitch('library',event)">&#x1F4DA; Library</button>
-      <button id="hm-activities" onclick="hmSwitch('activities',event)">&#x1F3C3; Activities</button>
-      <button id="hm-skill-log" onclick="hmSwitch('skill-log',event)">&#x1F6E0;&#xFE0F; Skills</button>
-      <button id="hm-thinking" onclick="hmSwitch('thinking',event)">&#x1F9E0; Thinking</button>
-    </div>
-  </div>
 </div>
+<!-- Hamburger dropdown — rendered outside .tabs so overflow:auto doesn't clip it -->
+<div class="hamburger-dropdown" id="hmDropdown" style="position:fixed;z-index:9999;">
+  <button id="hm-nutrition" onclick="hmSwitch('nutrition',event)">&#x1F957; Nutrition</button>
+  <button id="hm-habits" onclick="hmSwitch('habits',event)">&#x1F501; Habits</button>
+  <button id="hm-meditate" onclick="hmSwitch('meditate',event)">&#x1F9D8; Meditate</button>
+  <button id="hm-bible" onclick="hmSwitch('bible',event)">&#x1F4D6; Bible</button>
+  <button id="hm-library" onclick="hmSwitch('library',event)">&#x1F4DA; Library</button>
+  <button id="hm-activities" onclick="hmSwitch('activities',event)">&#x1F3C3; Activities</button>
+  <button id="hm-skill-log" onclick="hmSwitch('skill-log',event)">&#x1F6E0;&#xFE0F; Skills</button>
+  <button id="hm-thinking" onclick="hmSwitch('thinking',event)">&#x1F9E0; Thinking</button>
+</div>
+<!-- (tabs div closed above) -->
 <!-- Today's Workout card (shown only on Daily tab when a training plan is active) -->
 <div id="todayWorkoutCard" style="display:none;margin:8px 12px 0;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.12);">
   <div class="tw-header" style="background:linear-gradient(135deg,#667eea,#764ba2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;">
@@ -6873,18 +6873,29 @@ function meditInitTab(){
 /* ========= END MEDITATION JS ========= */
 
 var _hmTabs=['nutrition','habits','meditate','bible','library','activities','skill-log','thinking'];
-function toggleHamburger(e){e.stopPropagation();var d=document.getElementById('hmDropdown');d.classList.toggle('open');}
+function toggleHamburger(e){
+  e.stopPropagation();
+  var d=document.getElementById('hmDropdown');
+  var btn=document.getElementById('hmBtn');
+  if(d.classList.contains('open')){d.classList.remove('open');return;}
+  var r=btn.getBoundingClientRect();
+  d.style.top=(r.bottom+window.scrollY)+'px';
+  d.style.left=r.left+'px';
+  d.classList.add('open');
+}
 function hmSwitch(tab,e){
+  if(e)e.stopPropagation();
   document.getElementById('hmDropdown').classList.remove('open');
   document.querySelectorAll('.hamburger-dropdown button').forEach(b=>b.classList.remove('hm-active'));
   var hb=document.getElementById('hm-'+tab);if(hb)hb.classList.add('hm-active');
   var hmBtn=document.getElementById('hmBtn');
-  if(hmBtn){hmBtn.classList.add('hm-active');hmBtn.textContent='☰ '+hb.textContent.trim();}
+  if(hmBtn){hmBtn.classList.add('hm-active');hmBtn.textContent='☰ '+(hb?hb.textContent.trim():'More');}
   switchTab(tab,null);
 }
 document.addEventListener('click',function(e){
-  var wrap=document.getElementById('hmWrap');
-  if(wrap&&!wrap.contains(e.target))document.getElementById('hmDropdown').classList.remove('open');
+  var btn=document.getElementById('hmBtn');
+  var d=document.getElementById('hmDropdown');
+  if(d&&btn&&!btn.contains(e.target)&&!d.contains(e.target))d.classList.remove('open');
 });
 function switchTab(tab,e){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
