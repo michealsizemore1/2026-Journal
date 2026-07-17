@@ -19,7 +19,8 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 .date-nav button{background:rgba(255,255,255,0.2);border:none;color:white;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem;}
 #currentDate{font-size:0.95rem;min-width:130px;text-align:center;}
 .hdr-btn{background:rgba(255,255,255,0.2);border:none;color:white;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:0.88rem;white-space:nowrap;}
-.tabs{display:flex;flex-wrap:wrap;background:#f8f9fa;border-bottom:1px solid #e9ecef;overflow-x:auto;scrollbar-width:none;}
+.tabs-wrapper{display:flex;background:#f8f9fa;border-bottom:1px solid #e9ecef;}
+.tabs{display:flex;flex-wrap:wrap;overflow-x:auto;scrollbar-width:none;flex:1;}
 .hamburger-wrap{position:relative;display:inline-flex;align-items:stretch;}
 .hamburger-btn{padding:10px 13px;border:none;background:none;cursor:pointer;font-size:0.86rem;color:#6c757d;white-space:nowrap;border-bottom:3px solid transparent;flex-shrink:0;}
 .hamburger-btn:hover,.hamburger-btn.hm-active{color:#667eea;border-bottom-color:#667eea;font-weight:600;}
@@ -359,28 +360,22 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 .medit-ring-track{fill:none;stroke:#ede9fe;stroke-width:8;}
 .medit-ring-prog{fill:none;stroke:#8b5cf6;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
 
-/* Fixed hamburger toggle button */
+/* Hamburger toggle button — left of the tab bar, never scrolls */
 #hmToggleBtn{
-  position:fixed;
-  left:12px;
-  top:50%;
-  transform:translateY(-50%);
-  z-index:10001;
-  background:#667eea;
-  color:#fff;
+  flex-shrink:0;
+  padding:10px 14px;
   border:none;
-  border-radius:8px;
-  width:38px;
-  height:44px;
-  font-size:1.25rem;
+  border-right:1px solid #e9ecef;
+  background:#f8f9fa;
   cursor:pointer;
-  box-shadow:0 2px 10px rgba(0,0,0,0.22);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:background 0.18s;
+  font-size:0.9rem;
+  font-weight:700;
+  color:#667eea;
+  white-space:nowrap;
+  border-bottom:3px solid #667eea;
+  align-self:stretch;
 }
-#hmToggleBtn:hover{background:#5a6fd6;}
+#hmToggleBtn:hover{background:#f0f2ff;}
 
 /* Overlay behind sidebar */
 #hmOverlay{
@@ -438,8 +433,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 </head>
 <body>
 
-<!-- Fixed left sidebar nav -->
-<button id="hmToggleBtn" onclick="toggleHamburger(event)" title="More tabs">&#x2630;</button>
+<!-- Sidebar overlay + panel (outside container so fixed positioning works) -->
 <div id="hmOverlay" onclick="closeHamburger()"></div>
 <nav id="hmSidebar">
   <div class="hm-sidebar-header">More Tabs</div>
@@ -476,13 +470,16 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   </div>
   <button class="hdr-btn" onclick="openSettings()">&#x2699;&#xFE0F; AI Key</button>
 </div>
-<div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('daily',event)">Daily</button>
-  <button class="tab-btn" onclick="switchTab('weekly',event)">Weekly</button>
-  <button class="tab-btn" onclick="switchTab('monthly',event)">Monthly</button>
-  <button class="tab-btn" onclick="switchTab('yearly',event)">Yearly</button>
-  <button class="tab-btn" onclick="switchTab('dashboard',event)">Dashboard</button>
-  <button class="tab-btn" onclick="switchTab('review',event)">Review</button>
+<div class="tabs-wrapper">
+  <button id="hmToggleBtn" onclick="toggleHamburger(event)" title="More tabs">&#x2630; More</button>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('daily',event)">Daily</button>
+    <button class="tab-btn" onclick="switchTab('weekly',event)">Weekly</button>
+    <button class="tab-btn" onclick="switchTab('monthly',event)">Monthly</button>
+    <button class="tab-btn" onclick="switchTab('yearly',event)">Yearly</button>
+    <button class="tab-btn" onclick="switchTab('dashboard',event)">Dashboard</button>
+    <button class="tab-btn" onclick="switchTab('review',event)">Review</button>
+  </div>
 </div>
 <!-- Today's Workout card (shown only on Daily tab when a training plan is active) -->
 <div id="todayWorkoutCard" style="display:none;margin:8px 12px 0;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.12);">
