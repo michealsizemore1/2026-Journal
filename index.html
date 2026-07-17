@@ -20,6 +20,13 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 #currentDate{font-size:0.95rem;min-width:130px;text-align:center;}
 .hdr-btn{background:rgba(255,255,255,0.2);border:none;color:white;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:0.88rem;white-space:nowrap;}
 .tabs{display:flex;flex-wrap:wrap;background:#f8f9fa;border-bottom:1px solid #e9ecef;overflow-x:auto;scrollbar-width:none;}
+.hamburger-wrap{position:relative;display:inline-flex;align-items:stretch;}
+.hamburger-btn{padding:10px 13px;border:none;background:none;cursor:pointer;font-size:0.86rem;color:#6c757d;white-space:nowrap;border-bottom:3px solid transparent;flex-shrink:0;}
+.hamburger-btn:hover,.hamburger-btn.hm-active{color:#667eea;border-bottom-color:#667eea;font-weight:600;}
+.hamburger-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #e9ecef;border-radius:0 0 8px 8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:2000;min-width:160px;}
+.hamburger-dropdown.open{display:block;}
+.hamburger-dropdown button{display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:0.86rem;color:#495057;white-space:nowrap;}
+.hamburger-dropdown button:hover,.hamburger-dropdown button.hm-active{background:#f0f2ff;color:#667eea;font-weight:600;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab-btn{padding:10px 13px;border:none;background:none;cursor:pointer;font-size:0.86rem;color:#6c757d;white-space:nowrap;border-bottom:3px solid transparent;flex-shrink:0;}
 .tab-btn.active{color:#667eea;border-bottom-color:#667eea;font-weight:600;}
@@ -384,14 +391,19 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <button class="tab-btn" onclick="switchTab('yearly',event)">Yearly</button>
   <button class="tab-btn" onclick="switchTab('dashboard',event)">Dashboard</button>
   <button class="tab-btn" onclick="switchTab('review',event)">Review</button>
-  <button class="tab-btn" onclick="switchTab('nutrition',event)">&#x1F957; Nutrition</button>
-  <button class="tab-btn" onclick="switchTab('habits',event)">&#x1F501; Habits</button>
-  <button class="tab-btn" onclick="switchTab('meditate',event)">&#x1F9D8; Meditate</button>
-  <button class="tab-btn" onclick="switchTab('bible',event)">&#x1F4D6; Bible</button>
-  <button class="tab-btn" onclick="switchTab('library',event)">&#x1F4DA; Library</button>
-  <button class="tab-btn" onclick="switchTab('activities',event)">&#x1F3C3; Activities</button>
-  <button class="tab-btn" onclick="switchTab('skill-log',event)">&#x1F6E0;&#xFE0F; Skills</button>
-  <button class="tab-btn" onclick="switchTab('thinking',event)">&#x1F9E0; Thinking</button>
+  <div class="hamburger-wrap" id="hmWrap">
+    <button class="hamburger-btn" id="hmBtn" onclick="toggleHamburger(event)">&#x2630; More</button>
+    <div class="hamburger-dropdown" id="hmDropdown">
+      <button id="hm-nutrition" onclick="hmSwitch('nutrition',event)">&#x1F957; Nutrition</button>
+      <button id="hm-habits" onclick="hmSwitch('habits',event)">&#x1F501; Habits</button>
+      <button id="hm-meditate" onclick="hmSwitch('meditate',event)">&#x1F9D8; Meditate</button>
+      <button id="hm-bible" onclick="hmSwitch('bible',event)">&#x1F4D6; Bible</button>
+      <button id="hm-library" onclick="hmSwitch('library',event)">&#x1F4DA; Library</button>
+      <button id="hm-activities" onclick="hmSwitch('activities',event)">&#x1F3C3; Activities</button>
+      <button id="hm-skill-log" onclick="hmSwitch('skill-log',event)">&#x1F6E0;&#xFE0F; Skills</button>
+      <button id="hm-thinking" onclick="hmSwitch('thinking',event)">&#x1F9E0; Thinking</button>
+    </div>
+  </div>
 </div>
 <!-- Today's Workout card (shown only on Daily tab when a training plan is active) -->
 <div id="todayWorkoutCard" style="display:none;margin:8px 12px 0;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.12);">
@@ -1782,31 +1794,41 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <div class="meal-header" onclick="toggleMealSection('breakfast')">
         <span>🌅 Breakfast</span><div class="meal-right"><span class="meal-subtotal" id="st-breakfast" style="font-size:0.75rem;color:#888;"></span><button onclick="event.stopPropagation();saveMealFromSection('breakfast')" style="background:none;border:none;color:#667eea;font-size:0.9rem;cursor:pointer;padding:0 2px;" title="Save breakfast as a meal">&#x1F4BE;</button><button onclick="event.stopPropagation();addFoodItem('breakfast')" class="meal-add-btn">+ Add</button><span class="meal-chevron" id="chev-breakfast">▸</span></div>
       </div>
-      <div class="meal-body" id="mb-breakfast" style="display:none;"><div id="foodList-breakfast"></div></div>
+      <div class="meal-body" id="mb-breakfast" style="display:none;"><div id="foodList-breakfast"></div>
+        <div style="padding:6px 8px 8px;"><textarea id="mnotes-breakfast" rows="1" placeholder="Breakfast notes..." oninput="save()" style="width:100%;border:1px solid #e9ecef;border-radius:5px;padding:4px 8px;font-size:0.78rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fafafa;color:#555;"></textarea></div>
+      </div>
     </div>
     <div class="meal-section" id="ms-lunch" data-meal="lunch">
       <div class="meal-header" onclick="toggleMealSection('lunch')">
         <span>🥗 Lunch</span><div class="meal-right"><span class="meal-subtotal" id="st-lunch" style="font-size:0.75rem;color:#888;"></span><button onclick="event.stopPropagation();saveMealFromSection('lunch')" style="background:none;border:none;color:#667eea;font-size:0.9rem;cursor:pointer;padding:0 2px;" title="Save lunch as a meal">&#x1F4BE;</button><button onclick="event.stopPropagation();addFoodItem('lunch')" class="meal-add-btn">+ Add</button><span class="meal-chevron" id="chev-lunch">▸</span></div>
       </div>
-      <div class="meal-body" id="mb-lunch" style="display:none;"><div id="foodList-lunch"></div></div>
+      <div class="meal-body" id="mb-lunch" style="display:none;"><div id="foodList-lunch"></div>
+        <div style="padding:6px 8px 8px;"><textarea id="mnotes-lunch" rows="1" placeholder="Lunch notes..." oninput="save()" style="width:100%;border:1px solid #e9ecef;border-radius:5px;padding:4px 8px;font-size:0.78rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fafafa;color:#555;"></textarea></div>
+      </div>
     </div>
     <div class="meal-section" id="ms-dinner" data-meal="dinner">
       <div class="meal-header" onclick="toggleMealSection('dinner')">
         <span>🍽️ Dinner</span><div class="meal-right"><span class="meal-subtotal" id="st-dinner" style="font-size:0.75rem;color:#888;"></span><button onclick="event.stopPropagation();saveMealFromSection('dinner')" style="background:none;border:none;color:#667eea;font-size:0.9rem;cursor:pointer;padding:0 2px;" title="Save dinner as a meal">&#x1F4BE;</button><button onclick="event.stopPropagation();addFoodItem('dinner')" class="meal-add-btn">+ Add</button><span class="meal-chevron" id="chev-dinner">▸</span></div>
       </div>
-      <div class="meal-body" id="mb-dinner" style="display:none;"><div id="foodList-dinner"></div></div>
+      <div class="meal-body" id="mb-dinner" style="display:none;"><div id="foodList-dinner"></div>
+        <div style="padding:6px 8px 8px;"><textarea id="mnotes-dinner" rows="1" placeholder="Dinner notes..." oninput="save()" style="width:100%;border:1px solid #e9ecef;border-radius:5px;padding:4px 8px;font-size:0.78rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fafafa;color:#555;"></textarea></div>
+      </div>
     </div>
     <div class="meal-section" id="ms-snack" data-meal="snack">
       <div class="meal-header" onclick="toggleMealSection('snack')">
         <span>🍎 Snacks</span><div class="meal-right"><span class="meal-subtotal" id="st-snack" style="font-size:0.75rem;color:#888;"></span><button onclick="event.stopPropagation();saveMealFromSection('snack')" style="background:none;border:none;color:#667eea;font-size:0.9rem;cursor:pointer;padding:0 2px;" title="Save snack as a meal">&#x1F4BE;</button><button onclick="event.stopPropagation();addFoodItem('snack')" class="meal-add-btn">+ Add</button><span class="meal-chevron" id="chev-snack">▸</span></div>
       </div>
-      <div class="meal-body" id="mb-snack" style="display:none;"><div id="foodList-snack"></div></div>
+      <div class="meal-body" id="mb-snack" style="display:none;"><div id="foodList-snack"></div>
+        <div style="padding:6px 8px 8px;"><textarea id="mnotes-snack" rows="1" placeholder="Snack notes..." oninput="save()" style="width:100%;border:1px solid #e9ecef;border-radius:5px;padding:4px 8px;font-size:0.78rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fafafa;color:#555;"></textarea></div>
+      </div>
     </div>
     <div class="meal-section" id="ms-sports" data-meal="sports">
       <div class="meal-header" onclick="toggleMealSection('sports')" style="border-left-color:#27ae60;">
         <span>💪 Sports Nutrition</span><div class="meal-right"><span class="meal-subtotal" id="st-sports" style="font-size:0.75rem;color:#888;"></span><button onclick="event.stopPropagation();saveMealFromSection('sports')" style="background:none;border:none;color:#667eea;font-size:0.9rem;cursor:pointer;padding:0 2px;" title="Save sports nutrition as a meal">&#x1F4BE;</button><button onclick="event.stopPropagation();addFoodItem('sports')" class="meal-add-btn" style="background:#27ae60;">+ Add</button><span class="meal-chevron" id="chev-sports">▸</span></div>
       </div>
-      <div class="meal-body" id="mb-sports" style="display:none;"><div id="foodList-sports"></div></div>
+      <div class="meal-body" id="mb-sports" style="display:none;"><div id="foodList-sports"></div>
+        <div style="padding:6px 8px 8px;"><textarea id="mnotes-sports" rows="1" placeholder="Sports nutrition notes..." oninput="save()" style="width:100%;border:1px solid #e9ecef;border-radius:5px;padding:4px 8px;font-size:0.78rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fafafa;color:#555;"></textarea></div>
+      </div>
     </div>
   </div>
   <!-- Legacy flat list (hidden, kept for compat) -->
@@ -1994,7 +2016,7 @@ function parseBP(s){if(!s)return{sys:0,dia:0};const m=s.match(/(\d+)\s*\/\s*(\d+
 function buildStars(){const ss=document.getElementById('scoreStars');if(!ss)return;ss.innerHTML='';for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star'+(i<=scoreVal?' active':'');s.textContent='★';s.onclick=()=>{scoreVal=(scoreVal===i)?i-1:i;buildStars();save();};ss.appendChild(s);}}
 
 // All text/number fields
-const TXS=['ebayListedCount','ebaySoldCount','ebayRevenue','ebayActionItems','ebayNotes','spDailyBreadText','spMeditationText','spSermonText','gaFinancialText','gaFinancialTime','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exRunVal','exMiles','exPace','exWatts','exTotalTime','exCalBurned','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jRunLog','jAccomplish','jImprov','jGratitude','jNotes','jIssues','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports'];
+const TXS=['ebayListedCount','ebaySoldCount','ebayRevenue','ebayActionItems','ebayNotes','spDailyBreadText','spMeditationText','spSermonText','gaFinancialText','gaFinancialTime','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exRunVal','exMiles','exPace','exWatts','exTotalTime','exCalBurned','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jRunLog','jAccomplish','jImprov','jGratitude','jNotes','jIssues','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports','mnotes-breakfast','mnotes-lunch','mnotes-dinner','mnotes-snack','mnotes-sports'];
 const NMS=['exScore','exSteps','wSleepScore'];
 const PTIDS=['pt0','pt1','pt2','dg0','dg1','dg2'];
 
@@ -3169,9 +3191,15 @@ function aiDailyBread(){
   if(!key){alert('Add your Anthropic API key via the ⚙️ AI Key button first.');return;}
   const btn=document.querySelector('[onclick="aiDailyBread()"]');
   if(btn){btn.textContent='…';btn.disabled=true;}
-  const today_str=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric'});
-  const prompt='Suggest one Bible verse appropriate for today ('+today_str+'). Reply with ONLY the reference in this exact format: Book Chapter:Verse or Chapter:StartVerse-EndVerse for a range. Example: Proverbs 3:5-6. Nothing else — just the reference.';
-  fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:30,messages:[{role:'user',content:prompt}]})})
+  const now=new Date();
+  const today_str=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const themes=['faith and trust','perseverance and endurance','wisdom and discernment','courage and strength','gratitude and praise','hope and renewal','humility and service','peace and rest','love and compassion','purpose and calling','forgiveness and grace','identity in Christ','stewardship and generosity','prayer and communion','joy in trials','righteousness and integrity','community and fellowship','spiritual growth','God\'s faithfulness','endurance in hardship','the armor of God','waiting on the Lord','bearing fruit','abiding in Christ','the power of the tongue'];
+  const theme=themes[Math.floor(Math.random()*themes.length)];
+  const seed=Math.floor(Math.random()*9000)+1000;
+  const books=['Genesis','Exodus','Psalms','Proverbs','Isaiah','Jeremiah','Matthew','Mark','Luke','John','Acts','Romans','1 Corinthians','2 Corinthians','Galatians','Ephesians','Philippians','Colossians','1 Thessalonians','Hebrews','James','1 Peter','1 John','Revelation'];
+  const book=books[Math.floor(Math.random()*books.length)];
+  const prompt='Today is '+today_str+'. Random seed: '+seed+'. Theme for today: "'+theme+'".\n\nSuggest one specific Bible verse from '+book+' or any other book that fits this theme. IMPORTANT: Do NOT suggest John 3:16, Jeremiah 29:11, Philippians 4:13, Romans 8:28, or any other extremely common/overused verse. Pick something meaningful but less frequently cited. Reply with ONLY the reference in this exact format: Book Chapter:Verse (or Chapter:StartVerse-EndVerse for a short range). Example: Proverbs 3:5-6. Nothing else — just the reference.';
+  fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:60,messages:[{role:'user',content:prompt}]})})
   .then(r=>r.json()).then(data=>{
     if(btn){btn.textContent='✨ Suggest';btn.disabled=false;}
     if(data.error){alert('AI error: '+data.error.message);return;}
@@ -6844,9 +6872,28 @@ function meditInitTab(){
 }
 /* ========= END MEDITATION JS ========= */
 
+var _hmTabs=['nutrition','habits','meditate','bible','library','activities','skill-log','thinking'];
+function toggleHamburger(e){e.stopPropagation();var d=document.getElementById('hmDropdown');d.classList.toggle('open');}
+function hmSwitch(tab,e){
+  document.getElementById('hmDropdown').classList.remove('open');
+  document.querySelectorAll('.hamburger-dropdown button').forEach(b=>b.classList.remove('hm-active'));
+  var hb=document.getElementById('hm-'+tab);if(hb)hb.classList.add('hm-active');
+  var hmBtn=document.getElementById('hmBtn');
+  if(hmBtn){hmBtn.classList.add('hm-active');hmBtn.textContent='☰ '+hb.textContent.trim();}
+  switchTab(tab,null);
+}
+document.addEventListener('click',function(e){
+  var wrap=document.getElementById('hmWrap');
+  if(wrap&&!wrap.contains(e.target))document.getElementById('hmDropdown').classList.remove('open');
+});
 function switchTab(tab,e){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  // Reset hamburger active state if switching to a main tab
+  if(!_hmTabs.includes(tab)){
+    document.querySelectorAll('.hamburger-dropdown button').forEach(b=>b.classList.remove('hm-active'));
+    var hmBtn=document.getElementById('hmBtn');if(hmBtn){hmBtn.classList.remove('hm-active');hmBtn.textContent='☰ More';}
+  }
   document.getElementById('tab-'+tab).classList.add('active');
   if(e)e.target.classList.add('active');
   const isDaily=tab==='daily';
@@ -7123,10 +7170,10 @@ function jaSearch(){
 window.addEventListener('load',function(){jaRenderList();});
 window.addEventListener('load',function(){
   var lastTab=localStorage.getItem('last_active_tab');
-  var validTabs=['daily','weekly','monthly','yearly','dashboard','review','habits','meditate','bible','library','activities','skill-log','thinking'];
+  var validTabs=['daily','weekly','monthly','yearly','dashboard','review','nutrition','habits','meditate','bible','library','activities','skill-log','thinking'];
   if(lastTab&&lastTab!=='daily'&&validTabs.indexOf(lastTab)!==-1){
-    var btn=document.querySelector('[onclick*="switchTab(\''+lastTab+'\'"]');
-    if(btn)btn.click();
+    if(_hmTabs.includes(lastTab)){hmSwitch(lastTab,null);}
+    else{var btn=document.querySelector('[onclick*="switchTab(\''+lastTab+'\'"]');if(btn)btn.click();}
   }
 });
 /* ========= END PERSONAL JOURNAL ARCHIVE ========= */
