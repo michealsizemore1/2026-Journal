@@ -6988,6 +6988,7 @@ function switchTab(tab,e){
   document.getElementById('tab-'+tab).classList.add('active');
   if(e)e.target.classList.add('active');
   const isDaily=tab==='daily';
+  if(isDaily)load();
   document.getElementById('streakBar').style.display=isDaily?'flex':'none';
   document.getElementById('aiToolbar').style.display=isDaily?'block':'none';
   if(tab==='weekly')renderWeekly();if(tab==='monthly')renderMonthly();
@@ -7261,6 +7262,7 @@ function jaSearch(){
 window.addEventListener('load',function(){jaRenderList();});
 window.addEventListener('load',function(){loadAllTabNotes();});
 window.addEventListener('load',function(){
+  load(); // Always initialize _foodLog and daily fields from localStorage
   var lastTab=localStorage.getItem('last_active_tab');
   var validTabs=['daily','weekly','monthly','yearly','dashboard','review','nutrition','habits','meditate','bible','library','activities','skill-log','thinking'];
   if(lastTab&&lastTab!=='daily'&&validTabs.indexOf(lastTab)!==-1){
