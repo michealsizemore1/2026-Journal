@@ -476,7 +476,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   </div>
   <button class="hdr-btn" onclick="openSettings()">&#x2699;&#xFE0F; AI Key</button>
 </div>
-<div id="tabNotesBar" style="padding:6px 14px 0;"><textarea id="tabNoteTA" rows="2" placeholder="Notes..." oninput="saveTabNote()" style="width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:8px;padding:8px 10px;font-size:0.83rem;font-family:inherit;color:#374151;background:#fafafa;resize:vertical;min-height:52px;line-height:1.5;display:block;"></textarea></div>
 <div class="tabs-wrapper">
   <button id="hmToggleBtn" onclick="toggleHamburger(event)" title="More tabs">&#x2630; More</button>
   <div class="tabs">
@@ -488,6 +487,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <button class="tab-btn" onclick="switchTab('review',event)">Review</button>
   </div>
 </div>
+<div id="tabNotesBar" style="padding:6px 14px 0;"><textarea id="tabNoteTA" rows="2" placeholder="Notes..." oninput="saveTabNote()" style="width:100%;box-sizing:border-box;border:1px solid #d1d5db;border-radius:8px;padding:8px 10px;font-size:0.83rem;font-family:inherit;color:#374151;background:#fafafa;resize:vertical;min-height:52px;line-height:1.5;display:block;"></textarea></div>
 <!-- Today's Workout card (shown only on Daily tab when a training plan is active) -->
 <div id="todayWorkoutCard" style="display:none;margin:8px 12px 0;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.12);">
   <div class="tw-header" style="background:linear-gradient(135deg,#667eea,#764ba2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;">
