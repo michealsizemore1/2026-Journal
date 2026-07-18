@@ -1867,7 +1867,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <div class="section-title orange" style="margin-bottom:10px;">&#x1F957; Nutrition</div>
   <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
     <label title="Scan food label with camera" style="background:#e67e22;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-size:0.78rem;cursor:pointer;">&#x1F4F7; Scan Label<input type="file" id="foodLabelScan" accept="image/*" capture="camera" style="display:none" onchange="scanFoodLabel(event)"></label>
-    <button onclick="toggleFavMealPanel()" style="background:#f39c12;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-size:0.78rem;cursor:pointer;">&#x2B50; Favs</button>
     <button onclick="openFuelAIModal()" title="Analyze how a day's nutrition affected the next day's run" style="background:#8e44ad;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-size:0.78rem;cursor:pointer;">&#x1F9E0; Fuel AI</button>
     <button onclick="openCopyDayModal()" style="background:#16a085;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-size:0.78rem;cursor:pointer;">&#x1F4C5; Copy Day</button>
   </div>
@@ -1927,6 +1926,25 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <span>&#x1F4A7; <strong id="totWater">—</strong> water</span>
     </div>
   </div>
+  <!-- Favorites / Meals panel -->
+  <div id="favMealPanel" style="display:block;background:#fffdf5;border:1px solid #f0c080;border-radius:10px;padding:10px 12px;margin-bottom:8px;">
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+      <button onclick="showFavTab('favs')" id="favTabBtn" style="flex:1;background:#f39c12;color:#fff;border:none;padding:5px;border-radius:6px;font-size:0.8rem;cursor:pointer;font-weight:700;">⭐ Favorites</button>
+      <button onclick="showFavTab('meals')" id="mealTabBtn" style="flex:1;background:#e9ecef;color:#555;border:none;padding:5px;border-radius:6px;font-size:0.8rem;cursor:pointer;">🍲 Saved Meals</button>
+    </div>
+    <div style="margin-bottom:6px;">
+      <input type="text" id="favSearch" placeholder="🔍 Search favorites..." oninput="renderFavsList()" style="width:100%;border:1px solid #e9c87b;border-radius:6px;padding:5px 8px;font-size:0.8rem;box-sizing:border-box;margin-bottom:6px;">
+      <select id="favTargetMeal" style="width:100%;border:1px solid #e9c87b;border-radius:6px;padding:5px 8px;font-size:0.8rem;box-sizing:border-box;">
+        <option value="breakfast">🌅 Add to Breakfast</option>
+        <option value="lunch">🥗 Add to Lunch</option>
+        <option value="dinner">🍽️ Add to Dinner</option>
+        <option value="snack">🍎 Add to Snacks</option>
+        <option value="sports">💪 Add to Sports Nutrition</option>
+      </select>
+    </div>
+    <div id="favsList" style="max-height:180px;overflow-y:auto;"></div>
+    <div id="mealsList" style="display:none;max-height:200px;overflow-y:auto;"></div>
+  </div>
   <!-- AI Food Search -->
   <div id="aiFoodSearchPanel" style="background:#f0f4ff;border:1px solid #c7d2fe;border-radius:10px;padding:10px 12px;margin-bottom:8px;">
     <div style="font-size:0.82rem;font-weight:700;color:#4338ca;margin-bottom:7px;">&#x1F50D; AI Food Search</div>
@@ -1944,25 +1962,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       </div>
     </div>
     <div id="aiFoodResults" style="display:none;"></div>
-  </div>
-  <!-- Favorites / Meals panel -->
-  <div id="favMealPanel" style="display:none;background:#fffdf5;border:1px solid #f0c080;border-radius:10px;padding:10px 12px;margin-bottom:8px;">
-    <div style="display:flex;gap:8px;margin-bottom:8px;">
-      <button onclick="showFavTab('favs')" id="favTabBtn" style="flex:1;background:#f39c12;color:#fff;border:none;padding:5px;border-radius:6px;font-size:0.8rem;cursor:pointer;font-weight:700;">⭐ Favorites</button>
-      <button onclick="showFavTab('meals')" id="mealTabBtn" style="flex:1;background:#e9ecef;color:#555;border:none;padding:5px;border-radius:6px;font-size:0.8rem;cursor:pointer;">🍲 Saved Meals</button>
-    </div>
-    <div style="margin-bottom:6px;">
-      <input type="text" id="favSearch" placeholder="🔍 Search favorites..." oninput="renderFavsList()" style="width:100%;border:1px solid #e9c87b;border-radius:6px;padding:5px 8px;font-size:0.8rem;box-sizing:border-box;margin-bottom:6px;">
-      <select id="favTargetMeal" style="width:100%;border:1px solid #e9c87b;border-radius:6px;padding:5px 8px;font-size:0.8rem;box-sizing:border-box;">
-        <option value="breakfast">🌅 Add to Breakfast</option>
-        <option value="lunch">🥗 Add to Lunch</option>
-        <option value="dinner">🍽️ Add to Dinner</option>
-        <option value="snack">🍎 Add to Snacks</option>
-        <option value="sports">💪 Add to Sports Nutrition</option>
-      </select>
-    </div>
-    <div id="favsList" style="max-height:180px;overflow-y:auto;"></div>
-    <div id="mealsList" style="display:none;max-height:200px;overflow-y:auto;"></div>
   </div>
   <!-- AI Fuel insight box -->
   <div id="nutritionAIBox" class="ai-box" style="display:none;margin-bottom:8px;"></div>
@@ -3676,11 +3675,8 @@ function addFavorite(){
 }
 
 function toggleFavMealPanel(){
-  var p=document.getElementById('favMealPanel');
-  if(!p)return;
-  var open=p.style.display==='block';
-  p.style.display=open?'none':'block';
-  if(!open){showFavTab('favs');renderFavsList();}
+  // Panel is always visible; just ensure favs tab is active and rendered
+  showFavTab('favs');renderFavsList();
 }
 
 function showFavTab(tab){
@@ -3795,7 +3791,7 @@ function loadMeal(idx){
   });
   _setMealOpen(target,true);
   renderFoodItems();save();
-  document.getElementById('favMealPanel').style.display='none';
+  // favMealPanel stays open
 }
 
 function deleteMeal(idx){
