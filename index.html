@@ -641,15 +641,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     </div>
     <div class="section">
       <div class="section-title green">&#x1F3C3; Daily Physical Exercises</div>
-      <div class="task-row"><div class="tri-check" data-key="exRun" onclick="triClick(this)"></div><label>Run:</label><input type="text" id="exRunVal" placeholder="Notes..."></div>
-      <div class="metrics-grid">
-        <div class="metric-field"><label>Miles</label><input type="text" id="exMiles" placeholder="0.0"></div>
-        <div class="metric-field"><label>Pace (mm:ss)</label><input type="text" id="exPace" placeholder="9:30"></div>
-        <div class="metric-field"><label>Watts</label><input type="text" id="exWatts" placeholder="0"></div>
-        <div class="metric-field"><label>Time</label><input type="text" id="exTotalTime" placeholder="h:mm:ss or 45 min"></div>
-        <div class="metric-field"><label>Calories Burned</label><input type="number" id="exCalBurned" placeholder="0" min="0"></div>
-      </div>
-      <div class="score-row" style="margin-top:8px;"><label>Execution Score:</label><input type="number" id="exScore" min="0" max="100" placeholder="0-100"></div>
       <div class="task-row"><div class="tri-check" data-key="exStrength" onclick="triClick(this)"></div><label>Strength:</label><input type="text" id="exStrengthVal" placeholder="Notes..."></div>
       <div class="task-row"><div class="tri-check" data-key="exBike" onclick="triClick(this)"></div><label>Bike:</label><input type="text" id="exBikeVal" placeholder="Distance/time..."></div>
       <div class="task-row"><div class="tri-check" data-key="exStretch" onclick="triClick(this)"></div><label>Stretch:</label><input type="text" id="exStretchVal" placeholder="Duration..."></div>
@@ -667,7 +658,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <div class="journaling-section">
   <div class="section-title purple">&#x1F4D3; Journaling</div>
   <div class="journal-grid">
-    <div class="journal-col"><label>&#x1F3C3; Running Log</label><textarea id="jRunLog" placeholder="Today's run notes..."></textarea><button type="button" class="mic-btn" onclick="startVoice('jRunLog',this)" title="Voice input">🎤 Mic</button><button id="undo_jRunLog" onclick="fieldUndo('jRunLog')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jRunLog" onclick="fieldRedo('jRunLog')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
     <div class="journal-col"><label>&#x1F3C6; Accomplishments</label><textarea id="jAccomplish" placeholder="What did you accomplish today?"></textarea><button type="button" class="mic-btn" onclick="startVoice('jAccomplish',this)" title="Voice input">🎤 Mic</button><button id="undo_jAccomplish" onclick="fieldUndo('jAccomplish')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jAccomplish" onclick="fieldRedo('jAccomplish')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
     <div class="journal-col"><label>&#x1F4A1; Improvements</label><textarea id="jImprov" placeholder="What could be better tomorrow?"></textarea><button type="button" class="mic-btn" onclick="startVoice('jImprov',this)" title="Voice input">🎤 Mic</button><button id="undo_jImprov" onclick="fieldUndo('jImprov')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jImprov" onclick="fieldRedo('jImprov')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
     <div class="journal-col"><label>&#x1F64F; Gratitude</label><textarea id="jGratitude" placeholder="What are you grateful for today?&#10;1.&#10;2.&#10;3."></textarea><button type="button" class="mic-btn" style="background:#e67e22;" onclick="startVoice('jGratitude',this)" title="Voice input">🎤 Mic</button><button id="undo_jGratitude" onclick="fieldUndo('jGratitude')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jGratitude" onclick="fieldRedo('jGratitude')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
@@ -679,20 +669,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <span id="copyNextDayConfirm" style="font-size:0.78rem;color:#16a34a;display:none;">✓ Copied to tomorrow!</span>
   </div>
 
-  <!-- Issues to Fix -->
-  <div class="section-title" style="color:#b45309;margin-top:18px;">&#x1F6A7; Journal Fix &amp; Updates</div>
-  <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;">
-    <div style="font-size:0.78rem;color:#92400e;margin-bottom:8px;">Note anything in the planner that needs to be fixed, improved, or updated. Review with AI periodically to batch all fixes at once.</div>
-    <textarea id="jIssues" placeholder="e.g. Sleep section not saving correctly on Sundays&#10;Food scanner doesn&#39;t show product name when barcode is blurry&#10;Race countdown showing wrong date on July tab..." rows="5" style="width:100%;box-sizing:border-box;border:1px solid #fde68a;border-radius:7px;padding:8px 10px;font-size:0.88rem;resize:vertical;outline:none;font-family:inherit;background:#fff;"></textarea>
-    <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center;">
-      <button type="button" class="mic-btn" style="background:#b45309;" onclick="startVoice('jIssues',this)" title="Voice input">🎤 Mic</button><button id="undo_jIssues" onclick="fieldUndo('jIssues')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jIssues" onclick="fieldRedo('jIssues')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button>
-      <button type="button" onclick="copyIssuesToClipboard()" style="background:#92400e;color:#fff;border:none;padding:5px 14px;border-radius:6px;font-size:0.8rem;cursor:pointer;font-weight:600;">📋 Copy All Issues</button>
-      <button type="button" onclick="copyToNextDay()" style="background:#4f46e5;color:#fff;border:none;padding:5px 14px;border-radius:6px;font-size:0.8rem;cursor:pointer;font-weight:600;">➡️ Copy to Tomorrow</button>
-      <span id="issuesCopyConfirm" style="font-size:0.78rem;color:#16a34a;display:none;">✓ Copied!</span>
-      <span style="margin-left:auto;font-size:0.75rem;color:#aaa;" id="issuesCount"></span>
-    </div>
-  </div>
-
+  
   <!-- Personal Journal Archive -->
   <div class="section-title" style="color:#0f766e;margin-top:22px;">&#x1F4DA; Personal Journal Archive</div>
   <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:14px 16px;">
@@ -1249,6 +1226,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <div><label class="act-label">Calories</label><input type="number" id="actCalories" class="act-input" placeholder="0"></div>
       <div><label class="act-label">Elev Gain (ft)</label><input type="number" id="actElevGain" class="act-input" placeholder="0"></div>
       <div><label class="act-label">Temp (°F)</label><input type="number" id="actTemp" class="act-input" placeholder="e.g. 68"></div>
+      <div><label class="act-label">Execution Score (0-100)</label><input type="number" id="actExecScore" class="act-input" placeholder="0-100" min="0" max="100"></div>
       <div><label class="act-label">Source</label>
         <select id="actSource" class="act-input">
           <option value="manual">Manual</option><option value="garmin">Garmin</option><option value="stryd">Stryd</option>
@@ -2099,8 +2077,8 @@ function parseBP(s){if(!s)return{sys:0,dia:0};const m=s.match(/(\d+)\s*\/\s*(\d+
 function buildStars(){const ss=document.getElementById('scoreStars');if(!ss)return;ss.innerHTML='';for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star'+(i<=scoreVal?' active':'');s.textContent='★';s.onclick=()=>{scoreVal=(scoreVal===i)?i-1:i;buildStars();save();};ss.appendChild(s);}}
 
 // All text/number fields
-const TXS=['ebayListedCount','ebaySoldCount','ebayRevenue','ebayActionItems','ebayNotes','spDailyBreadText','spMeditationText','spSermonText','gaFinancialText','gaFinancialTime','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exRunVal','exMiles','exPace','exWatts','exTotalTime','exCalBurned','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jRunLog','jAccomplish','jImprov','jGratitude','jNotes','jIssues','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports','mnotes-breakfast','mnotes-lunch','mnotes-dinner','mnotes-snack','mnotes-sports'];
-const NMS=['exScore','exSteps','wSleepScore'];
+const TXS=['ebayListedCount','ebaySoldCount','ebayRevenue','ebayActionItems','ebayNotes','spDailyBreadText','spMeditationText','spSermonText','gaFinancialText','gaFinancialTime','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jAccomplish','jImprov','jGratitude','jNotes','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports','mnotes-breakfast','mnotes-lunch','mnotes-dinner','mnotes-snack','mnotes-sports'];
+const NMS=['exSteps','wSleepScore'];
 const PTIDS=['pt0','pt1','pt2','dg0','dg1','dg2'];
 
 function save(){
@@ -2566,23 +2544,24 @@ function streak(fn){
   try{
     const todayRaw=localStorage.getItem('planner_'+dk(d));
     if(todayRaw){
-      if(!fn(JSON.parse(todayRaw))){
+      const _todayDK=dk(d);
+      if(!fn(JSON.parse(todayRaw),_todayDK)){
         // Not done today yet — fall back to yesterday (don't break mid-day)
         d.setDate(d.getDate()-1);
         const ydRaw=localStorage.getItem('planner_'+dk(d));
-        if(!ydRaw||!fn(JSON.parse(ydRaw)))return 0;
+        if(!ydRaw||!fn(JSON.parse(ydRaw),dk(d)))return 0;
       }
     } else {
       // No entry today — fall back to yesterday
       const yd=new Date(d);yd.setDate(yd.getDate()-1);
       const ydRaw=localStorage.getItem('planner_'+dk(yd));
-      if(!ydRaw||!fn(JSON.parse(ydRaw)))return 0;
+      if(!ydRaw||!fn(JSON.parse(ydRaw),dk(yd)))return 0;
       d=yd;
     }
     for(let i=0;i<365;i++){
       const r=localStorage.getItem('planner_'+dk(d));
       if(!r)break;
-      let ok=false;try{ok=fn(JSON.parse(r));}catch(e){break;}
+      let ok=false;try{ok=fn(JSON.parse(r),dk(d));}catch(e){break;}
       if(!ok)break;
       n++;
       d.setDate(d.getDate()-1);
@@ -2590,11 +2569,14 @@ function streak(fn){
   }catch(e){n=0;}
   return n;
 }
+function hasActivityOnDate(dateKey){
+  return getActivities().some(function(a){return a.date===dateKey;});
+}
 function renderStreaks(){
   const DEFS=[
     {id:'stBible',  label:'📖',  tip:'Bible',    fn:d=>d.spChronBible==='green'},
     {id:'stPrayer', label:'🙏',  tip:'Prayer',   fn:d=>d.spPrayer==='green'},
-    {id:'stExercise',label:'🏃', tip:'Run',      fn:d=>d.exRun==='green'},
+    {id:'stExercise',label:'🏃', tip:'Exercise', fn:(d,dk)=>d.exRun==='green'||d.exStrength==='green'||d.exBike==='green'||d.exWalk==='green'||hasActivityOnDate(dk)},
     {id:'stWater',  label:'💧',  tip:'Water',    fn:d=>(parseFloat(d.waterOz)||parseFloat(d.waterCount)*8||0)>0},
     {id:'stVideos', label:'📈',  tip:'Fin.Videos',fn:d=>d.gaFinancial==='green'}
   ];
@@ -2609,7 +2591,17 @@ function renderStreaks(){
   });
 }
 
-function getDM(d){const bp=parseBP(d.wBPVal);return{miles:parseFloat(d.exMiles)||0,pace:parsePace(d.exPace),watts:parseFloat(d.exWatts)||0,time:parseMins(d.exTotalTime),calBurned:parseFloat(d.exCalBurned)||0,steps:parseFloat(d.exSteps)||0,score:parseFloat(d.score)||0,weight:parseFloat(d.wWghtVal)||0,sleep:parseMins(d.wSleepVal),sleepScore:parseFloat(d.wSleepScore)||0,calories:parseFloat(d.nuCalVal)||0,water:parseFloat(d.waterOz)||(parseFloat(d.waterCount)*8||0),finVideo:parseMins(d.gaFinancialTime),audiobook:parseMins(d.gaAudiobookTime),skill:parseMins(d.gaSkillTime),skillName:d.gaSkillText||'',bpSys:bp.sys,bpDia:bp.dia,pulse:parseFloat(d.wPulseVal)||0,dogWalk:parseFloat(d.exDogWalkVal)||(d.exDogWalk==='green'?1:0),walk:parseFloat(d.exWalkVal)||(d.exWalk==='green'?1:0),headache:d.wHeadache==='green'?1:0,ctMM:d.ctMentalModels==='green'?1:0,ctAB:d.ctAssumption==='green'?1:0,ctSOT:d.ctSecondOrder==='green'?1:0,ctMMTime:parseMins(d.ctMentalModelsTime||'')};}
+function getDM(d,dateKey){
+  var actMiles=0,actTime=0,actWatts=0,actWattsN=0,actPace=0,actPaceN=0;
+  if(dateKey){
+    getActivities().filter(function(a){return a.date===dateKey;}).forEach(function(a){
+      actMiles+=parseFloat(a.distance)||0;
+      actTime+=parseMins(a.duration);
+      if(parseFloat(a.power)){actWatts+=parseFloat(a.power);actWattsN++;}
+      if(a.pace&&parsePace(a.pace)){actPace+=parsePace(a.pace);actPaceN++;}
+    });
+  }
+  const bp=parseBP(d.wBPVal);return{miles:(parseFloat(d.exMiles)||0)+actMiles,pace:actPaceN?actPace/actPaceN:parsePace(d.exPace),watts:actWattsN?actWatts/actWattsN:(parseFloat(d.exWatts)||0),time:(parseMins(d.exTotalTime)||0)+actTime,calBurned:parseFloat(d.exCalBurned)||0,steps:parseFloat(d.exSteps)||0,score:parseFloat(d.score)||0,weight:parseFloat(d.wWghtVal)||0,sleep:parseMins(d.wSleepVal),sleepScore:parseFloat(d.wSleepScore)||0,calories:parseFloat(d.nuCalVal)||0,water:parseFloat(d.waterOz)||(parseFloat(d.waterCount)*8||0),finVideo:parseMins(d.gaFinancialTime),audiobook:parseMins(d.gaAudiobookTime),skill:parseMins(d.gaSkillTime),skillName:d.gaSkillText||'',bpSys:bp.sys,bpDia:bp.dia,pulse:parseFloat(d.wPulseVal)||0,dogWalk:parseFloat(d.exDogWalkVal)||(d.exDogWalk==='green'?1:0),walk:parseFloat(d.exWalkVal)||(d.exWalk==='green'?1:0),headache:d.wHeadache==='green'?1:0,ctMM:d.ctMentalModels==='green'?1:0,ctAB:d.ctAssumption==='green'?1:0,ctSOT:d.ctSecondOrder==='green'?1:0,ctMMTime:parseMins(d.ctMentalModelsTime||'')};}
 function agg(arr){const t={miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,finVideo:0,audiobook:0,skill:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,walk:0,headache:0,ctMM:0,ctAB:0,ctSOT:0,ctMMTime:0};const c={pace:0,watts:0,score:0,weight:0,sleep:0,sleepScore:0,bp:0,pulse:0};arr.forEach(m=>{t.miles+=m.miles;t.time+=m.time;t.steps+=m.steps;t.calories+=m.calories;t.water+=m.water;t.finVideo+=m.finVideo;t.audiobook+=m.audiobook;t.skill+=m.skill||0;t.dogWalk+=(m.dogWalk||0);t.walk+=(m.walk||0);t.headache+=(m.headache||0);t.ctMM+=(m.ctMM||0);t.ctAB+=(m.ctAB||0);t.ctSOT+=(m.ctSOT||0);t.ctMMTime+=(m.ctMMTime||0);if(m.pace){t.pace+=m.pace;c.pace++;}if(m.watts){t.watts+=m.watts;c.watts++;}if(m.score){t.score+=m.score;c.score++;}if(m.weight){t.weight+=m.weight;c.weight++;}if(m.sleep){t.sleep+=m.sleep;c.sleep++;}if(m.sleepScore){t.sleepScore+=m.sleepScore;c.sleepScore++;}if(m.bpSys){t.bpSys+=m.bpSys;t.bpDia+=m.bpDia;c.bp++;}if(m.pulse){t.pulse+=m.pulse;c.pulse++;}});return{miles:t.miles,pace:c.pace?t.pace/c.pace:0,watts:c.watts?t.watts/c.watts:0,time:t.time,steps:t.steps,calories:t.calories,water:t.water,score:c.score?t.score/c.score:0,weight:c.weight?t.weight/c.weight:0,sleep:c.sleep?t.sleep/c.sleep:0,sleepScore:c.sleepScore?t.sleepScore/c.sleepScore:0,finVideo:t.finVideo,audiobook:t.audiobook,skill:t.skill,bpSys:c.bp?t.bpSys/c.bp:0,bpDia:c.bp?t.bpDia/c.bp:0,pulse:c.pulse?t.pulse/c.pulse:0,dogWalk:t.dogWalk,walk:t.walk,headache:t.headache,ctMM:t.ctMM,ctAB:t.ctAB,ctSOT:t.ctSOT,ctMMTime:t.ctMMTime};}
 function gRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';return`<tr style="${b}"><td>${l}</td><td>${fmtMins(m.finVideo)}</td><td>${fmtMins(m.audiobook)}</td><td>${fmtMins(m.skill)}</td></tr>`;}
 function fRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';return`<tr style="${b}"><td>${l}</td><td>${m.miles?m.miles.toFixed(1):'-'}</td><td>${m.pace?fmtPace(m.pace):'-'}</td><td>${m.watts?Math.round(m.watts):'-'}</td><td>${fmtMins(m.time)}</td><td>${m.steps?Math.round(m.steps):'-'}</td><td>${m.score?m.score.toFixed(1):'-'}</td><td>${m.dogWalk?(Math.round(m.dogWalk*10)/10)%1===0?Math.round(m.dogWalk):+(m.dogWalk.toFixed(1)):'-'}</td><td>${m.walk?(Math.round(m.walk*10)/10)%1===0?Math.round(m.walk):+(m.walk.toFixed(1)):'-'}</td></tr>`;}
@@ -2761,11 +2753,11 @@ function renderNutritionSpirit(dateKeys,labels,nuContainerId,spirContainerId){
   if(spEl)spEl.innerHTML=mkT(spirH,spirRows,spirRow('TOTAL',totSpir,true));
 }
 
-function renderWeekly(){const ws=wkStart(weekOff2),days=[],lbls=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r=localStorage.getItem('planner_'+dk(d));days.push(r?getDM(JSON.parse(r)):{miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,finVideo:0,audiobook:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,headache:0});lbls.push(d.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'}));}const we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('weekLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const tot=agg(days);document.getElementById('wGrowth').innerHTML=mkT(gH,days.map((m,i)=>gRow(lbls[i],m)),gRow('TOTAL',tot,true));var wct=document.getElementById('wCritical');if(wct)wct.innerHTML=mkT(ctH,days.map((m,i)=>ctRow(lbls[i],m)),ctRow('TOTAL',tot,true));document.getElementById('wFitness').innerHTML=mkT(fH,days.map((m,i)=>fRow(lbls[i],m)),fRow('TOTAL/AVG',tot,true));document.getElementById('wWellness').innerHTML=mkT(wH,days.map((m,i)=>wRow(lbls[i],m)),wRow('TOTAL/AVG',tot,true));
+function renderWeekly(){const ws=wkStart(weekOff2),days=[],lbls=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r=localStorage.getItem('planner_'+dk(d));var _dk=dk(d);days.push(r?getDM(JSON.parse(r),_dk):{miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,finVideo:0,audiobook:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,headache:0});lbls.push(d.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'}));}const we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('weekLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const tot=agg(days);document.getElementById('wGrowth').innerHTML=mkT(gH,days.map((m,i)=>gRow(lbls[i],m)),gRow('TOTAL',tot,true));var wct=document.getElementById('wCritical');if(wct)wct.innerHTML=mkT(ctH,days.map((m,i)=>ctRow(lbls[i],m)),ctRow('TOTAL',tot,true));document.getElementById('wFitness').innerHTML=mkT(fH,days.map((m,i)=>fRow(lbls[i],m)),fRow('TOTAL/AVG',tot,true));document.getElementById('wWellness').innerHTML=mkT(wH,days.map((m,i)=>wRow(lbls[i],m)),wRow('TOTAL/AVG',tot,true));
   const wDayKeys=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);wDayKeys.push(dk(d));}renderNutritionSpirit(wDayKeys,lbls,'wNutrition','wSpirituality');}
 function changeWeekOff(n){weekOff2+=n;renderWeekly();renderGoals();}
 let monthOff2=0;
-function renderMonthly(){const now=new Date(),ref=new Date(now.getFullYear(),now.getMonth()+monthOff2,1);const yr=ref.getFullYear(),mo=ref.getMonth(),dim=new Date(yr,mo+1,0).getDate();const wmap={};for(let d=1;d<=dim;d++){const dt=new Date(yr,mo,d);const ws=wkStartOf(dt);const k=dk(ws);if(!wmap[k])wmap[k]={ws,ms:[]};const r=localStorage.getItem('planner_'+dk(dt));if(r)wmap[k].ms.push(getDM(JSON.parse(r)));}document.getElementById('monthLabel').textContent=ref.toLocaleDateString('en-US',{month:'long',year:'numeric'});const wks=Object.values(wmap).sort((a,b)=>a.ws-b.ws),allM=[],gR=[],fR=[],wR=[];wks.forEach(({ws,ms})=>{const we=new Date(ws);we.setDate(ws.getDate()+6);const lb=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'-'+we.toLocaleDateString('en-US',{day:'numeric'});const a=agg(ms);allM.push(...ms);gR.push(gRow('Wk '+lb,a));fR.push(fRow('Wk '+lb,a));wR.push(wRow('Wk '+lb,a));});const tot=agg(allM);document.getElementById('mGrowth').innerHTML=mkT(gH,gR,gRow('TOTAL',tot,true));document.getElementById('mFitness').innerHTML=mkT(fH,fR,fRow('TOTAL/AVG',tot,true));document.getElementById('mWellness').innerHTML=mkT(wH,wR,wRow('TOTAL/AVG',tot,true));
+function renderMonthly(){const now=new Date(),ref=new Date(now.getFullYear(),now.getMonth()+monthOff2,1);const yr=ref.getFullYear(),mo=ref.getMonth(),dim=new Date(yr,mo+1,0).getDate();const wmap={};for(let d=1;d<=dim;d++){const dt=new Date(yr,mo,d);const ws=wkStartOf(dt);const k=dk(ws);if(!wmap[k])wmap[k]={ws,ms:[]};const r=localStorage.getItem('planner_'+dk(dt));if(r)wmap[k].ms.push(getDM(JSON.parse(r),dk(dt)));}document.getElementById('monthLabel').textContent=ref.toLocaleDateString('en-US',{month:'long',year:'numeric'});const wks=Object.values(wmap).sort((a,b)=>a.ws-b.ws),allM=[],gR=[],fR=[],wR=[];wks.forEach(({ws,ms})=>{const we=new Date(ws);we.setDate(ws.getDate()+6);const lb=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'-'+we.toLocaleDateString('en-US',{day:'numeric'});const a=agg(ms);allM.push(...ms);gR.push(gRow('Wk '+lb,a));fR.push(fRow('Wk '+lb,a));wR.push(wRow('Wk '+lb,a));});const tot=agg(allM);document.getElementById('mGrowth').innerHTML=mkT(gH,gR,gRow('TOTAL',tot,true));document.getElementById('mFitness').innerHTML=mkT(fH,fR,fRow('TOTAL/AVG',tot,true));document.getElementById('mWellness').innerHTML=mkT(wH,wR,wRow('TOTAL/AVG',tot,true));
   const mWkKeys=[],mWkLbls=[];wks.forEach(({ws,ms})=>{const we=new Date(ws);we.setDate(ws.getDate()+6);const lb=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'-'+we.toLocaleDateString('en-US',{day:'numeric'});const keys=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);keys.push(dk(d));}mWkKeys.push(keys);mWkLbls.push('Wk '+lb);});renderNutritionSpirit(mWkKeys,mWkLbls,'mNutrition','mSpirituality');
   // Render heatmap
   const hmGrid=document.getElementById('hmGrid');
@@ -3221,7 +3213,7 @@ function aiReviewAnalysis(){
 }
 function changeDashOff(n){dashOff2+=n;renderDashboard();renderBPChart();}
 let revOff2=0;
-function renderReview(){const ws=wkStart(revOff2),we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('revLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const r=localStorage.getItem('review_'+dk(ws)),rv=r?JSON.parse(r):{};['revWins','revImprove','revFocus','revLessons'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=rv[id]||'';});let logged=0,bible=0,prayer=0,ex=0,steps=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r2=localStorage.getItem('planner_'+dk(d));if(!r2)continue;logged++;const dd=JSON.parse(r2);if(dd.spChronBible==='green')bible++;if(dd.spPrayer==='green')prayer++;if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green')ex++;steps+=parseFloat(dd.exSteps)||0;}document.getElementById('revStats').innerHTML=[{l:'Days Logged',v:logged+'/7'},{l:'Bible Days',v:bible+'/7'},{l:'Prayer Days',v:prayer+'/7'},{l:'Exercise Days',v:ex+'/7'},{l:'Total Steps',v:Math.round(steps).toLocaleString()}].map(({l,v})=>'<div class="review-stat"><strong>'+v+'</strong>'+l+'</div>').join('');}
+function renderReview(){const ws=wkStart(revOff2),we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('revLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const r=localStorage.getItem('review_'+dk(ws)),rv=r?JSON.parse(r):{};['revWins','revImprove','revFocus','revLessons'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=rv[id]||'';});let logged=0,bible=0,prayer=0,ex=0,steps=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r2=localStorage.getItem('planner_'+dk(d));if(!r2)continue;logged++;const dd=JSON.parse(r2);if(dd.spChronBible==='green')bible++;if(dd.spPrayer==='green')prayer++;if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green'||hasActivityOnDate(dk(d)))ex++;steps+=parseFloat(dd.exSteps)||0;}document.getElementById('revStats').innerHTML=[{l:'Days Logged',v:logged+'/7'},{l:'Bible Days',v:bible+'/7'},{l:'Prayer Days',v:prayer+'/7'},{l:'Exercise Days',v:ex+'/7'},{l:'Total Steps',v:Math.round(steps).toLocaleString()}].map(({l,v})=>'<div class="review-stat"><strong>'+v+'</strong>'+l+'</div>').join('');}
 function saveReview(){const ws=wkStart(revOff2),d={};['revWins','revImprove','revFocus','revLessons'].forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});localStorage.setItem('review_'+dk(ws),JSON.stringify(d));const btn=document.querySelector('[onclick="saveReview()"]');if(btn){btn.textContent='Saved!';btn.style.background='#27ae60';setTimeout(()=>{btn.textContent='Save Review';btn.style.background='#667eea';},2000);}}
 function changeRevOff(n){revOff2+=n;renderReview();}
 function aiWeeklyTakeaways(){
@@ -4102,11 +4094,11 @@ function _attachFieldUndo(id){
 }
 
 function attachAllFieldUndos(){
-  var ids=['jRunLog','jAccomplish','jImprov','jGratitude','jNotes','jIssues',
+  var ids=['jAccomplish','jImprov','jGratitude','jNotes',
            'spDailyBreadText','spMeditationText','spSermonText',
            'gaFinancialText','gaAudiobookText','gaSkillText',
            'wBPVal','wPulseVal','wWghtVal','wSleepVal','wMedsVal',
-           'exRunVal','exMiles','exPace','exStrengthVal','exBikeVal','exWalkVal'];
+           'exStrengthVal','exBikeVal','exWalkVal'];
   ids.forEach(_attachFieldUndo);
 }
 
@@ -4114,6 +4106,7 @@ function attachAllFieldUndos(){
 function copyIssuesToClipboard(){
   const el=document.getElementById('jIssues');
   const text=(el&&el.value||'').trim();
+  if(!el)return;
   if(!text){alert('No issues logged yet.');return;}
   // Gather all issues across all days
   const allIssues=[];
@@ -4980,8 +4973,9 @@ function submitAskJournal(){
     const waterAmt=parseFloat(dd.waterOz)||(parseFloat(dd.waterCount)*8||0);
     if(waterAmt)parts.push('Water: '+waterAmt+' oz');
     // Exercise
-    if(dd.exRun==='green'||dd.exRunVal||dd.exMiles){
-      let run='Run: '+(dd.exRunVal||'✓');
+    if(dd.exRun==='green'||dd.exRunVal||dd.exMiles||hasActivityOnDate(k)){
+      var _runActs=getActivities().filter(function(a){return a.date===k&&(a.type||'').toLowerCase().includes('run');});
+      let run='Run: '+(_runActs.length?_runActs[0].title||_runActs[0].notes||'✓':(dd.exRunVal||'✓'));
       if(dd.exMiles)run+=' | '+dd.exMiles+' mi';
       if(dd.exPace)run+=' | '+dd.exPace+'/mi';
       if(dd.exTotalTime)run+=' | '+dd.exTotalTime+' min';
@@ -5402,7 +5396,7 @@ function runJournalSearch(){
     if(!k.startsWith('planner_'))continue;
     let d;try{d=JSON.parse(localStorage.getItem(k));}catch{continue;}
     const foodNames=Array.isArray(d.foodLog)?d.foodLog.map(function(f){return f.name||'';}).filter(Boolean).join(', '):'';
-    const fields={'Running Log':d.jRunLog,'Accomplishments':d.jAccomplish,'Improvements':d.jImprov,'Notes':d.jNotes,'Daily Bread':d.spDailyBreadText,'Meditation':d.spMeditationText,'Sermon':d.spSermonText,'Financial Videos':d.gaFinancialText,'Audiobook':d.gaAudiobookText,'Skill Builder':d.gaSkillText,'BP':d.wBPVal,'Weight':d.wWghtVal,'Sleep':d.wSleepVal,'Meds':d.wMedsVal,'Run Notes':d.exRunVal,'Strength Notes':d.exStrengthVal,'Bike':d.exBikeVal,'Walk':d.exWalkVal,'Stretch':d.exStretchVal,'Food Log':foodNames,'Priority 1':d.pt0t,'Priority 2':d.pt1t,'Priority 3':d.pt2t,'Daily Goal 1':d.dg0t,'Daily Goal 2':d.dg1t,'Daily Goal 3':d.dg2t};
+    const fields={'Running Log':d.jRunLog,'Accomplishments':d.jAccomplish,'Improvements':d.jImprov,'Notes':d.jNotes,'Daily Bread':d.spDailyBreadText,'Meditation':d.spMeditationText,'Sermon':d.spSermonText,'Financial Videos':d.gaFinancialText,'Audiobook':d.gaAudiobookText,'Skill Builder':d.gaSkillText,'BP':d.wBPVal,'Weight':d.wWghtVal,'Sleep':d.wSleepVal,'Meds':d.wMedsVal,'Strength Notes':d.exStrengthVal,'Bike':d.exBikeVal,'Walk':d.exWalkVal,'Stretch':d.exStretchVal,'Food Log':foodNames,'Priority 1':d.pt0t,'Priority 2':d.pt1t,'Priority 3':d.pt2t,'Daily Goal 1':d.dg0t,'Daily Goal 2':d.dg1t,'Daily Goal 3':d.dg2t};
     const date=k.replace('planner_','');
     const hits=[];
     Object.entries(fields).forEach(([label,val])=>{if(val&&val.toLowerCase().includes(q))hits.push({label,val});});
@@ -7615,7 +7609,8 @@ function copyItemsToNextDay(ids,confirmId){
 function copyToNextDay(){
   save(); // save current day first
   var notes=(document.getElementById('jNotes').value||'').trim();
-  var issues=(document.getElementById('jIssues').value||'').trim();
+  var issuesEl=document.getElementById('jIssues');
+  var issues=(issuesEl?issuesEl.value||'':'').trim();
   if(!notes&&!issues){alert('Nothing to copy — Notes/Ideas and Issues to Fix are both empty.');return;}
   var tomorrow=new Date(today);
   tomorrow.setDate(tomorrow.getDate()+1);
@@ -7717,7 +7712,7 @@ function toggleAddActivity(){
 }
 function cancelAddActivity(){document.getElementById('addActivityForm').style.display='none';editingActivityId=null;}
 function clearActForm(){
-  ['actDate','actType','actTitle','actCode','actDistance','actDuration','actPace','actPower','actHR','actCadence','actCalories','actElevGain','actTemp','actNotes'].forEach(id=>{
+  ['actDate','actType','actTitle','actCode','actDistance','actDuration','actPace','actPower','actHR','actCadence','actCalories','actElevGain','actTemp','actExecScore','actNotes'].forEach(id=>{
     const e=document.getElementById(id);if(e)e.value='';
   });
   document.getElementById('actSource').value='manual';
@@ -7739,6 +7734,7 @@ function getActFormValues(){
     elevGain:parseFloat(document.getElementById('actElevGain').value)||0,
     notes:(document.getElementById('actNotes').value||'').trim(),
     temp:(document.getElementById('actTemp').value||'').trim(),
+    execScore:parseFloat(document.getElementById('actExecScore').value)||0,
     source:document.getElementById('actSource').value
   };
 }
@@ -7792,6 +7788,7 @@ function editActivity(id){
   document.getElementById('actCalories').value=act.calories||'';
   document.getElementById('actElevGain').value=act.elevGain||'';
   document.getElementById('actTemp').value=act.temp||'';
+  document.getElementById('actExecScore').value=act.execScore||'';
   document.getElementById('actNotes').value=act.notes||'';
   document.getElementById('actSource').value=act.source||'manual';
   f.style.display='block';
@@ -8268,6 +8265,7 @@ function renderActivities(){
     if(a.calories)stats.push('<span class="act-stat">&#x1F525; <strong>'+a.calories+'</strong> cal</span>');
     if(a.elevGain)stats.push('<span class="act-stat">&#x26F0; <strong>'+a.elevGain+'</strong> ft</span>');
     if(a.temp)stats.push('<span class="act-stat">&#x1F321;&#xFE0F; <strong>'+a.temp+'</strong>°F</span>');
+    if(a.execScore)stats.push('<span class="act-stat">&#x1F3AF; <strong>'+a.execScore+'</strong>/100</span>');
     if(a.activityCode)stats.push('<span class="act-stat">&#x1F194; <strong>'+escHtml(a.activityCode)+'</strong></span>');
     var collapsed=actCollapsed.has(a.id);
     var chevron=collapsed?'&#x25B6;':'&#x25BC;';
