@@ -1248,6 +1248,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <div><label class="act-label">Cadence (spm)</label><input type="number" id="actCadence" class="act-input" placeholder="0"></div>
       <div><label class="act-label">Calories</label><input type="number" id="actCalories" class="act-input" placeholder="0"></div>
       <div><label class="act-label">Elev Gain (ft)</label><input type="number" id="actElevGain" class="act-input" placeholder="0"></div>
+      <div><label class="act-label">Temp (°F)</label><input type="number" id="actTemp" class="act-input" placeholder="e.g. 68"></div>
       <div><label class="act-label">Source</label>
         <select id="actSource" class="act-input">
           <option value="manual">Manual</option><option value="garmin">Garmin</option><option value="stryd">Stryd</option>
@@ -7716,7 +7717,7 @@ function toggleAddActivity(){
 }
 function cancelAddActivity(){document.getElementById('addActivityForm').style.display='none';editingActivityId=null;}
 function clearActForm(){
-  ['actDate','actType','actTitle','actCode','actDistance','actDuration','actPace','actPower','actHR','actCadence','actCalories','actElevGain','actNotes'].forEach(id=>{
+  ['actDate','actType','actTitle','actCode','actDistance','actDuration','actPace','actPower','actHR','actCadence','actCalories','actElevGain','actTemp','actNotes'].forEach(id=>{
     const e=document.getElementById(id);if(e)e.value='';
   });
   document.getElementById('actSource').value='manual';
@@ -7737,6 +7738,7 @@ function getActFormValues(){
     calories:parseFloat(document.getElementById('actCalories').value)||0,
     elevGain:parseFloat(document.getElementById('actElevGain').value)||0,
     notes:(document.getElementById('actNotes').value||'').trim(),
+    temp:(document.getElementById('actTemp').value||'').trim(),
     source:document.getElementById('actSource').value
   };
 }
@@ -7789,6 +7791,7 @@ function editActivity(id){
   document.getElementById('actCadence').value=act.cadence||'';
   document.getElementById('actCalories').value=act.calories||'';
   document.getElementById('actElevGain').value=act.elevGain||'';
+  document.getElementById('actTemp').value=act.temp||'';
   document.getElementById('actNotes').value=act.notes||'';
   document.getElementById('actSource').value=act.source||'manual';
   f.style.display='block';
@@ -8264,6 +8267,7 @@ function renderActivities(){
     if(a.cadence)stats.push('<span class="act-stat">&#x1F9B5; <strong>'+a.cadence+'</strong> spm</span>');
     if(a.calories)stats.push('<span class="act-stat">&#x1F525; <strong>'+a.calories+'</strong> cal</span>');
     if(a.elevGain)stats.push('<span class="act-stat">&#x26F0; <strong>'+a.elevGain+'</strong> ft</span>');
+    if(a.temp)stats.push('<span class="act-stat">&#x1F321;&#xFE0F; <strong>'+a.temp+'</strong>°F</span>');
     if(a.activityCode)stats.push('<span class="act-stat">&#x1F194; <strong>'+escHtml(a.activityCode)+'</strong></span>');
     var collapsed=actCollapsed.has(a.id);
     var chevron=collapsed?'&#x25B6;':'&#x25BC;';
