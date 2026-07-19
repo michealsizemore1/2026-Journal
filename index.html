@@ -4972,7 +4972,8 @@ function submitAskJournal(){
   allPlannerKeys.sort((a,b)=>b.localeCompare(a));
   for(let ki=0;ki<allPlannerKeys.length;ki++){
     const r=localStorage.getItem(allPlannerKeys[ki]);
-    const d=new Date(allPlannerKeys[ki].replace('planner_','')+'T00:00:00');
+    const _pDateKey=allPlannerKeys[ki].replace('planner_','');
+    const d=new Date(_pDateKey+'T00:00:00');
     if(!r)continue;
     const dd=JSON.parse(r);
     const label=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
@@ -4996,8 +4997,8 @@ function submitAskJournal(){
     const waterAmt=parseFloat(dd.waterOz)||(parseFloat(dd.waterCount)*8||0);
     if(waterAmt)parts.push('Water: '+waterAmt+' oz');
     // Exercise
-    if(dd.exRun==='green'||dd.exRunVal||dd.exMiles||hasActivityOnDate(k)){
-      var _runActs=getActivities().filter(function(a){return a.date===k&&(a.type||'').toLowerCase().includes('run');});
+    if(dd.exRun==='green'||dd.exRunVal||dd.exMiles||hasActivityOnDate(_pDateKey)){
+      var _runActs=getActivities().filter(function(a){return a.date===_pDateKey&&(a.type||'').toLowerCase().includes('run');});
       let run='Run: '+(_runActs.length?_runActs[0].title||_runActs[0].notes||'✓':(dd.exRunVal||'✓'));
       if(dd.exMiles)run+=' | '+dd.exMiles+' mi';
       if(dd.exPace)run+=' | '+dd.exPace+'/mi';
