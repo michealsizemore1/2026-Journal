@@ -2603,29 +2603,43 @@ function changeDay(n){today.setDate(today.getDate()+n);load();}
 // Streak: counts consecutive qualifying days going backward.
 // If today is not yet done (or has no entry), starts counting from yesterday
 // so the streak is preserved until midnight.
-function streak(fn){
+// Shared per-render cache so multiple streak() calls (Bible/Prayer/Exercise/
+// Water/Videos) don't each re-read + re-parse the same planner_* days from
+// localStorage. Pass the same cache object across all calls in one render pass.
+function _getPlannerDayCached(dateKey,cache){
+  if(cache&&Object.prototype.hasOwnProperty.call(cache,dateKey))return cache[dateKey];
+  let v=null;
+  try{const r=localStorage.getItem('planner_'+dateKey);v=r?JSON.parse(r):null;}catch(e){v=null;}
+  if(cache)cache[dateKey]=v;
+  return v;
+}
+function streak(fn,cache){
+  cache=cache||{};
   let n=0,d=new Date();
   try{
-    const todayRaw=localStorage.getItem('planner_'+dk(d));
-    if(todayRaw){
-      const _todayDK=dk(d);
-      if(!fn(JSON.parse(todayRaw),_todayDK)){
+    const _todayDK=dk(d);
+    const todayData=_getPlannerDayCached(_todayDK,cache);
+    if(todayData){
+      if(!fn(todayData,_todayDK)){
         // Not done today yet — fall back to yesterday (don't break mid-day)
         d.setDate(d.getDate()-1);
-        const ydRaw=localStorage.getItem('planner_'+dk(d));
-        if(!ydRaw||!fn(JSON.parse(ydRaw),dk(d)))return 0;
+        const ydk=dk(d);
+        const ydData=_getPlannerDayCached(ydk,cache);
+        if(!ydData||!fn(ydData,ydk))return 0;
       }
     } else {
       // No entry today — fall back to yesterday
       const yd=new Date(d);yd.setDate(yd.getDate()-1);
-      const ydRaw=localStorage.getItem('planner_'+dk(yd));
-      if(!ydRaw||!fn(JSON.parse(ydRaw),dk(yd)))return 0;
+      const ydk=dk(yd);
+      const ydData=_getPlannerDayCached(ydk,cache);
+      if(!ydData||!fn(ydData,ydk))return 0;
       d=yd;
     }
     for(let i=0;i<365;i++){
-      const r=localStorage.getItem('planner_'+dk(d));
-      if(!r)break;
-      let ok=false;try{ok=fn(JSON.parse(r),dk(d));}catch(e){break;}
+      const ddk=dk(d);
+      const data=_getPlannerDayCached(ddk,cache);
+      if(!data)break;
+      let ok=false;try{ok=fn(data,ddk);}catch(e){break;}
       if(!ok)break;
       n++;
       d.setDate(d.getDate()-1);
@@ -2650,6 +2664,7 @@ function _buildActivityDateIndex(){
 }
 function renderStreaks(){
   const actIdx=_buildActivityDateIndex();
+  const _streakCache={};
   const DEFS=[
     {id:'stBible',  label:'📖',  tip:'Bible',    fn:d=>d.spChronBible==='green'},
     {id:'stPrayer', label:'🙏',  tip:'Prayer',   fn:d=>d.spPrayer==='green'},
@@ -2658,7 +2673,7 @@ function renderStreaks(){
     {id:'stVideos', label:'📈',  tip:'Fin.Videos',fn:d=>d.gaFinancial==='green'}
   ];
   DEFS.forEach(({id,label,tip,fn})=>{
-    const n=streak(fn);
+    const n=streak(fn,_streakCache);
     const el=document.getElementById(id);
     if(!el)return;
     const cls=n>=30?'streak-great':n>=7?'streak-hot':'streak-cold';
