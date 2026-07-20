@@ -2636,11 +2636,24 @@ function streak(fn){
 function hasActivityOnDate(dateKey){
   return getActivities().some(function(a){return a.date===dateKey;});
 }
+// Builds date->bool lookups once so per-day streak checks don't re-parse
+// the full activities log on every iteration (was causing slow rendering).
+function _buildActivityDateIndex(){
+  const acts=getActivities();
+  const any={},run={};
+  acts.forEach(function(a){
+    if(!a.date)return;
+    any[a.date]=true;
+    if((a.type||'').toLowerCase().indexOf('run')!==-1)run[a.date]=true;
+  });
+  return {any:any,run:run};
+}
 function renderStreaks(){
+  const actIdx=_buildActivityDateIndex();
   const DEFS=[
     {id:'stBible',  label:'📖',  tip:'Bible',    fn:d=>d.spChronBible==='green'},
     {id:'stPrayer', label:'🙏',  tip:'Prayer',   fn:d=>d.spPrayer==='green'},
-    {id:'stExercise',label:'🏃', tip:'Exercise', fn:(d,dk)=>d.exRun==='green'||d.exStrength==='green'||d.exBike==='green'||d.exWalk==='green'||hasActivityOnDate(dk)},
+    {id:'stExercise',label:'🏃', tip:'Running',  fn:(d,dk)=>d.exRun==='green'||!!actIdx.run[dk]},
     {id:'stWater',  label:'💧',  tip:'Water',    fn:d=>(parseFloat(d.waterOz)||parseFloat(d.waterCount)*8||0)>0},
     {id:'stVideos', label:'📈',  tip:'Fin.Videos',fn:d=>d.gaFinancial==='green'}
   ];
