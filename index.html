@@ -1641,6 +1641,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <option value="lunch">&#x1F957; Lunch</option>
       <option value="dinner">&#x1F37D;&#xFE0F; Dinner</option>
       <option value="snack">&#x1F34E; Snacks</option>
+      <option value="liquids">&#x1F4A7; Liquids</option>
       <option value="sports">&#x1F4AA; Sports Nutrition</option>
     </select>
     <div style="display:flex;gap:8px;">
@@ -1883,6 +1884,14 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
         <div style="padding:6px 8px 8px;"><textarea id="mnotes-snack" rows="1" placeholder="Snack notes..." oninput="save()" style="width:100%;border:1px solid #e9ecef;border-radius:5px;padding:4px 8px;font-size:0.78rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fafafa;color:#555;"></textarea></div>
       </div>
     </div>
+    <div class="meal-section" id="ms-liquids" data-meal="liquids">
+      <div class="meal-header" onclick="toggleMealSection('liquids')" style="border-left-color:#3498db;">
+        <span>💧 Liquids</span><div class="meal-right"><span class="meal-subtotal" id="st-liquids" style="font-size:0.75rem;color:#888;"></span><button onclick="event.stopPropagation();saveMealFromSection('liquids')" style="background:none;border:none;color:#667eea;font-size:0.9rem;cursor:pointer;padding:0 2px;" title="Save liquids as a meal">&#x1F4BE;</button><button onclick="event.stopPropagation();addFoodItem('liquids')" class="meal-add-btn" style="background:#3498db;">+ Add</button><span class="meal-chevron" id="chev-liquids">▸</span></div>
+      </div>
+      <div class="meal-body" id="mb-liquids" style="display:none;"><div id="foodList-liquids"></div>
+        <div style="padding:6px 8px 8px;"><textarea id="mnotes-liquids" rows="1" placeholder="Liquids notes..." oninput="save()" style="width:100%;border:1px solid #e9ecef;border-radius:5px;padding:4px 8px;font-size:0.78rem;resize:vertical;font-family:inherit;box-sizing:border-box;background:#fafafa;color:#555;"></textarea></div>
+      </div>
+    </div>
     <div class="meal-section" id="ms-sports" data-meal="sports">
       <div class="meal-header" onclick="toggleMealSection('sports')" style="border-left-color:#27ae60;">
         <span>💪 Sports Nutrition</span><div class="meal-right"><span class="meal-subtotal" id="st-sports" style="font-size:0.75rem;color:#888;"></span><button onclick="event.stopPropagation();saveMealFromSection('sports')" style="background:none;border:none;color:#667eea;font-size:0.9rem;cursor:pointer;padding:0 2px;" title="Save sports nutrition as a meal">&#x1F4BE;</button><button onclick="event.stopPropagation();addFoodItem('sports')" class="meal-add-btn" style="background:#27ae60;">+ Add</button><span class="meal-chevron" id="chev-sports">▸</span></div>
@@ -1918,6 +1927,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
         <option value="lunch">🥗 Add to Lunch</option>
         <option value="dinner">🍽️ Add to Dinner</option>
         <option value="snack">🍎 Add to Snacks</option>
+        <option value="liquids">💧 Add to Liquids</option>
         <option value="sports">💪 Add to Sports Nutrition</option>
       </select>
     </div>
@@ -1935,6 +1945,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
           <option value="lunch">&#x1F957; Lunch</option>
           <option value="dinner">&#x1F37D;&#xFE0F; Dinner</option>
           <option value="snack">&#x1F34E; Snacks</option>
+          <option value="liquids">&#x1F4A7; Liquids</option>
           <option value="sports">&#x1F4AA; Sports</option>
         </select>
         <button onclick="aiSearchFood()" style="background:#4338ca;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:0.82rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">Search</button>
@@ -2011,6 +2022,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <option value="lunch">🥗 Lunch</option>
       <option value="dinner">🍽️ Dinner</option>
       <option value="snack">🍎 Snacks</option>
+      <option value="liquids">💧 Liquids</option>
       <option value="sports">💪 Sports Nutrition</option>
     </select>
     <div id="copyDayFoodRow" style="display:none;">
@@ -2041,6 +2053,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <option value="lunch">&#x1F957; Lunch</option>
       <option value="dinner">&#x1F37D;&#xFE0F; Dinner</option>
       <option value="snack">&#x1F34E; Snacks</option>
+      <option value="liquids">&#x1F4A7; Liquids</option>
       <option value="sports">&#x1F4AA; Sports Nutrition</option>
     </select>
     <div style="display:flex;gap:8px;">
@@ -2100,7 +2113,7 @@ function parseBP(s){if(!s)return{sys:0,dia:0};const m=s.match(/(\d+)\s*\/\s*(\d+
 function buildStars(){const ss=document.getElementById('scoreStars');if(!ss)return;ss.innerHTML='';for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star'+(i<=scoreVal?' active':'');s.textContent='★';s.onclick=()=>{scoreVal=(scoreVal===i)?i-1:i;buildStars();save();};ss.appendChild(s);}}
 
 // All text/number fields
-const TXS=['ebayListedCount','ebaySoldCount','ebayRevenue','ebayActionItems','ebayNotes','spDailyBreadText','spMeditationText','spSermonText','gaFinancialText','gaFinancialTime','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jAccomplish','jImprov','jGratitude','jNotes','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports','mnotes-breakfast','mnotes-lunch','mnotes-dinner','mnotes-snack','mnotes-sports'];
+const TXS=['ebayListedCount','ebaySoldCount','ebayRevenue','ebayActionItems','ebayNotes','spDailyBreadText','spMeditationText','spSermonText','gaFinancialText','gaFinancialTime','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jAccomplish','jImprov','jGratitude','jNotes','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports','mnotes-breakfast','mnotes-lunch','mnotes-dinner','mnotes-snack','mnotes-liquids','mnotes-sports'];
 const NMS=['exSteps','wSleepScore'];
 const PTIDS=['pt0','pt1','pt2','dg0','dg1','dg2'];
 
@@ -3313,9 +3326,9 @@ function aiDailyBread(){
 // ══════════════════════════════════════════════════════
 if(!window._foodLog)window._foodLog=[];
 
-const MEALS=['breakfast','lunch','dinner','snack','sports'];
-const MEAL_LABELS={breakfast:'🌅 Breakfast',lunch:'🥗 Lunch',dinner:'🍽️ Dinner',snack:'🍎 Snacks',sports:'💪 Sports Nutrition'};
-const MEAL_HINTS={breakfast:'Food name',lunch:'Food name',dinner:'Food name',snack:'Snack name',sports:'Sports fuel / supplement'};
+const MEALS=['breakfast','lunch','dinner','snack','liquids','sports'];
+const MEAL_LABELS={breakfast:'🌅 Breakfast',lunch:'🥗 Lunch',dinner:'🍽️ Dinner',snack:'🍎 Snacks',liquids:'💧 Liquids',sports:'💪 Sports Nutrition'};
+const MEAL_HINTS={breakfast:'Food name',lunch:'Food name',dinner:'Food name',snack:'Snack name',liquids:'Drink name',sports:'Sports fuel / supplement'};
 
 function _mkMacroCell(labelTxt, field, val, highlight, itemId){
   var lbl=document.createElement('label');
@@ -3789,6 +3802,7 @@ function renderMealsList(){
           +'<option value="lunch"'+(m.category==='lunch'?' selected':'')+'>🥗 Lunch</option>'
           +'<option value="dinner"'+(m.category==='dinner'?' selected':'')+'>🍽️ Dinner</option>'
           +'<option value="snack"'+(m.category==='snack'?' selected':'')+'>🍎 Snacks</option>'
+          +'<option value="liquids"'+(m.category==='liquids'?' selected':'')+'>💧 Liquids</option>'
           +'<option value="sports"'+(m.category==='sports'?' selected':'')+'>💪 Sports Nutrition</option>'
         +'</select>'
         +'<button onclick="loadMeal('+i+')" style="background:#2980b9;color:#fff;border:none;border-radius:5px;padding:4px 9px;font-size:0.78rem;cursor:pointer;">Load</button>'
@@ -3967,7 +3981,7 @@ function aiNutritionCorrelation(){
   var nFat=nLog.reduce(function(a,x){return a+(parseFloat(x.fat)||0);},0)||parseFloat(nData.nuFatVal)||0;
   var nWater=nData.waterOz||(nData.waterCount?nData.waterCount*8:0);
   // Meal breakdown
-  var mealTypes=['breakfast','lunch','dinner','snack','sports'];
+  var mealTypes=['breakfast','lunch','dinner','snack','liquids','sports'];
   var mealLines=[];
   mealTypes.forEach(function(mt){
     var items=nLog.filter(function(x){return x.meal===mt;});
