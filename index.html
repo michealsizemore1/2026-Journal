@@ -2546,6 +2546,7 @@ function load(){
     }
   }
   renderFoodItems();
+  try{renderStreaks();}catch(e){console.error('renderStreaks:',e);}
   // Restore meal planning / nutrition card collapsed state
   (function(){
     var mpBody=document.getElementById('mpBody');
