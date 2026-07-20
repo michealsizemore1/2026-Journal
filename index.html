@@ -658,10 +658,8 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <div class="journaling-section">
   <div class="section-title purple">&#x1F4D3; Journaling</div>
   <div class="journal-grid">
-    <div class="journal-col"><label>&#x1F3C6; Accomplishments</label><textarea id="jAccomplish" placeholder="What did you accomplish today?"></textarea><button type="button" class="mic-btn" onclick="startVoice('jAccomplish',this)" title="Voice input">🎤 Mic</button><button id="undo_jAccomplish" onclick="fieldUndo('jAccomplish')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jAccomplish" onclick="fieldRedo('jAccomplish')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
-    <div class="journal-col"><label>&#x1F4A1; Improvements</label><textarea id="jImprov" placeholder="What could be better tomorrow?"></textarea><button type="button" class="mic-btn" onclick="startVoice('jImprov',this)" title="Voice input">🎤 Mic</button><button id="undo_jImprov" onclick="fieldUndo('jImprov')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jImprov" onclick="fieldRedo('jImprov')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
-    <div class="journal-col"><label>&#x1F64F; Gratitude</label><textarea id="jGratitude" placeholder="What are you grateful for today?&#10;1.&#10;2.&#10;3."></textarea><button type="button" class="mic-btn" style="background:#e67e22;" onclick="startVoice('jGratitude',this)" title="Voice input">🎤 Mic</button><button id="undo_jGratitude" onclick="fieldUndo('jGratitude')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jGratitude" onclick="fieldRedo('jGratitude')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
-    <div class="journal-col"><label>&#x1F4DD; Notes / Ideas</label><textarea id="jNotes" placeholder="Anything else..."></textarea><button type="button" class="mic-btn" onclick="startVoice('jNotes',this)" title="Voice input">🎤 Mic</button><button id="undo_jNotes" onclick="fieldUndo('jNotes')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jNotes" onclick="fieldRedo('jNotes')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
+    <div class="journal-col"><label>&#x1F4D3; Accomplishments, Improvements, Gratitude &amp; Ideas</label><textarea id="jCombined" style="height:220px;" placeholder="&#x1F3C6; Accomplishments:&#10;&#10;&#x1F4A1; Improvements:&#10;&#10;&#x1F64F; Gratitude:&#10;1.&#10;2.&#10;3.&#10;&#10;&#x1F4DD; Notes / Ideas:&#10;"></textarea><button type="button" class="mic-btn" onclick="startVoice('jCombined',this)" title="Voice input">🎤 Mic</button><button id="undo_jCombined" onclick="fieldUndo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jCombined" onclick="fieldRedo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
+    <div style="display:none;"><textarea id="jAccomplish"></textarea><textarea id="jImprov"></textarea><textarea id="jGratitude"></textarea><textarea id="jNotes"></textarea></div>
   </div>
   <!-- Copy to Next Day -->
   <div style="display:flex;align-items:center;gap:10px;margin-top:10px;margin-bottom:2px;">
@@ -2523,6 +2521,7 @@ function load(){
     // Text fields
     TXS.forEach(id=>{const e=document.getElementById(id);if(e)e.value=d[id]||'';});
     NMS.forEach(id=>{const e=document.getElementById(id);if(e)e.value=d[id]||'';});
+    const jcEl=document.getElementById('jCombined');if(jcEl)jcEl.value=buildJournalCombined();
     waterOz=d.waterOz||(d.waterCount?d.waterCount*8:0);updateWaterDisplay();
     scoreVal=d.score||0;buildStars();
   }catch(e){console.error('load fields:',e);}
@@ -2568,6 +2567,35 @@ function attachListeners(){
   NMS.forEach(id=>{const e=document.getElementById(id);if(e)e.oninput=save;});
   renderCustomHabits();
   PTIDS.forEach(id=>{const row=document.getElementById(id);if(row){const tx=row.querySelector('input[type=text]');if(tx)tx.oninput=save;}});
+  const jc=document.getElementById('jCombined');if(jc)jc.oninput=function(){syncJournalCombinedToFields();save();};
+}
+
+// ── Merged Journal block (Accomplishments/Improvements/Gratitude/Ideas) ──
+const JOURNAL_HEADERS=[
+  {key:'jAccomplish',label:'🏆 Accomplishments:'},
+  {key:'jImprov',label:'💡 Improvements:'},
+  {key:'jGratitude',label:'🙏 Gratitude:'},
+  {key:'jNotes',label:'📝 Notes / Ideas:'}
+];
+function buildJournalCombined(){
+  return JOURNAL_HEADERS.map(function(h){
+    const el=document.getElementById(h.key);
+    return h.label+'\n'+((el&&el.value)||'');
+  }).join('\n\n');
+}
+function syncJournalCombinedToFields(){
+  const jc=document.getElementById('jCombined');if(!jc)return;
+  const lines=(jc.value||'').split('\n');
+  const sections={};JOURNAL_HEADERS.forEach(function(h){sections[h.key]='';});
+  let current=null,buf=[];
+  function flush(){if(current)sections[current]=buf.join('\n').replace(/^\n+|\n+$/g,'');buf=[];}
+  lines.forEach(function(line){
+    const hit=JOURNAL_HEADERS.find(function(h){return line.trim()===h.label.trim();});
+    if(hit){flush();current=hit.key;}
+    else if(current){buf.push(line);}
+  });
+  flush();
+  JOURNAL_HEADERS.forEach(function(h){const el=document.getElementById(h.key);if(el)el.value=sections[h.key];});
 }
 
 function changeDay(n){today.setDate(today.getDate()+n);load();}
@@ -4101,7 +4129,7 @@ function fieldUndo(id){
   _undoInProgress=true;
   fh.idx--;
   var el=document.getElementById(id);
-  if(el){el.value=fh.stack[fh.idx];save();}
+  if(el){el.value=fh.stack[fh.idx];if(id==='jCombined')syncJournalCombinedToFields();save();}
   _updateFieldUndo(id);
   setTimeout(function(){_undoInProgress=false;},100);
 }
@@ -4112,7 +4140,7 @@ function fieldRedo(id){
   _undoInProgress=true;
   fh.idx++;
   var el=document.getElementById(id);
-  if(el){el.value=fh.stack[fh.idx];save();}
+  if(el){el.value=fh.stack[fh.idx];if(id==='jCombined')syncJournalCombinedToFields();save();}
   _updateFieldUndo(id);
   setTimeout(function(){_undoInProgress=false;},100);
 }
@@ -4131,7 +4159,7 @@ function _attachFieldUndo(id){
 }
 
 function attachAllFieldUndos(){
-  var ids=['jAccomplish','jImprov','jGratitude','jNotes',
+  var ids=['jCombined',
            'spDailyBreadText','spMeditationText','spSermonText',
            'gaFinancialText','gaAudiobookText','gaSkillText',
            'wBPVal','wPulseVal','wWghtVal','wSleepVal','wMedsVal',
