@@ -585,6 +585,9 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
         <span id="copyTasksConfirm" style="font-size:0.78rem;color:#16a34a;display:none;">✓ Copied!</span>
       </div>
     </div>
+  </div>
+
+  <div class="col">
     <div class="section">
       <div class="section-title purple">&#x1F3AF; Daily Goals</div>
       <div class="priority-item" id="dg0"><div class="tri-check" data-key="dg0c" onclick="triClickPriority(this,'dg0')"></div><input type="text" id="dg0t" placeholder="Goal 1..."></div>
@@ -595,18 +598,15 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
         <span id="copyGoalsConfirm" style="font-size:0.78rem;color:#16a34a;display:none;">✓ Copied!</span>
       </div>
     </div>
-    <div class="section">
-      <div class="section-title teal">&#x1F50D; Daily Review</div>
-      <div class="task-row"><input type="checkbox" id="reviewCheck" onchange="save()" style="width:18px;height:18px;cursor:pointer;accent-color:#667eea;flex-shrink:0;"><label for="reviewCheck">Review tasks, goals &amp; calendar</label></div>
-    </div>
-  </div>
-
-  <div class="col">
   </div>
 </div>
 <div class="day-score-bar" style="flex-wrap:wrap;">
   <label style="font-size:0.92rem;color:#555;font-weight:600;white-space:nowrap;">&#x2B50; Day Score:</label>
   <div id="scoreStars" style="display:flex;gap:4px;flex-shrink:0;"></div>
+  <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#555;margin-left:auto;cursor:pointer;">
+    <input type="checkbox" id="reviewCheck" onchange="save()" style="width:16px;height:16px;cursor:pointer;accent-color:#667eea;flex-shrink:0;">
+    &#x1F50D; Review tasks, goals &amp; calendar
+  </label>
 </div>
 <div class="journaling-section">
   <div class="section-title purple">&#x1F4D3; Journaling</div>
@@ -614,13 +614,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <div class="journal-col"><label>&#x1F4D3; Accomplishments, Improvements, Gratitude &amp; Ideas</label><textarea id="jCombined" style="height:220px;" placeholder="&#x1F3C6; Accomplishments:&#10;&#10;&#x1F4A1; Improvements:&#10;&#10;&#x1F64F; Gratitude:&#10;1.&#10;2.&#10;3.&#10;&#10;&#x1F4DD; Notes / Ideas:&#10;"></textarea><button type="button" class="mic-btn" onclick="startVoice('jCombined',this)" title="Voice input">🎤 Mic</button><button id="undo_jCombined" onclick="fieldUndo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jCombined" onclick="fieldRedo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
     <div style="display:none;"><textarea id="jAccomplish"></textarea><textarea id="jImprov"></textarea><textarea id="jGratitude"></textarea><textarea id="jNotes"></textarea></div>
   </div>
-  <!-- Copy to Next Day -->
-  <div style="display:flex;align-items:center;gap:10px;margin-top:10px;margin-bottom:2px;">
-    <button type="button" onclick="copyToNextDay()" style="background:#4f46e5;color:#fff;border:none;border-radius:7px;padding:6px 16px;font-size:0.82rem;font-weight:600;cursor:pointer;">&#x27A1;&#xFE0F; Copy Notes &amp; Issues to Tomorrow</button>
-    <span id="copyNextDayConfirm" style="font-size:0.78rem;color:#16a34a;display:none;">✓ Copied to tomorrow!</span>
-  </div>
 
-  
   <!-- Personal Journal Archive -->
   <div class="section-title" style="color:#0f766e;margin-top:22px;">&#x1F4DA; Personal Journal Archive</div>
   <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:14px 16px;">
@@ -7749,30 +7743,6 @@ function copyItemsToNextDay(ids,confirmId){
   if(!copied){alert('Nothing to copy — all items are either empty or already completed.');return;}
   localStorage.setItem(tKey,JSON.stringify(tData));
   var conf=document.getElementById(confirmId);
-  if(conf){conf.style.display='inline';setTimeout(function(){conf.style.display='none';},2500);}
-}
-
-function copyToNextDay(){
-  save(); // save current day first
-  var notes=(document.getElementById('jNotes').value||'').trim();
-  var issuesEl=document.getElementById('jIssues');
-  var issues=(issuesEl?issuesEl.value||'':'').trim();
-  if(!notes&&!issues){alert('Nothing to copy — Notes/Ideas and Issues to Fix are both empty.');return;}
-  var tomorrow=new Date(today);
-  tomorrow.setDate(tomorrow.getDate()+1);
-  var tKey='planner_'+dk(tomorrow);
-  var tData={};
-  try{tData=JSON.parse(localStorage.getItem(tKey)||'{}');}catch(e){}
-  if(notes){
-    var existing=(tData.jNotes||'').trim();
-    tData.jNotes=existing?existing+'\n\n— Carried from '+dk(today)+' —\n'+notes:notes;
-  }
-  if(issues){
-    var existingI=(tData.jIssues||'').trim();
-    tData.jIssues=existingI?existingI+'\n\n— Carried from '+dk(today)+' —\n'+issues:issues;
-  }
-  localStorage.setItem(tKey,JSON.stringify(tData));
-  var conf=document.getElementById('copyNextDayConfirm');
   if(conf){conf.style.display='inline';setTimeout(function(){conf.style.display='none';},2500);}
 }
 
