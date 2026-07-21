@@ -934,28 +934,8 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
     <div>
       <h2 style="margin:0;color:#7c3aed;font-size:1.15rem;">&#x1F9D8; Meditation &amp; Stillness</h2>
-      <div style="font-size:0.73rem;color:#888;font-style:italic;margin-top:2px;">&#x201C;Be still, and know that I am God.&#x201D; — Psalm 46:10</div>
     </div>
     <div id="meditTabDate" style="font-size:0.82rem;color:#888;"></div>
-  </div>
-
-  <!-- Scripture Focus -->
-  <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #c4b5fd;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-      <div class="tri-check" data-key="spDailyBread" onclick="triClick(this)" title="Mark Daily Bread complete"></div>
-      <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;">&#x1F4D6; SCRIPTURE FOCUS — Today&#39;s Verse to Meditate On</div>
-      <button class="ai-btn" style="padding:3px 10px;font-size:0.78rem;margin-left:auto;" onclick="aiDailyBread()" title="AI suggest a Daily Bread verse">&#x2728; Suggest</button>
-    </div>
-    <input type="text" id="spDailyBreadText" placeholder="Daily Bread reference..." style="width:100%;border:1px solid #c4b5fd;border-radius:6px;padding:6px 10px;font-size:0.82rem;box-sizing:border-box;margin-bottom:8px;background:rgba(255,255,255,0.6);color:#4c1d95;">
-    <div id="meditScriptureDisplay" style="font-size:1rem;color:#4c1d95;font-style:italic;line-height:1.55;margin-bottom:8px;min-height:28px;">&#x201C;Be still, and know that I am God.&#x201D; — Psalm 46:10</div>
-    <input type="text" id="meditScriptureInput" placeholder="Type or paste a verse to meditate on..."
-      oninput="localStorage.setItem('medit_scripture',this.value);document.getElementById('meditScriptureDisplay').textContent=this.value||'“Be still, and know that I am God.” — Psalm 46:10'"
-      style="width:100%;border:1px solid #c4b5fd;border-radius:7px;padding:7px 10px;font-size:0.85rem;box-sizing:border-box;outline:none;background:rgba(255,255,255,0.6);color:#4c1d95;">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:8px;">
-      <div style="font-size:0.68rem;color:#7c3aed;">&#x1F4A1; Let the word dwell in you. Read slowly, pause, listen, and respond.</div>
-      <button onclick="meditVerseSummary()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:16px;padding:5px 13px;font-size:0.76rem;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 5px rgba(109,40,217,0.3);">&#x2728; Explain This Verse</button>
-    </div>
-    <div id="meditVerseExplain" style="display:none;margin-top:10px;background:rgba(255,255,255,0.75);border:1px solid #c4b5fd;border-radius:8px;padding:11px 13px;font-size:0.84rem;color:#4c1d95;line-height:1.6;white-space:pre-wrap;"></div>
   </div>
 
   <!-- Timer + Breathing Grid -->
@@ -1389,6 +1369,25 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <!-- BIBLE NOTES TAB -->
 <div class="tab-panel" id="tab-bible">
   <div style="padding:12px;max-width:700px;margin:0 auto;">
+
+    <!-- Scripture Focus -->
+    <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #c4b5fd;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div class="tri-check" data-key="spDailyBread" onclick="triClick(this)" title="Mark Daily Bread complete"></div>
+        <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;">&#x1F4D6; SCRIPTURE FOCUS</div>
+        <button class="ai-btn" style="padding:3px 10px;font-size:0.78rem;margin-left:auto;" onclick="aiDailyBread()" title="AI suggest a Daily Bread verse">&#x2728; Suggest</button>
+      </div>
+      <input type="text" id="spDailyBreadText" placeholder="Daily Bread reference..." style="width:100%;border:1px solid #c4b5fd;border-radius:6px;padding:6px 10px;font-size:0.82rem;box-sizing:border-box;margin-bottom:8px;background:rgba(255,255,255,0.6);color:#4c1d95;">
+      <div id="meditScriptureDisplay" style="font-size:1rem;color:#4c1d95;font-style:italic;line-height:1.55;margin-bottom:8px;min-height:28px;">&#x201C;Be still, and know that I am God.&#x201D; — Psalm 46:10</div>
+      <input type="text" id="meditScriptureInput" placeholder="Type or paste a verse to meditate on..."
+        oninput="localStorage.setItem('medit_scripture',this.value);document.getElementById('meditScriptureDisplay').textContent=this.value||'“Be still, and know that I am God.” — Psalm 46:10'"
+        style="width:100%;border:1px solid #c4b5fd;border-radius:7px;padding:7px 10px;font-size:0.85rem;box-sizing:border-box;outline:none;background:rgba(255,255,255,0.6);color:#4c1d95;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:8px;">
+        <div style="font-size:0.68rem;color:#7c3aed;">&#x1F4A1; Let the word dwell in you. Read slowly, pause, listen, and respond.</div>
+        <button onclick="meditVerseSummary()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:16px;padding:5px 13px;font-size:0.76rem;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 5px rgba(109,40,217,0.3);">&#x2728; Explain This Verse</button>
+      </div>
+      <div id="meditVerseExplain" style="display:none;margin-top:10px;background:rgba(255,255,255,0.75);border:1px solid #c4b5fd;border-radius:8px;padding:11px 13px;font-size:0.84rem;color:#4c1d95;line-height:1.6;white-space:pre-wrap;"></div>
+    </div>
 
     <!-- AI Prayer & Meditation Guide -->
     <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
@@ -5027,6 +5026,7 @@ function renderBibleTab(){
   }
   loadBibleEntry();
   renderBibleImages(getBibleDateInput());
+  try{_initScriptureFocus();}catch(e){}
 }
 
 function openSermonLink(){
@@ -7012,9 +7012,7 @@ function renderMeditLog(){
   el.innerHTML=html;
 }
 
-function meditInitTab(){
-  var dl=document.getElementById('meditTabDate');
-  if(dl)dl.textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+function _initScriptureFocus(){
   var verse=localStorage.getItem('medit_scripture')||'';
   var inp=document.getElementById('meditScriptureInput');
   var disp=document.getElementById('meditScriptureDisplay');
@@ -7029,6 +7027,11 @@ function meditInitTab(){
   }
   if(inp)inp.value=verse;
   if(disp&&verse)disp.textContent=verse;
+}
+function meditInitTab(){
+  var dl=document.getElementById('meditTabDate');
+  if(dl)dl.textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  _initScriptureFocus();
   var todayKey=meditTodayKey();
   var notes=localStorage.getItem('medit_notes_'+todayKey)||'';
   var na=document.getElementById('meditNotes');if(na)na.value=notes;
