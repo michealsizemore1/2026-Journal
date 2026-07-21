@@ -932,7 +932,8 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 
   <!-- Header -->
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
-    <div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="tri-check" data-key="spMeditation" onclick="triClick(this)" title="Mark Meditation complete"></div>
       <h2 style="margin:0;color:#7c3aed;font-size:1.15rem;">&#x1F9D8; Meditation &amp; Stillness</h2>
     </div>
     <div id="meditTabDate" style="font-size:0.82rem;color:#888;"></div>
@@ -1377,11 +1378,9 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
         <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;">&#x1F4D6; SCRIPTURE FOCUS</div>
         <button class="ai-btn" style="padding:3px 10px;font-size:0.78rem;margin-left:auto;" onclick="aiDailyBread()" title="AI suggest a Daily Bread verse">&#x2728; Suggest</button>
       </div>
-      <input type="text" id="spDailyBreadText" placeholder="Daily Bread reference..." style="width:100%;border:1px solid #c4b5fd;border-radius:6px;padding:6px 10px;font-size:0.82rem;box-sizing:border-box;margin-bottom:8px;background:rgba(255,255,255,0.6);color:#4c1d95;">
       <div id="meditScriptureDisplay" style="font-size:1rem;color:#4c1d95;font-style:italic;line-height:1.55;margin-bottom:8px;min-height:28px;">&#x201C;Be still, and know that I am God.&#x201D; — Psalm 46:10</div>
-      <input type="text" id="meditScriptureInput" placeholder="Type or paste a verse to meditate on..."
-        oninput="localStorage.setItem('medit_scripture',this.value);document.getElementById('meditScriptureDisplay').textContent=this.value||'“Be still, and know that I am God.” — Psalm 46:10'"
-        style="width:100%;border:1px solid #c4b5fd;border-radius:7px;padding:7px 10px;font-size:0.85rem;box-sizing:border-box;outline:none;background:rgba(255,255,255,0.6);color:#4c1d95;">
+      <input type="text" id="spDailyBreadText" placeholder="Type or paste a verse / Daily Bread reference..."
+        style="width:100%;border:1px solid #c4b5fd;border-radius:7px;padding:7px 10px;font-size:0.85rem;box-sizing:border-box;outline:none;background:rgba(255,255,255,0.6);color:#4c1d95;margin-bottom:8px;">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:8px;">
         <div style="font-size:0.68rem;color:#7c3aed;">&#x1F4A1; Let the word dwell in you. Read slowly, pause, listen, and respond.</div>
         <button onclick="meditVerseSummary()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:16px;padding:5px 13px;font-size:0.76rem;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 5px rgba(109,40,217,0.3);">&#x2728; Explain This Verse</button>
@@ -1393,7 +1392,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
         <div class="tri-check" data-key="spMeditation" onclick="triClick(this)" title="Mark Meditation complete"></div>
-        <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;">&#x2728; AI PRAYER &amp; MEDITATION GUIDE</div>
+        <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;">&#x2728; AI PRAYER</div>
       </div>
       <input type="text" id="spMeditationText" placeholder="Meditation notes..." style="width:100%;max-width:320px;border:1px solid #c4b5fd;border-radius:6px;padding:5px 9px;font-size:0.82rem;box-sizing:border-box;margin-bottom:10px;">
       <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
@@ -2100,7 +2099,14 @@ function triClick(el){
   const cur=_cur0;
   const idx=TRI_STATES.indexOf(cur);
   const next=TRI_STATES[(idx+1)%TRI_STATES.length];
-  applyTriState(el,next);
+  const key=el.dataset.key;
+  if(key){
+    // Some checkboxes (e.g. spMeditation) appear in more than one place —
+    // keep every instance sharing the same key in sync.
+    document.querySelectorAll('.tri-check[data-key="'+key+'"]').forEach(function(e2){applyTriState(e2,next);});
+  } else {
+    applyTriState(el,next);
+  }
   save();
   const wt=document.getElementById('tab-weekly');
   if(wt&&wt.classList.contains('active'))try{renderWeekly();}catch(e){}
@@ -2575,6 +2581,15 @@ function attachListeners(){
   renderCustomHabits();
   PTIDS.forEach(id=>{const row=document.getElementById(id);if(row){const tx=row.querySelector('input[type=text]');if(tx)tx.oninput=save;}});
   const jc=document.getElementById('jCombined');if(jc)jc.oninput=function(){syncJournalCombinedToFields();save();};
+  // spDailyBreadText also doubles as the Scripture Focus verse field — keep
+  // meditScriptureDisplay + the medit_scripture cache in sync as the user types.
+  const sdb=document.getElementById('spDailyBreadText');
+  if(sdb)sdb.oninput=function(){
+    localStorage.setItem('medit_scripture',this.value);
+    const disp=document.getElementById('meditScriptureDisplay');
+    if(disp)disp.textContent=this.value||'“Be still, and know that I am God.” — Psalm 46:10';
+    save();
+  };
 }
 
 // ── Merged Journal block (Accomplishments/Improvements/Gratitude/Ideas) ──
@@ -3379,7 +3394,13 @@ function aiDailyBread(){
     if(data.error){alert('AI error: '+data.error.message);return;}
     const verse=(data.content[0].text||'').trim();
     const el=document.getElementById('spDailyBreadText');
-    if(el){el.value=verse;save();}
+    if(el){
+      el.value=verse;
+      localStorage.setItem('medit_scripture',verse);
+      const disp=document.getElementById('meditScriptureDisplay');
+      if(disp)disp.textContent=verse||'“Be still, and know that I am God.” — Psalm 46:10';
+      save();
+    }
   }).catch(e=>{if(btn){btn.textContent='✨ Suggest';btn.disabled=false;}alert('Error: '+e.message);});
 }
 
@@ -7013,9 +7034,9 @@ function renderMeditLog(){
 }
 
 function _initScriptureFocus(){
-  var verse=localStorage.getItem('medit_scripture')||'';
-  var inp=document.getElementById('meditScriptureInput');
+  var inp=document.getElementById('spDailyBreadText');
   var disp=document.getElementById('meditScriptureDisplay');
+  var verse=(inp&&inp.value)||localStorage.getItem('medit_scripture')||'';
   // try loading from today's planner Daily Bread / Bible notes
   if(!verse){
     var todayKey=meditTodayKey();
@@ -7025,8 +7046,8 @@ function _initScriptureFocus(){
       if(verse&&verse.length>120)verse=verse.slice(0,120)+'…';
     }catch(e){}
   }
-  if(inp)inp.value=verse;
-  if(disp&&verse)disp.textContent=verse;
+  if(inp&&!inp.value)inp.value=verse;
+  if(disp)disp.textContent=verse||'“Be still, and know that I am God.” — Psalm 46:10';
 }
 function meditInitTab(){
   var dl=document.getElementById('meditTabDate');
