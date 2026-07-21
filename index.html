@@ -600,8 +600,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <div class="section">
       <div class="section-title orange">&#x1F64F; Spirituality</div>
       <div class="task-row"><div class="tri-check" data-key="spChronBible" onclick="triClick(this)"></div><label>Chronological Bible</label></div>
-      <div class="task-row"><div class="tri-check" data-key="spDailyBread" onclick="triClick(this)"></div><label>Daily Bread:</label><input type="text" id="spDailyBreadText" placeholder="Reference..."><button class="ai-btn" style="margin-left:6px;padding:3px 10px;font-size:0.78rem;" onclick="aiDailyBread()" title="AI suggest a verse">&#x2728; Suggest</button></div>
-      <div class="task-row"><div class="tri-check" data-key="spMeditation" onclick="triClick(this)"></div><label>Meditation:</label><input type="text" id="spMeditationText" placeholder="Notes..."></div>
       <div class="task-row"><div class="tri-check" data-key="spPrayer" onclick="triClick(this)"></div><label>Daily Prayer</label></div>
       <div class="task-row"><div class="tri-check" data-key="spSermon" onclick="triClick(this)"></div><label>Sermon:</label><input type="text" id="spSermonText" placeholder="Topic/notes..."></div>
     </div>
@@ -935,8 +933,13 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <!-- Header -->
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
     <div>
-      <h2 style="margin:0;color:#7c3aed;font-size:1.15rem;">&#x1F9D8; Meditation &amp; Stillness</h2>
-      <div style="font-size:0.73rem;color:#888;font-style:italic;margin-top:2px;">&#x201C;Be still, and know that I am God.&#x201D; — Psalm 46:10</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <div class="tri-check" data-key="spDailyBread" onclick="triClick(this)" title="Mark Daily Bread complete"></div>
+        <h2 style="margin:0;color:#7c3aed;font-size:1.15rem;">&#x1F9D8; Meditation &amp; Stillness</h2>
+        <button class="ai-btn" style="padding:3px 10px;font-size:0.78rem;" onclick="aiDailyBread()" title="AI suggest a Daily Bread verse">&#x2728; Suggest</button>
+      </div>
+      <input type="text" id="spDailyBreadText" placeholder="Daily Bread reference..." style="margin-top:6px;width:100%;max-width:320px;border:1px solid #c4b5fd;border-radius:6px;padding:5px 9px;font-size:0.82rem;box-sizing:border-box;">
+      <div style="font-size:0.73rem;color:#888;font-style:italic;margin-top:6px;">&#x201C;Be still, and know that I am God.&#x201D; — Psalm 46:10</div>
     </div>
     <div id="meditTabDate" style="font-size:0.82rem;color:#888;"></div>
   </div>
@@ -957,7 +960,11 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 
   <!-- AI Prayer & Meditation Guide -->
   <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
-    <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;margin-bottom:10px;">&#x2728; AI PRAYER &amp; MEDITATION GUIDE</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div class="tri-check" data-key="spMeditation" onclick="triClick(this)" title="Mark Meditation complete"></div>
+      <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;">&#x2728; AI PRAYER &amp; MEDITATION GUIDE</div>
+    </div>
+    <input type="text" id="spMeditationText" placeholder="Meditation notes..." style="width:100%;max-width:320px;border:1px solid #c4b5fd;border-radius:6px;padding:5px 9px;font-size:0.82rem;box-sizing:border-box;margin-bottom:10px;">
     <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
       <button onclick="meditAIPrompt('reflection')"
         style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F33F; Daily Reflection</button>
