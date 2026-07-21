@@ -669,7 +669,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <div class="journaling-section">
   <div class="section-title purple">&#x1F4D3; Journaling</div>
   <div class="journal-grid">
-    <div class="journal-col"><label>&#x1F4D3; Accomplishments, Improvements, Gratitude &amp; Ideas</label><textarea id="jCombined" style="height:220px;" placeholder="&#x1F3C6; Accomplishments:&#10;&#10;&#x1F4A1; Improvements:&#10;&#10;&#x1F64F; Gratitude:&#10;1.&#10;2.&#10;3.&#10;&#10;&#x1F4DD; Notes / Ideas:&#10;"></textarea><button type="button" class="mic-btn" onclick="startVoice('jCombined',this)" title="Voice input">🎤 Mic</button><button id="undo_jCombined" onclick="fieldUndo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jCombined" onclick="fieldRedo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
+    <div class="journal-col"><label>&#x1F4D3; Accomplishments, Improvements, Gratitude &amp; Ideas</label><textarea id="jCombined" style="height:220px;" placeholder="&#x1F3C6; Accomplishments:&#10;&#10;&#x1F4A1; Improvements:&#10;&#10;&#x1F64F; Gratitude:&#10;1.&#10;2.&#10;3.&#10;&#10;&#x1F4DD; Ideas:&#10;"></textarea><button type="button" class="mic-btn" onclick="startVoice('jCombined',this)" title="Voice input">🎤 Mic</button><button id="undo_jCombined" onclick="fieldUndo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jCombined" onclick="fieldRedo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
     <div style="display:none;"><textarea id="jAccomplish"></textarea><textarea id="jImprov"></textarea><textarea id="jGratitude"></textarea><textarea id="jNotes"></textarea></div>
   </div>
 
@@ -2680,7 +2680,7 @@ const JOURNAL_HEADERS=[
   {key:'jAccomplish',label:'🏆 Accomplishments:'},
   {key:'jImprov',label:'💡 Improvements:'},
   {key:'jGratitude',label:'🙏 Gratitude:'},
-  {key:'jNotes',label:'📝 Notes / Ideas:'}
+  {key:'jNotes',label:'📝 Ideas:'}
 ];
 function buildJournalCombined(){
   return JOURNAL_HEADERS.map(function(h){
