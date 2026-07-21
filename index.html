@@ -933,20 +933,20 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <!-- Header -->
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
     <div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <div class="tri-check" data-key="spDailyBread" onclick="triClick(this)" title="Mark Daily Bread complete"></div>
-        <h2 style="margin:0;color:#7c3aed;font-size:1.15rem;">&#x1F9D8; Meditation &amp; Stillness</h2>
-        <button class="ai-btn" style="padding:3px 10px;font-size:0.78rem;" onclick="aiDailyBread()" title="AI suggest a Daily Bread verse">&#x2728; Suggest</button>
-      </div>
-      <input type="text" id="spDailyBreadText" placeholder="Daily Bread reference..." style="margin-top:6px;width:100%;max-width:320px;border:1px solid #c4b5fd;border-radius:6px;padding:5px 9px;font-size:0.82rem;box-sizing:border-box;">
-      <div style="font-size:0.73rem;color:#888;font-style:italic;margin-top:6px;">&#x201C;Be still, and know that I am God.&#x201D; — Psalm 46:10</div>
+      <h2 style="margin:0;color:#7c3aed;font-size:1.15rem;">&#x1F9D8; Meditation &amp; Stillness</h2>
+      <div style="font-size:0.73rem;color:#888;font-style:italic;margin-top:2px;">&#x201C;Be still, and know that I am God.&#x201D; — Psalm 46:10</div>
     </div>
     <div id="meditTabDate" style="font-size:0.82rem;color:#888;"></div>
   </div>
 
   <!-- Scripture Focus -->
   <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #c4b5fd;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
-    <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;margin-bottom:8px;">&#x1F4D6; SCRIPTURE FOCUS — Today&#39;s Verse to Meditate On</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <div class="tri-check" data-key="spDailyBread" onclick="triClick(this)" title="Mark Daily Bread complete"></div>
+      <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;">&#x1F4D6; SCRIPTURE FOCUS — Today&#39;s Verse to Meditate On</div>
+      <button class="ai-btn" style="padding:3px 10px;font-size:0.78rem;margin-left:auto;" onclick="aiDailyBread()" title="AI suggest a Daily Bread verse">&#x2728; Suggest</button>
+    </div>
+    <input type="text" id="spDailyBreadText" placeholder="Daily Bread reference..." style="width:100%;border:1px solid #c4b5fd;border-radius:6px;padding:6px 10px;font-size:0.82rem;box-sizing:border-box;margin-bottom:8px;background:rgba(255,255,255,0.6);color:#4c1d95;">
     <div id="meditScriptureDisplay" style="font-size:1rem;color:#4c1d95;font-style:italic;line-height:1.55;margin-bottom:8px;min-height:28px;">&#x201C;Be still, and know that I am God.&#x201D; — Psalm 46:10</div>
     <input type="text" id="meditScriptureInput" placeholder="Type or paste a verse to meditate on..."
       oninput="localStorage.setItem('medit_scripture',this.value);document.getElementById('meditScriptureDisplay').textContent=this.value||'“Be still, and know that I am God.” — Psalm 46:10'"
@@ -956,39 +956,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
       <button onclick="meditVerseSummary()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border:none;border-radius:16px;padding:5px 13px;font-size:0.76rem;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 5px rgba(109,40,217,0.3);">&#x2728; Explain This Verse</button>
     </div>
     <div id="meditVerseExplain" style="display:none;margin-top:10px;background:rgba(255,255,255,0.75);border:1px solid #c4b5fd;border-radius:8px;padding:11px 13px;font-size:0.84rem;color:#4c1d95;line-height:1.6;white-space:pre-wrap;"></div>
-  </div>
-
-  <!-- AI Prayer & Meditation Guide -->
-  <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-      <div class="tri-check" data-key="spMeditation" onclick="triClick(this)" title="Mark Meditation complete"></div>
-      <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;">&#x2728; AI PRAYER &amp; MEDITATION GUIDE</div>
-    </div>
-    <input type="text" id="spMeditationText" placeholder="Meditation notes..." style="width:100%;max-width:320px;border:1px solid #c4b5fd;border-radius:6px;padding:5px 9px;font-size:0.82rem;box-sizing:border-box;margin-bottom:10px;">
-    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
-      <button onclick="meditAIPrompt('reflection')"
-        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F33F; Daily Reflection</button>
-      <button onclick="meditAIPrompt('prayer')"
-        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F64F; Guided Prayer</button>
-      <button onclick="meditAIPrompt('lectio')"
-        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F4D6; Lectio Divina</button>
-      <button onclick="meditAIPrompt('gratitude')"
-        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F49B; Gratitude Focus</button>
-      <button onclick="meditAIPrompt('body')"
-        style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F9D8; Body Scan</button>
-    </div>
-    <div id="meditAIResult" style="display:none;background:#faf5ff;border:1px solid #d8b4fe;border-radius:9px;padding:14px;font-size:0.88rem;color:#3b0764;line-height:1.6;white-space:pre-wrap;"></div>
-    <!-- Meditation Archive -->
-    <div style="margin-top:12px;">
-      <div onclick="toggleMeditArchive()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#f3e8ff;border:1px solid #d8b4fe;border-radius:8px;padding:9px 12px;">
-        <span style="font-size:0.82rem;font-weight:700;color:#7c3aed;">&#x1F4C1; Meditation Archive</span>
-        <span id="meditArchiveArrow" style="font-size:0.8rem;color:#7c3aed;">&#x25B6;</span>
-      </div>
-      <div id="meditArchivePanel" style="display:none;border:1px solid #d8b4fe;border-top:none;border-radius:0 0 8px 8px;background:#faf5ff;padding:10px 12px;">
-        <div id="meditArchiveList" style="font-size:0.83rem;color:#3b0764;"></div>
-        <div id="meditArchiveEmpty" style="font-size:0.82rem;color:#94a3b8;text-align:center;padding:10px 0;">No sessions saved yet. Tap <strong>Save to Meditation Archive</strong> after generating a guide.</div>
-      </div>
-    </div>
   </div>
 
   <!-- Timer + Breathing Grid -->
@@ -1422,6 +1389,39 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <!-- BIBLE NOTES TAB -->
 <div class="tab-panel" id="tab-bible">
   <div style="padding:12px;max-width:700px;margin:0 auto;">
+
+    <!-- AI Prayer & Meditation Guide -->
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <div class="tri-check" data-key="spMeditation" onclick="triClick(this)" title="Mark Meditation complete"></div>
+        <div style="font-size:0.75rem;font-weight:700;color:#7c3aed;">&#x2728; AI PRAYER &amp; MEDITATION GUIDE</div>
+      </div>
+      <input type="text" id="spMeditationText" placeholder="Meditation notes..." style="width:100%;max-width:320px;border:1px solid #c4b5fd;border-radius:6px;padding:5px 9px;font-size:0.82rem;box-sizing:border-box;margin-bottom:10px;">
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
+        <button onclick="meditAIPrompt('reflection')"
+          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F33F; Daily Reflection</button>
+        <button onclick="meditAIPrompt('prayer')"
+          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F64F; Guided Prayer</button>
+        <button onclick="meditAIPrompt('lectio')"
+          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F4D6; Lectio Divina</button>
+        <button onclick="meditAIPrompt('gratitude')"
+          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F49B; Gratitude Focus</button>
+        <button onclick="meditAIPrompt('body')"
+          style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:7px;padding:6px 12px;font-size:0.82rem;cursor:pointer;font-weight:600;">&#x1F9D8; Body Scan</button>
+      </div>
+      <div id="meditAIResult" style="display:none;background:#faf5ff;border:1px solid #d8b4fe;border-radius:9px;padding:14px;font-size:0.88rem;color:#3b0764;line-height:1.6;white-space:pre-wrap;"></div>
+      <!-- Meditation Archive -->
+      <div style="margin-top:12px;">
+        <div onclick="toggleMeditArchive()" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:#f3e8ff;border:1px solid #d8b4fe;border-radius:8px;padding:9px 12px;">
+          <span style="font-size:0.82rem;font-weight:700;color:#7c3aed;">&#x1F4C1; Meditation Archive</span>
+          <span id="meditArchiveArrow" style="font-size:0.8rem;color:#7c3aed;">&#x25B6;</span>
+        </div>
+        <div id="meditArchivePanel" style="display:none;border:1px solid #d8b4fe;border-top:none;border-radius:0 0 8px 8px;background:#faf5ff;padding:10px 12px;">
+          <div id="meditArchiveList" style="font-size:0.83rem;color:#3b0764;"></div>
+          <div id="meditArchiveEmpty" style="font-size:0.82rem;color:#94a3b8;text-align:center;padding:10px 0;">No sessions saved yet. Tap <strong>Save to Meditation Archive</strong> after generating a guide.</div>
+        </div>
+      </div>
+    </div>
 
     <!-- Bible & Worship Audio -->
     <div class="section" style="margin-bottom:10px;">
