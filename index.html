@@ -508,6 +508,12 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 </nav>
 
 <div class="container">
+<div id="backupReminderBar" style="display:none;background:linear-gradient(135deg,#fff7ed,#ffedd5);border-bottom:1px solid #fdba74;padding:8px 16px;align-items:center;gap:10px;flex-wrap:wrap;font-size:0.82rem;color:#7c2d12;">
+  <span>&#x1F4BE; <span id="backupReminderText">You haven't backed up your journal in a while.</span></span>
+  <button onclick="exportBackup();dismissBackupReminder()" style="background:#c2410c;color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:0.78rem;font-weight:600;cursor:pointer;">Backup Now</button>
+  <button onclick="dismissBackupReminder()" style="background:none;border:1px solid #fdba74;color:#7c2d12;border-radius:6px;padding:4px 10px;font-size:0.78rem;cursor:pointer;">Remind me later</button>
+  <button onclick="document.getElementById('backupReminderBar').style.display='none'" style="background:none;border:none;color:#a16207;font-size:0.9rem;cursor:pointer;margin-left:auto;padding:0 4px;" title="Dismiss">&#x2715;</button>
+</div>
 <div class="header">
   <h1>&#x1F4C5; Daily Planner</h1>
   <div class="date-nav">
@@ -608,9 +614,9 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <div class="streak-item" id="stPrayer"><span></span></div>
   <div class="streak-item" id="stExercise"><span></span></div>
   <div class="streak-item" id="stWater"><span></span></div>
-  <div class="streak-item" id="stVideos"><span></span></div>
 </div>
 <div id="tab-daily" class="tab-panel active">
+<div id="todayGlance" style="display:flex;gap:18px;flex-wrap:wrap;padding:8px 16px;background:#f0f4ff;border-bottom:1px solid #dfe4f5;font-size:0.85rem;font-weight:600;color:#4338ca;"></div>
 <div class="tab-toolbar">
   <div style="display:flex;gap:6px;flex-wrap:wrap;">
     <button class="copy-btn" id="copyDayBtn" onclick="copyDay()">&#x1F4CB; Copy Day</button>
@@ -706,7 +712,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <div class="goals-settings" id="goalsSettings">
       <div class="goal-input-row"><label style="width:110px;">Miles / week</label><input type="number" id="gMiles" min="0" placeholder="e.g. 25"> mi</div>
       <div class="goal-input-row"><label style="width:110px;">Audiobook</label><input type="number" id="gAudio" min="0" placeholder="e.g. 120"> min</div>
-      <div class="goal-input-row"><label style="width:110px;">Fin. Videos</label><input type="number" id="gFin" min="0" placeholder="e.g. 60"> min</div>
       <div class="goal-input-row"><label style="width:110px;">Bible days</label><input type="number" id="gBible" min="0" max="7" placeholder="7"> /7</div>
       <div class="goal-input-row"><label style="width:110px;">Prayer days</label><input type="number" id="gPrayer" min="0" max="7" placeholder="7"> /7</div>
       <div class="goal-input-row"><label style="width:110px;">Exercise days</label><input type="number" id="gExercise" min="0" max="7" placeholder="4"> /7</div>
@@ -1370,6 +1375,12 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <!-- BIBLE NOTES TAB -->
 <div class="tab-panel" id="tab-bible">
   <div style="padding:12px;max-width:700px;margin:0 auto;">
+
+    <!-- Today's Basics: Chronological Bible + Daily Prayer -->
+    <div style="background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;gap:20px;flex-wrap:wrap;">
+      <div class="task-row" style="margin-bottom:0;"><div class="tri-check" data-key="spChronBible" onclick="triClick(this)"></div><label>&#x1F4D6; Chronological Bible</label></div>
+      <div class="task-row" style="margin-bottom:0;"><div class="tri-check" data-key="spPrayer" onclick="triClick(this)"></div><label>&#x1F64F; Daily Prayer</label></div>
+    </div>
 
     <!-- Scripture Focus -->
     <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #c4b5fd;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
@@ -2172,15 +2183,27 @@ function triClickPriority(el,rowId){
   triClick(el);
   const row=document.getElementById(rowId);
   if(row)row.classList.toggle('done',el.dataset.state==='green');
+  updateTodayGlance();
+}
+
+// ── Today at a Glance ────────────────────────────────────────────────────────
+function updateTodayGlance(){
+  const el=document.getElementById('todayGlance');if(!el)return;
+  const doneCount=['pt0','pt1','pt2'].filter(function(id){
+    const row=document.getElementById(id);
+    const chk=row&&row.querySelector('.tri-check');
+    return chk&&chk.dataset.state==='green';
+  }).length;
+  el.innerHTML='<span>&#x2705; '+doneCount+'/3 Priorities</span><span>&#x2B50; Day Score '+scoreVal+'/5</span>';
 }
 
 function updateWaterDisplay(){const cups=(waterOz/8).toFixed(1);const el=document.getElementById('waterDisplay');if(el)el.textContent=waterOz+' oz ('+cups+' cups)';}
 function changeWater(delta){waterOz=Math.max(0,waterOz+delta);updateWaterDisplay();save();}
 function parseBP(s){if(!s)return{sys:0,dia:0};const m=s.match(/(\d+)\s*\/\s*(\d+)/);return m?{sys:+m[1],dia:+m[2]}:{sys:0,dia:0};}
-function buildStars(){const ss=document.getElementById('scoreStars');if(!ss)return;ss.innerHTML='';for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star'+(i<=scoreVal?' active':'');s.textContent='★';s.onclick=()=>{scoreVal=(scoreVal===i)?i-1:i;buildStars();save();};ss.appendChild(s);}}
+function buildStars(){const ss=document.getElementById('scoreStars');if(!ss)return;ss.innerHTML='';for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star'+(i<=scoreVal?' active':'');s.textContent='★';s.onclick=()=>{scoreVal=(scoreVal===i)?i-1:i;buildStars();save();};ss.appendChild(s);}updateTodayGlance();}
 
 // All text/number fields
-const TXS=['spDailyBreadText','spMeditationText','spSermonText','gaFinancialText','gaFinancialTime','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jAccomplish','jImprov','jGratitude','jNotes','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports','mnotes-breakfast','mnotes-lunch','mnotes-dinner','mnotes-snack','mnotes-liquids','mnotes-sports'];
+const TXS=['spDailyBreadText','spMeditationText','spSermonText','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jAccomplish','jImprov','jGratitude','jNotes','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports','mnotes-breakfast','mnotes-lunch','mnotes-dinner','mnotes-snack','mnotes-liquids','mnotes-sports'];
 const NMS=['exSteps','wSleepScore'];
 const PTIDS=['pt0','pt1','pt2','dg0','dg1','dg2'];
 
@@ -2748,8 +2771,7 @@ function renderStreaks(){
     {id:'stBible',  label:'📖',  tip:'Bible',    fn:d=>d.spChronBible==='green'},
     {id:'stPrayer', label:'🙏',  tip:'Prayer',   fn:d=>d.spPrayer==='green'},
     {id:'stExercise',label:'🏃', tip:'Running',  fn:(d,dk)=>d.exRun==='green'||!!actIdx.run[dk]},
-    {id:'stWater',  label:'💧',  tip:'Water',    fn:d=>(parseFloat(d.waterOz)||parseFloat(d.waterCount)*8||0)>0},
-    {id:'stVideos', label:'📈',  tip:'Fin.Videos',fn:d=>d.gaFinancial==='green'}
+    {id:'stWater',  label:'💧',  tip:'Water',    fn:d=>(parseFloat(d.waterOz)||parseFloat(d.waterCount)*8||0)>0}
   ];
   DEFS.forEach(({id,label,tip,fn})=>{
     const n=streak(fn,_streakCache);
@@ -2772,12 +2794,12 @@ function getDM(d,dateKey){
       if(a.pace&&parsePace(a.pace)){actPace+=parsePace(a.pace);actPaceN++;}
     });
   }
-  const bp=parseBP(d.wBPVal);return{miles:actMiles,pace:actPaceN?actPace/actPaceN:0,watts:actWattsN?actWatts/actWattsN:0,time:actTime,calBurned:parseFloat(d.exCalBurned)||0,steps:parseFloat(d.exSteps)||0,score:parseFloat(d.score)||0,weight:parseFloat(d.wWghtVal)||0,sleep:parseMins(d.wSleepVal),sleepScore:parseFloat(d.wSleepScore)||0,calories:parseFloat(d.nuCalVal)||0,water:parseFloat(d.waterOz)||(parseFloat(d.waterCount)*8||0),finVideo:parseMins(d.gaFinancialTime),audiobook:parseMins(d.gaAudiobookTime),skill:parseMins(d.gaSkillTime),skillName:d.gaSkillText||'',bpSys:bp.sys,bpDia:bp.dia,pulse:parseFloat(d.wPulseVal)||0,dogWalk:parseFloat(d.exDogWalkVal)||(d.exDogWalk==='green'?1:0),walk:parseFloat(d.exWalkVal)||(d.exWalk==='green'?1:0),headache:d.wHeadache==='green'?1:0,ctMM:d.ctMentalModels==='green'?1:0,ctAB:d.ctAssumption==='green'?1:0,ctSOT:d.ctSecondOrder==='green'?1:0,ctMMTime:parseMins(d.ctMentalModelsTime||'')};}
-function agg(arr){const t={miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,finVideo:0,audiobook:0,skill:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,walk:0,headache:0,ctMM:0,ctAB:0,ctSOT:0,ctMMTime:0};const c={pace:0,watts:0,score:0,weight:0,sleep:0,sleepScore:0,bp:0,pulse:0};arr.forEach(m=>{t.miles+=m.miles;t.time+=m.time;t.steps+=m.steps;t.calories+=m.calories;t.water+=m.water;t.finVideo+=m.finVideo;t.audiobook+=m.audiobook;t.skill+=m.skill||0;t.dogWalk+=(m.dogWalk||0);t.walk+=(m.walk||0);t.headache+=(m.headache||0);t.ctMM+=(m.ctMM||0);t.ctAB+=(m.ctAB||0);t.ctSOT+=(m.ctSOT||0);t.ctMMTime+=(m.ctMMTime||0);if(m.pace){t.pace+=m.pace;c.pace++;}if(m.watts){t.watts+=m.watts;c.watts++;}if(m.score){t.score+=m.score;c.score++;}if(m.weight){t.weight+=m.weight;c.weight++;}if(m.sleep){t.sleep+=m.sleep;c.sleep++;}if(m.sleepScore){t.sleepScore+=m.sleepScore;c.sleepScore++;}if(m.bpSys){t.bpSys+=m.bpSys;t.bpDia+=m.bpDia;c.bp++;}if(m.pulse){t.pulse+=m.pulse;c.pulse++;}});return{miles:t.miles,pace:c.pace?t.pace/c.pace:0,watts:c.watts?t.watts/c.watts:0,time:t.time,steps:t.steps,calories:t.calories,water:t.water,score:c.score?t.score/c.score:0,weight:c.weight?t.weight/c.weight:0,sleep:c.sleep?t.sleep/c.sleep:0,sleepScore:c.sleepScore?t.sleepScore/c.sleepScore:0,finVideo:t.finVideo,audiobook:t.audiobook,skill:t.skill,bpSys:c.bp?t.bpSys/c.bp:0,bpDia:c.bp?t.bpDia/c.bp:0,pulse:c.pulse?t.pulse/c.pulse:0,dogWalk:t.dogWalk,walk:t.walk,headache:t.headache,ctMM:t.ctMM,ctAB:t.ctAB,ctSOT:t.ctSOT,ctMMTime:t.ctMMTime};}
-function gRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';return`<tr style="${b}"><td>${l}</td><td>${fmtMins(m.finVideo)}</td><td>${fmtMins(m.audiobook)}</td><td>${fmtMins(m.skill)}</td></tr>`;}
+  const bp=parseBP(d.wBPVal);return{miles:actMiles,pace:actPaceN?actPace/actPaceN:0,watts:actWattsN?actWatts/actWattsN:0,time:actTime,calBurned:parseFloat(d.exCalBurned)||0,steps:parseFloat(d.exSteps)||0,score:parseFloat(d.score)||0,weight:parseFloat(d.wWghtVal)||0,sleep:parseMins(d.wSleepVal),sleepScore:parseFloat(d.wSleepScore)||0,calories:parseFloat(d.nuCalVal)||0,water:parseFloat(d.waterOz)||(parseFloat(d.waterCount)*8||0),audiobook:parseMins(d.gaAudiobookTime),skill:parseMins(d.gaSkillTime),skillName:d.gaSkillText||'',bpSys:bp.sys,bpDia:bp.dia,pulse:parseFloat(d.wPulseVal)||0,dogWalk:parseFloat(d.exDogWalkVal)||(d.exDogWalk==='green'?1:0),walk:parseFloat(d.exWalkVal)||(d.exWalk==='green'?1:0),headache:d.wHeadache==='green'?1:0,ctMM:d.ctMentalModels==='green'?1:0,ctAB:d.ctAssumption==='green'?1:0,ctSOT:d.ctSecondOrder==='green'?1:0,ctMMTime:parseMins(d.ctMentalModelsTime||'')};}
+function agg(arr){const t={miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,audiobook:0,skill:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,walk:0,headache:0,ctMM:0,ctAB:0,ctSOT:0,ctMMTime:0};const c={pace:0,watts:0,score:0,weight:0,sleep:0,sleepScore:0,bp:0,pulse:0};arr.forEach(m=>{t.miles+=m.miles;t.time+=m.time;t.steps+=m.steps;t.calories+=m.calories;t.water+=m.water;t.audiobook+=m.audiobook;t.skill+=m.skill||0;t.dogWalk+=(m.dogWalk||0);t.walk+=(m.walk||0);t.headache+=(m.headache||0);t.ctMM+=(m.ctMM||0);t.ctAB+=(m.ctAB||0);t.ctSOT+=(m.ctSOT||0);t.ctMMTime+=(m.ctMMTime||0);if(m.pace){t.pace+=m.pace;c.pace++;}if(m.watts){t.watts+=m.watts;c.watts++;}if(m.score){t.score+=m.score;c.score++;}if(m.weight){t.weight+=m.weight;c.weight++;}if(m.sleep){t.sleep+=m.sleep;c.sleep++;}if(m.sleepScore){t.sleepScore+=m.sleepScore;c.sleepScore++;}if(m.bpSys){t.bpSys+=m.bpSys;t.bpDia+=m.bpDia;c.bp++;}if(m.pulse){t.pulse+=m.pulse;c.pulse++;}});return{miles:t.miles,pace:c.pace?t.pace/c.pace:0,watts:c.watts?t.watts/c.watts:0,time:t.time,steps:t.steps,calories:t.calories,water:t.water,score:c.score?t.score/c.score:0,weight:c.weight?t.weight/c.weight:0,sleep:c.sleep?t.sleep/c.sleep:0,sleepScore:c.sleepScore?t.sleepScore/c.sleepScore:0,audiobook:t.audiobook,skill:t.skill,bpSys:c.bp?t.bpSys/c.bp:0,bpDia:c.bp?t.bpDia/c.bp:0,pulse:c.pulse?t.pulse/c.pulse:0,dogWalk:t.dogWalk,walk:t.walk,headache:t.headache,ctMM:t.ctMM,ctAB:t.ctAB,ctSOT:t.ctSOT,ctMMTime:t.ctMMTime};}
+function gRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';return`<tr style="${b}"><td>${l}</td><td>${fmtMins(m.audiobook)}</td><td>${fmtMins(m.skill)}</td></tr>`;}
 function fRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';return`<tr style="${b}"><td>${l}</td><td>${m.miles?m.miles.toFixed(1):'-'}</td><td>${m.pace?fmtPace(m.pace):'-'}</td><td>${m.watts?Math.round(m.watts):'-'}</td><td>${fmtMins(m.time)}</td><td>${m.steps?Math.round(m.steps):'-'}</td><td>${m.score?m.score.toFixed(1):'-'}</td><td>${m.dogWalk?(Math.round(m.dogWalk*10)/10)%1===0?Math.round(m.dogWalk):+(m.dogWalk.toFixed(1)):'-'}</td><td>${m.walk?(Math.round(m.walk*10)/10)%1===0?Math.round(m.walk):+(m.walk.toFixed(1)):'-'}</td></tr>`;}
 function wRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';const bp=m.bpSys?Math.round(m.bpSys)+'/'+Math.round(m.bpDia):'-';const hd=m.headache?`<span style='color:#2563eb;font-weight:700;'>${t?m.headache+'d':'✓'}</span>`:'-';return`<tr style="${b}"><td>${l}</td><td>${m.weight?m.weight.toFixed(1):'-'}</td><td>${m.sleep?fmtMins(m.sleep):'-'}</td><td>${m.sleepScore?m.sleepScore.toFixed(0):'-'}</td><td>${bp}</td><td>${m.pulse?Math.round(m.pulse):'-'}</td><td>${hd}</td></tr>`;}
-const gH='<table class="summary-table"><thead><tr><th>Period</th><th>Fin. Videos</th><th>Audiobook</th><th>Skill Building</th></tr></thead><tbody>';
+const gH='<table class="summary-table"><thead><tr><th>Period</th><th>Audiobook</th><th>Skill Building</th></tr></thead><tbody>';
 const ctH='<table class="summary-table"><thead><tr><th>Period</th><th>Mental Models</th><th>Assumption Buster</th><th>2nd-Order</th></tr></thead><tbody>';
 function ctRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';return`<tr style="${b}"><td>${l}</td><td>${m.ctMM||'-'}</td><td>${m.ctAB||'-'}</td><td>${m.ctSOT||'-'}</td></tr>`;}
 const fH='<table class="summary-table"><thead><tr><th>Period</th><th>Miles</th><th>Pace</th><th>Watts</th><th>Time</th><th>Steps</th><th>Score</th><th>Dog Walk</th><th>Walk</th></tr></thead><tbody>';
@@ -2932,7 +2954,7 @@ function renderNutritionSpirit(dateKeys,labels,nuContainerId,spirContainerId){
   if(spEl)spEl.innerHTML=mkT(spirH,spirRows,spirRow('TOTAL',totSpir,true));
 }
 
-function renderWeekly(){const ws=wkStart(weekOff2),days=[],lbls=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r=localStorage.getItem('planner_'+dk(d));var _dk=dk(d);days.push(r?getDM(JSON.parse(r),_dk):{miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,finVideo:0,audiobook:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,headache:0});lbls.push(d.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'}));}const we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('weekLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const tot=agg(days);document.getElementById('wGrowth').innerHTML=mkT(gH,days.map((m,i)=>gRow(lbls[i],m)),gRow('TOTAL',tot,true));var wct=document.getElementById('wCritical');if(wct)wct.innerHTML=mkT(ctH,days.map((m,i)=>ctRow(lbls[i],m)),ctRow('TOTAL',tot,true));document.getElementById('wFitness').innerHTML=mkT(fH,days.map((m,i)=>fRow(lbls[i],m)),fRow('TOTAL/AVG',tot,true));document.getElementById('wWellness').innerHTML=mkT(wH,days.map((m,i)=>wRow(lbls[i],m)),wRow('TOTAL/AVG',tot,true));
+function renderWeekly(){const ws=wkStart(weekOff2),days=[],lbls=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r=localStorage.getItem('planner_'+dk(d));var _dk=dk(d);days.push(r?getDM(JSON.parse(r),_dk):{miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,audiobook:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,headache:0});lbls.push(d.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'}));}const we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('weekLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const tot=agg(days);document.getElementById('wGrowth').innerHTML=mkT(gH,days.map((m,i)=>gRow(lbls[i],m)),gRow('TOTAL',tot,true));var wct=document.getElementById('wCritical');if(wct)wct.innerHTML=mkT(ctH,days.map((m,i)=>ctRow(lbls[i],m)),ctRow('TOTAL',tot,true));document.getElementById('wFitness').innerHTML=mkT(fH,days.map((m,i)=>fRow(lbls[i],m)),fRow('TOTAL/AVG',tot,true));document.getElementById('wWellness').innerHTML=mkT(wH,days.map((m,i)=>wRow(lbls[i],m)),wRow('TOTAL/AVG',tot,true));
   const wDayKeys=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);wDayKeys.push(dk(d));}renderNutritionSpirit(wDayKeys,lbls,'wNutrition','wSpirituality');}
 function changeWeekOff(n){weekOff2+=n;renderWeekly();renderGoals();}
 let monthOff2=0;
@@ -2962,10 +2984,9 @@ function renderMonthly(){const now=new Date(),ref=new Date(now.getFullYear(),now
           if(dd.spPrayer==='green')score++;
           if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green')score++;
           if((parseFloat(dd.waterOz)||parseFloat(dd.waterCount)*8||0)>=48)score++;
-          if(dd.gaFinancial==='green')score++;
         }
         cell.classList.add('hm'+score);
-        cell.title=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+': '+score+'/5 habits';
+        cell.title=dt.toLocaleDateString('en-US',{month:'short',day:'numeric'})+': '+score+'/4 habits';
       }
       hmGrid.appendChild(cell);
     }
@@ -2980,7 +3001,36 @@ function renderYearly(){const yr=new Date().getFullYear()+yearOff2;document.getE
   renderNutritionSpirit(yMoKeys,yMoLbls,'yNutrition','ySpirituality');}
 function changeYearOff(n){yearOff2+=n;renderYearly();}
 let dashOff2=0;
-function renderDashboard(){const ws=wkStart(dashOff2),we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('dashLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const lbls=[],ms=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);lbls.push(d.toLocaleDateString('en-US',{weekday:'short'}));const r=localStorage.getItem('planner_'+dk(d));ms.push(r?getDM(JSON.parse(r)):{miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,finVideo:0,audiobook:0,bpSys:0,bpDia:0,pulse:0});}const cfgs=[{k:'weight',l:'Weight',c:'#e74c3c'},{k:'sleep',l:'Sleep',c:'#9b59b6'},{k:'steps',l:'Steps',c:'#2ecc71'},{k:'calories',l:'Calories',c:'#f39c12'},{k:'water',l:'Water',c:'#3498db'},{k:'score',l:'Day Score',c:'#f0b429'},{k:'miles',l:'Miles',c:'#1abc9c'},{k:'pace',l:'Pace',c:'#e67e22'},{k:'watts',l:'Watts',c:'#8e44ad'},{k:'time',l:'Exer. Time',c:'#16a085'},{k:'finVideo',l:'Fin. Video',c:'#2980b9'},{k:'audiobook',l:'Audiobook',c:'#27ae60'},{k:'skill',l:'Skill Time',c:'#e91e8c'}];const grid=document.getElementById('dashGrid');grid.innerHTML='';cfgs.forEach(({k,l,c})=>{const id='ch_'+k;const card=document.createElement('div');card.className='dash-card';card.innerHTML='<h3>'+l+'</h3><canvas id="'+id+'"></canvas>';grid.appendChild(card);if(charts[id]){charts[id].destroy();delete charts[id];}const ctx=document.getElementById(id).getContext('2d');charts[id]=new Chart(ctx,{type:'line',data:{labels:lbls,datasets:[{data:ms.map(m=>m[k]||0),borderColor:c,backgroundColor:c+'22',tension:0.3,fill:true,pointRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}},animation:false}});});}
+function renderDashboard(){const ws=wkStart(dashOff2),we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('dashLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const lbls=[],ms=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);lbls.push(d.toLocaleDateString('en-US',{weekday:'short'}));const r=localStorage.getItem('planner_'+dk(d));ms.push(r?getDM(JSON.parse(r)):{miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,audiobook:0,bpSys:0,bpDia:0,pulse:0});}const cfgs=[{k:'weight',l:'Weight',c:'#e74c3c'},{k:'sleep',l:'Sleep',c:'#9b59b6'},{k:'steps',l:'Steps',c:'#2ecc71'},{k:'calories',l:'Calories',c:'#f39c12'},{k:'water',l:'Water',c:'#3498db'},{k:'score',l:'Day Score',c:'#f0b429'},{k:'miles',l:'Miles',c:'#1abc9c'},{k:'pace',l:'Pace',c:'#e67e22'},{k:'watts',l:'Watts',c:'#8e44ad'},{k:'time',l:'Exer. Time',c:'#16a085'},{k:'audiobook',l:'Audiobook',c:'#27ae60'},{k:'skill',l:'Skill Time',c:'#e91e8c'}];const grid=document.getElementById('dashGrid');grid.innerHTML='';cfgs.forEach(({k,l,c})=>{const id='ch_'+k;const card=document.createElement('div');card.className='dash-card';card.innerHTML='<h3>'+l+'</h3><canvas id="'+id+'"></canvas>';grid.appendChild(card);if(charts[id]){charts[id].destroy();delete charts[id];}const ctx=document.getElementById(id).getContext('2d');charts[id]=new Chart(ctx,{type:'line',data:{labels:lbls,datasets:[{data:ms.map(m=>m[k]||0),borderColor:c,backgroundColor:c+'22',tension:0.3,fill:true,pointRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:false}},animation:false}});});renderHabitStreakChart(ws);}
+
+// Weekly habit trend: days-hit (0-7) for Bible / Prayer / Exercise / Water over the dashboard week.
+function renderHabitStreakChart(ws){
+  var habitDefs=[
+    {k:'bible',   l:'Bible',    c:'#f0b429', fn:function(d,dateKey){return d.spChronBible==='green';}},
+    {k:'prayer',  l:'Prayer',   c:'#8e44ad', fn:function(d,dateKey){return d.spPrayer==='green';}},
+    {k:'exercise',l:'Exercise', c:'#e67e22', fn:function(d,dateKey){return d.exRun==='green'||d.exStrength==='green'||d.exBike==='green'||d.exWalk==='green'||hasActivityOnDate(dateKey);}},
+    {k:'water',   l:'Water',    c:'#3498db', fn:function(d){return (parseFloat(d.waterOz)||parseFloat(d.waterCount)*8||0)>0;}}
+  ];
+  var counts=habitDefs.map(function(){return 0;});
+  for(var i=0;i<7;i++){
+    var d=new Date(ws);d.setDate(ws.getDate()+i);
+    var dateKey=dk(d);
+    var r=localStorage.getItem('planner_'+dateKey);
+    if(!r)continue;
+    var dd=JSON.parse(r);
+    habitDefs.forEach(function(h,idx){if(h.fn(dd,dateKey))counts[idx]++;});
+  }
+  var grid=document.getElementById('dashGrid');
+  if(!grid)return;
+  var id='ch_habitStreaks';
+  var card=document.createElement('div');
+  card.className='dash-card';
+  card.innerHTML='<h3>Habit Streaks (days this week)</h3><canvas id="'+id+'"></canvas>';
+  grid.appendChild(card);
+  if(charts[id]){charts[id].destroy();delete charts[id];}
+  var ctx=document.getElementById(id).getContext('2d');
+  charts[id]=new Chart(ctx,{type:'bar',data:{labels:habitDefs.map(function(h){return h.l;}),datasets:[{data:counts,backgroundColor:habitDefs.map(function(h){return h.c;}),borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:7,ticks:{stepSize:1}}},animation:false}});
+}
 
 // ── BP Trend Chart ────────────────────────────────────────────────────────────
 function renderBPChart(){
@@ -3265,7 +3315,6 @@ function aiMotivate(){
   if(d.spChronBible==='green')done.push('Bible reading');
   if(d.spPrayer==='green')done.push('prayer');
   if(d.exRun==='green'||d.exStrength==='green'||d.exBike==='green'||d.exWalk==='green')done.push('exercise');
-  if(d.gaFinancial==='green')done.push('financial videos');
   if(d.gaAudiobook==='green')done.push('audiobook');
   const miles=parseFloat(d.exMiles)||0;
   const notes=d.jNotes||d.jAccomplish||'';
@@ -3289,7 +3338,7 @@ function aiGoals(){
   // Gather last 3 weeks of data
   const lines=[];
   for(let w=1;w<=3;w++){
-    const ws=wkStart(-w);let wMiles=0,wBible=0,wEx=0,wAudio=0,wFin=0;
+    const ws=wkStart(-w);let wMiles=0,wBible=0,wEx=0,wAudio=0;
     for(let i=0;i<7;i++){
       const d=new Date(ws);d.setDate(ws.getDate()+i);
       const r=localStorage.getItem('planner_'+dk(d));if(!r)continue;
@@ -3298,9 +3347,8 @@ function aiGoals(){
       if(dd.spChronBible==='green')wBible++;
       if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green')wEx++;
       if(dd.gaAudiobook==='green')wAudio++;
-      if(dd.gaFinancial==='green')wFin++;
     }
-    lines.push('Week -'+w+': '+wMiles.toFixed(1)+' miles, Bible '+wBible+'/7, Exercise '+wEx+'/7, Audiobook '+wAudio+'/7, Fin.Videos '+wFin+'/7');
+    lines.push('Week -'+w+': '+wMiles.toFixed(1)+' miles, Bible '+wBible+'/7, Exercise '+wEx+'/7, Audiobook '+wAudio+'/7');
   }
   const prompt='You are a goal-setting coach. Here is someone\'s last 3 weeks of habit data:\n'+lines.join('\n')+'\n\nBased on these patterns, suggest 3-5 specific, achievable goals for this coming week across fitness, spirituality, and personal growth. Be concrete (e.g. specific miles, days, minutes). Keep it concise and actionable.';
   aiCall(prompt,2000,
@@ -3345,7 +3393,7 @@ function aiWeeklyAnalysis(){
     days.push(r?JSON.parse(r):null);
   }
   const wLabel=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+new Date(ws.getTime()+6*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  let miles=0,bibleD=0,prayD=0,exD=0,audioMin=0,finMin=0,steps=0,logged=0;
+  let miles=0,bibleD=0,prayD=0,exD=0,audioMin=0,steps=0,logged=0;
   days.forEach(d=>{
     if(!d)return;logged++;
     miles+=parseFloat(d.exMiles)||0;
@@ -3353,13 +3401,12 @@ function aiWeeklyAnalysis(){
     if(d.spPrayer==='green')prayD++;
     if(d.exRun==='green'||d.exStrength==='green'||d.exBike==='green'||d.exWalk==='green')exD++;
     audioMin+=parseMins(d.gaAudiobookTime);
-    finMin+=parseMins(d.gaFinancialTime);
     steps+=parseFloat(d.exSteps)||0;
   });
   const fmtM=m=>m>=60?Math.floor(m/60)+'h '+(m%60?m%60+'m':''):m+'m';
   const summary='Week of '+wLabel+' ('+logged+' days logged)\n'
     +'Miles: '+miles.toFixed(1)+'\nExercise days: '+exD+'/7\nBible: '+bibleD+'/7\nPrayer: '+prayD+'/7\n'
-    +'Audiobook: '+fmtM(audioMin)+'\nFinancial videos: '+fmtM(finMin)+'\nSteps: '+Math.round(steps).toLocaleString();
+    +'Audiobook: '+fmtM(audioMin)+'\nSteps: '+Math.round(steps).toLocaleString();
   const prompt='You are a life coach reviewing someone\'s weekly planner data.\n\nWeekly summary:\n'+summary+'\n\nProvide a concise weekly analysis covering: (1) what went well, (2) what could improve, (3) one specific focus for next week. Keep it under 200 words, warm and direct.';
   const box=document.getElementById('aiWeeklyBox');if(box){box.style.display='block';box.textContent='⏳ Analyzing your week...';}
   aiCall(prompt,2000,
@@ -4282,7 +4329,7 @@ function _attachFieldUndo(id){
 function attachAllFieldUndos(){
   var ids=['jCombined',
            'spDailyBreadText','spMeditationText','spSermonText',
-           'gaFinancialText','gaAudiobookText','gaSkillText',
+           'gaAudiobookText','gaSkillText',
            'wBPVal','wPulseVal','wWghtVal','wSleepVal','wMedsVal',
            'exStrengthVal','exBikeVal','exWalkVal'];
   ids.forEach(_attachFieldUndo);
@@ -5150,7 +5197,6 @@ function submitAskJournal(){
     if(dd.spPrayer==='green')parts.push('Daily Prayer: ✓ completed');
     if(dd.spSermon==='green'||dd.spSermonText)parts.push('Sermon: '+(dd.spSermonText||'✓'));
     // Growth & Learning
-    if(dd.gaFinancial==='green'||dd.gaFinancialText)parts.push('Financial Videos: '+(dd.gaFinancialText||'✓')+(dd.gaFinancialTime?' ('+dd.gaFinancialTime+')':''));
     if(dd.gaAudiobook==='green'||dd.gaAudiobookText)parts.push('Audiobook: '+(dd.gaAudiobookText||'✓')+(dd.gaAudiobookTime?' ('+dd.gaAudiobookTime+')':''));
     if(dd.gaSkill==='green'||dd.gaSkillText)parts.push('Skill Builder: '+(dd.gaSkillText||'✓')+(dd.gaSkillTime?' ('+dd.gaSkillTime+')':''));
     // Wellness
@@ -5584,7 +5630,7 @@ function runJournalSearch(){
     if(!k.startsWith('planner_'))continue;
     let d;try{d=JSON.parse(localStorage.getItem(k));}catch{continue;}
     const foodNames=Array.isArray(d.foodLog)?d.foodLog.map(function(f){return f.name||'';}).filter(Boolean).join(', '):'';
-    const fields={'Running Log':d.jRunLog,'Accomplishments':d.jAccomplish,'Improvements':d.jImprov,'Notes':d.jNotes,'Daily Bread':d.spDailyBreadText,'Meditation':d.spMeditationText,'Sermon':d.spSermonText,'Financial Videos':d.gaFinancialText,'Audiobook':d.gaAudiobookText,'Skill Builder':d.gaSkillText,'BP':d.wBPVal,'Weight':d.wWghtVal,'Sleep':d.wSleepVal,'Meds':d.wMedsVal,'Strength Notes':d.exStrengthVal,'Bike':d.exBikeVal,'Walk':d.exWalkVal,'Stretch':d.exStretchVal,'Food Log':foodNames,'Priority 1':d.pt0t,'Priority 2':d.pt1t,'Priority 3':d.pt2t,'Daily Goal 1':d.dg0t,'Daily Goal 2':d.dg1t,'Daily Goal 3':d.dg2t};
+    const fields={'Running Log':d.jRunLog,'Accomplishments':d.jAccomplish,'Improvements':d.jImprov,'Notes':d.jNotes,'Daily Bread':d.spDailyBreadText,'Meditation':d.spMeditationText,'Sermon':d.spSermonText,'Audiobook':d.gaAudiobookText,'Skill Builder':d.gaSkillText,'BP':d.wBPVal,'Weight':d.wWghtVal,'Sleep':d.wSleepVal,'Meds':d.wMedsVal,'Strength Notes':d.exStrengthVal,'Bike':d.exBikeVal,'Walk':d.exWalkVal,'Stretch':d.exStretchVal,'Food Log':foodNames,'Priority 1':d.pt0t,'Priority 2':d.pt1t,'Priority 3':d.pt2t,'Daily Goal 1':d.dg0t,'Daily Goal 2':d.dg1t,'Daily Goal 3':d.dg2t};
     const date=k.replace('planner_','');
     const hits=[];
     Object.entries(fields).forEach(([label,val])=>{if(val&&val.toLowerCase().includes(q))hits.push({label,val});});
@@ -7595,6 +7641,7 @@ function ouRenderList(){
 }
 
 window.addEventListener('load',function(){ouRenderList();});
+window.addEventListener('load',function(){checkBackupReminder();});
 /* ========= END OTHER FILE UPLOADS ========= */
 
 /* ========= SHOE TRACKER ========= */
@@ -7819,6 +7866,7 @@ function exportBackup(){
       window.showSaveFilePicker({suggestedName:filename,types:[{description:'JSON Backup',accept:{'application/json':['.json']}}]})
       .then(function(fh){return fh.createWritable();})
       .then(function(w){return w.write(json).then(function(){return w.close();});})
+      .then(function(){localStorage.setItem('last_backup_ts',new Date().toISOString());})
       .catch(function(err){if(err.name!=='AbortError'){fallbackDownload(json,filename);}});
     } else {
       fallbackDownload(json,filename);
@@ -7832,6 +7880,30 @@ function fallbackDownload(content,filename){
   var a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([content],{type:'application/json'}));
   a.download=filename;a.click();
+  localStorage.setItem('last_backup_ts',new Date().toISOString());
+}
+
+// ── Backup Reminder ──────────────────────────────────────────────────────────
+function dismissBackupReminder(){
+  var snoozeUntil=new Date();snoozeUntil.setDate(snoozeUntil.getDate()+3);
+  localStorage.setItem('backup_reminder_snooze',snoozeUntil.toISOString());
+  var bar=document.getElementById('backupReminderBar');if(bar)bar.style.display='none';
+}
+function checkBackupReminder(){
+  var bar=document.getElementById('backupReminderBar');if(!bar)return;
+  var snooze=localStorage.getItem('backup_reminder_snooze');
+  if(snooze&&new Date(snooze)>new Date())return;
+  var lastTs=localStorage.getItem('last_backup_ts');
+  var msg;
+  if(!lastTs){
+    msg="You haven't backed up your journal yet.";
+  } else {
+    var days=Math.floor((Date.now()-new Date(lastTs).getTime())/86400000);
+    if(days<7)return;
+    msg='Your last backup was '+days+' days ago.';
+  }
+  var txt=document.getElementById('backupReminderText');if(txt)txt.textContent=msg;
+  bar.style.display='flex';
 }
 function importBackup(ev){
   const file=ev.target.files[0];if(!file)return;
@@ -8989,14 +9061,13 @@ function toggleGoalsSettings(){
 function renderGoals(){
   const g=JSON.parse(localStorage.getItem('weekly_goals')||'{}');
   const ws=wkStart(weekOff2);
-  let miles=0,audioMin=0,finMin=0,bibleD=0,prayerD=0,exD=0;
+  let miles=0,audioMin=0,bibleD=0,prayerD=0,exD=0;
   for(let i=0;i<7;i++){
     const d=new Date(ws);d.setDate(ws.getDate()+i);
     const r=localStorage.getItem('planner_'+dk(d));if(!r)continue;
     const dd=JSON.parse(r);
     miles+=parseFloat(dd.exMiles)||0;
     audioMin+=parseMins(dd.gaAudiobookTime);
-    finMin+=parseMins(dd.gaFinancialTime);
     if(dd.spChronBible==='green')bibleD++;
     if(dd.spPrayer==='green')prayerD++;
     if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green')exD++;
@@ -9004,7 +9075,6 @@ function renderGoals(){
   const actuals=[
     {key:'Miles',label:'Miles',actual:parseFloat(miles.toFixed(1)),unit:'mi',fmt:v=>v.toFixed(1)},
     {key:'Audio',label:'Audiobook',actual:audioMin,unit:'min',fmt:v=>v>=60?Math.floor(v/60)+'h '+(v%60?v%60+'m':''):v+'m'},
-    {key:'Fin',label:'Fin. Videos',actual:finMin,unit:'min',fmt:v=>v>=60?Math.floor(v/60)+'h '+(v%60?v%60+'m':''):v+'m'},
     {key:'Bible',label:'Bible',actual:bibleD,unit:'/7',fmt:v=>v+'/7'},
     {key:'Prayer',label:'Prayer',actual:prayerD,unit:'/7',fmt:v=>v+'/7'},
     {key:'Exercise',label:'Exercise',actual:exD,unit:'/7',fmt:v=>v+'/7'},
@@ -9025,7 +9095,7 @@ function renderGoals(){
 function autoFillWins(){
   const ws=wkStart(revOff2);
   const we=new Date(ws);we.setDate(ws.getDate()+6);
-  let miles=0,runTime=0,bibleD=0,prayerD=0,exD=0,finMin=0,audioMin=0,steps=0,logged=0;
+  let miles=0,runTime=0,bibleD=0,prayerD=0,exD=0,audioMin=0,steps=0,logged=0;
   let bpReadings=[];
   for(let i=0;i<7;i++){
     const d=new Date(ws);d.setDate(ws.getDate()+i);
@@ -9034,7 +9104,6 @@ function autoFillWins(){
     miles+=parseFloat(dd.exMiles)||0;
     runTime+=parseMins(dd.exTotalTime);
     steps+=parseFloat(dd.exSteps)||0;
-    finMin+=parseMins(dd.gaFinancialTime);
     audioMin+=parseMins(dd.gaAudiobookTime);
     if(dd.spChronBible==='green')bibleD++;
     if(dd.spPrayer==='green')prayerD++;
@@ -9056,7 +9125,6 @@ function autoFillWins(){
   lines.push('  • Prayer: '+prayerD+'/7 days');
   lines.push('');
   lines.push('📈 GROWTH');
-  if(finMin>0)lines.push('  • Financial videos: '+fmtMins(finMin));
   if(audioMin>0)lines.push('  • Audiobook: '+fmtMins(audioMin));
   if(bpReadings.length>0){
     const avgSys=Math.round(bpReadings.reduce((s,b)=>s+b.sys,0)/bpReadings.length);
