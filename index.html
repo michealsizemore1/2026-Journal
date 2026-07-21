@@ -497,7 +497,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <div class="hm-sidebar-header">More Tabs</div>
   <button id="hm-activities" class="hm-nav-btn" onclick="hmSwitch('activities',event)">&#x1F3C3; Activities</button>
   <button id="hm-bible" class="hm-nav-btn" onclick="hmSwitch('bible',event)">&#x1F4D6; Bible</button>
-  <button id="hm-file-uploads" class="hm-nav-btn" onclick="hmSwitch('file-uploads',event)">&#x1F4C1; File Uploads</button>
+  <button id="hm-file-uploads" class="hm-nav-btn" onclick="hmSwitch('file-uploads',event)">&#x1F4C1; Uploads</button>
   <button id="hm-habits" class="hm-nav-btn" onclick="hmSwitch('habits',event)">&#x1F501; Habits</button>
   <button id="hm-library" class="hm-nav-btn" onclick="hmSwitch('library',event)">&#x1F4DA; Library</button>
   <button id="hm-meditate" class="hm-nav-btn" onclick="hmSwitch('meditate',event)">&#x1F9D8; Meditate</button>
@@ -671,28 +671,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   <div class="journal-grid">
     <div class="journal-col"><label>&#x1F4D3; Accomplishments, Improvements, Gratitude &amp; Ideas</label><textarea id="jCombined" style="height:220px;" placeholder="&#x1F3C6; Accomplishments:&#10;&#10;&#x1F4A1; Improvements:&#10;&#10;&#x1F64F; Gratitude:&#10;1.&#10;2.&#10;3.&#10;&#10;&#x1F4DD; Notes / Ideas:&#10;"></textarea><button type="button" class="mic-btn" onclick="startVoice('jCombined',this)" title="Voice input">🎤 Mic</button><button id="undo_jCombined" onclick="fieldUndo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Undo">↩</button><button id="redo_jCombined" onclick="fieldRedo('jCombined')" disabled style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:0.72rem;padding:2px 6px;cursor:pointer;color:#6b7280;" title="Redo">↪</button></div>
     <div style="display:none;"><textarea id="jAccomplish"></textarea><textarea id="jImprov"></textarea><textarea id="jGratitude"></textarea><textarea id="jNotes"></textarea></div>
-  </div>
-
-  <!-- Personal Journal Archive -->
-  <div class="section-title" style="color:#0f766e;margin-top:22px;">&#x1F4DA; Personal Journal Archive</div>
-  <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:14px 16px;">
-    <div style="font-size:0.78rem;color:#134e4a;margin-bottom:10px;">Upload old journal files to keep them searchable in one place. Supports .txt, .md, .docx, and text-based .pdf files.</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
-      <input type="file" id="jaFileInput" accept=".txt,.md,.docx,.pdf,.html,.htm" multiple style="display:none" onchange="jaUpload(event)">
-      <button type="button" onclick="document.getElementById('jaFileInput').click()" style="background:#0f766e;color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:0.85rem;font-weight:600;cursor:pointer;">&#x1F4C2; Upload Journal Files</button>
-      <span id="jaUploadStatus" style="font-size:0.78rem;color:#0f766e;display:none;"></span>
-    </div>
-    <div style="display:flex;gap:6px;margin-bottom:12px;">
-      <input type="text" id="jaSearchInput" placeholder="Search your journals..." oninput="jaSearch()" style="flex:1;border:1px solid #99f6e4;border-radius:7px;padding:7px 10px;font-size:0.88rem;outline:none;box-sizing:border-box;">
-      <button type="button" onclick="jaSearch()" style="background:#0f766e;color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:0.85rem;cursor:pointer;">&#x1F50D;</button>
-      <button type="button" onclick="document.getElementById('jaSearchInput').value='';jaSearch();" style="background:#e2e8f0;color:#555;border:none;border-radius:7px;padding:7px 10px;font-size:0.82rem;cursor:pointer;">&#x2715;</button>
-    </div>
-    <div id="jaSearchResults" style="display:none;margin-bottom:12px;"></div>
-    <div id="jaFileList" style="display:none;">
-      <div style="font-size:0.75rem;font-weight:700;color:#0f766e;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Uploaded Journals</div>
-      <div id="jaFileListInner"></div>
-    </div>
-    <div id="jaEmpty" style="font-size:0.82rem;color:#94a3b8;text-align:center;padding:10px 0;">No journals uploaded yet.</div>
   </div>
 
 </div>
@@ -1595,7 +1573,32 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <!-- ===== FILE UPLOADS TAB ===== -->
 <div class="tab-panel" id="tab-file-uploads">
   <div style="padding:12px;max-width:700px;margin:0 auto;">
-    <h2 style="margin:0 0 16px;color:#4f46e5;font-size:1.15rem;">&#x1F4C1; File Uploads</h2>
+    <h2 style="margin:0 0 16px;color:#4f46e5;font-size:1.15rem;">&#x1F4C1; Uploads</h2>
+
+    <!-- Personal Journal Archive -->
+    <div class="section-title" style="color:#0f766e;">&#x1F4DA; Personal Journal Archive</div>
+    <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:0.78rem;color:#134e4a;margin-bottom:10px;">Upload old journal files to keep them searchable in one place. Supports .txt, .md, .docx, and text-based .pdf files.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
+        <input type="file" id="jaFileInput" accept=".txt,.md,.docx,.pdf,.html,.htm" multiple style="display:none" onchange="jaUpload(event)">
+        <button type="button" onclick="document.getElementById('jaFileInput').click()" style="background:#0f766e;color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:0.85rem;font-weight:600;cursor:pointer;">&#x1F4C2; Upload Journal Files</button>
+        <span id="jaUploadStatus" style="font-size:0.78rem;color:#0f766e;display:none;"></span>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:12px;">
+        <input type="text" id="jaSearchInput" placeholder="Search your journals..." oninput="jaSearch()" style="flex:1;border:1px solid #99f6e4;border-radius:7px;padding:7px 10px;font-size:0.88rem;outline:none;box-sizing:border-box;">
+        <button type="button" onclick="jaSearch()" style="background:#0f766e;color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:0.85rem;cursor:pointer;">&#x1F50D;</button>
+        <button type="button" onclick="document.getElementById('jaSearchInput').value='';jaSearch();" style="background:#e2e8f0;color:#555;border:none;border-radius:7px;padding:7px 10px;font-size:0.82rem;cursor:pointer;">&#x2715;</button>
+      </div>
+      <div id="jaSearchResults" style="display:none;margin-bottom:12px;"></div>
+      <div id="jaFileList" style="display:none;">
+        <div style="font-size:0.75rem;font-weight:700;color:#0f766e;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Uploaded Journals</div>
+        <div id="jaFileListInner"></div>
+      </div>
+      <div id="jaEmpty" style="font-size:0.82rem;color:#94a3b8;text-align:center;padding:10px 0;">No journals uploaded yet.</div>
+    </div>
+
+    <!-- Other File Uploads -->
+    <div class="section-title" style="color:#4f46e5;">&#x1F4C1; Other Files</div>
     <div style="background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;padding:14px 16px;">
       <div style="font-size:0.78rem;color:#3730a3;margin-bottom:10px;">Upload any file for safekeeping — PDFs, images, documents, spreadsheets, and more. Files are stored on this device.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
