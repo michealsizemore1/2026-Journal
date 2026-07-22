@@ -7521,7 +7521,7 @@ window.addEventListener('load',function(){
   migrateLegacySpiritStreaks(); // restore Bible/Prayer streak history from pre-rename field names
   load(); // Always initialize _foodLog and daily fields from localStorage
   var lastTab=localStorage.getItem('last_active_tab');
-  var validTabs=['daily','weekly','monthly','yearly','dashboard','review','nutrition','habits','meditate','bible','library','activities','skill-log','thinking'];
+  var validTabs=['daily','weekly','monthly','yearly','dashboard','review','nutrition','habits','meditate','bible','library','activities','skill-log','thinking','wellness','file-uploads'];
   if(lastTab&&lastTab!=='daily'&&validTabs.indexOf(lastTab)!==-1){
     if(_hmTabs.includes(lastTab)){hmSwitch(lastTab,null);}
     else{var btn=document.querySelector('[onclick*="switchTab(\''+lastTab+'\'"]');if(btn)btn.click();}
