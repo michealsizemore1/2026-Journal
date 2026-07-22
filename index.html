@@ -1878,6 +1878,34 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     </div>
   </div>
 
+  <!-- DECISION JOURNAL -->
+  <div style="background:linear-gradient(135deg,#fff8f0,#fffefb);border:1px solid #f0c080;border-radius:12px;padding:16px;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+      <div style="font-weight:700;color:#d35400;font-size:1rem;">&#x1F4D3; Decision Journal</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="djCount" style="font-size:0.8rem;color:#888;"></span>
+        <button onclick="toggleAddDecision()" style="background:#d35400;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:0.8rem;cursor:pointer;font-weight:600;">+ Log Decision</button>
+      </div>
+    </div>
+    <div style="font-size:0.78rem;color:#916428;margin-bottom:12px;">Record decisions as you make them — reasoning, confidence, and what you expect to happen — then revisit later to see how your judgment held up.</div>
+    <div id="addDecisionForm" style="display:none;background:#fffaf3;border:1px solid #f0c080;border-radius:10px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:0.85rem;font-weight:700;color:#d35400;margin-bottom:8px;" id="decisionFormTitle">&#x2795; Log a Decision</div>
+      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Date</label><input type="date" id="djDate" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;"></div>
+      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">What decision are you making?</label><textarea id="djDecision" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="e.g. Taking the new job offer..."></textarea></div>
+      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Reasoning</label><textarea id="djReasoning" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="Why? What's driving this decision?"></textarea></div>
+      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Expected outcome</label><textarea id="djExpected" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="What do you think will happen?"></textarea></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        <div style="flex:1;min-width:130px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Confidence (1-10)</label><input type="number" id="djConfidence" min="1" max="10" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;" placeholder="7"></div>
+        <div style="flex:1;min-width:150px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Revisit on</label><input type="date" id="djFollowUp" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;"></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="toggleAddDecision()" style="background:#f0f0f0;color:#555;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:0.88rem;">Cancel</button>
+        <button onclick="saveDecisionEntry()" id="djSaveBtn" style="background:#d35400;color:white;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:0.88rem;font-weight:600;">Save Decision</button>
+      </div>
+    </div>
+    <div id="decisionJournalList"></div>
+  </div>
+
   <!-- THINKING ARCHIVE -->
   <div style="border:1px solid #d0d0d0;border-radius:12px;overflow:hidden;margin-top:4px;">
     <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.tarch-chev').textContent=this.nextElementSibling.style.display==='none'?'▸':'▾';"
@@ -6443,6 +6471,159 @@ function runSecondOrderThinking(){
 }
 
 // ── Thinking Archive ─────────────────────────────────────────────────────────
+// ── Decision Journal ─────────────────────────────────────────────────────────
+var _editingDecisionId=null;
+function getDecisionEntries(){try{return JSON.parse(localStorage.getItem('decision_journal_data')||'[]');}catch(e){return[];}}
+function saveDecisionEntries(arr){localStorage.setItem('decision_journal_data',JSON.stringify(arr));}
+
+function toggleAddDecision(){
+  var f=document.getElementById('addDecisionForm');
+  if(!f)return;
+  var isOpen=f.style.display!=='none';
+  if(isOpen){f.style.display='none';_editingDecisionId=null;return;}
+  var el=function(id){return document.getElementById(id);};
+  if(el('djDate'))el('djDate').value=dk(new Date());
+  if(el('djDecision'))el('djDecision').value='';
+  if(el('djReasoning'))el('djReasoning').value='';
+  if(el('djExpected'))el('djExpected').value='';
+  if(el('djConfidence'))el('djConfidence').value='';
+  if(el('djFollowUp'))el('djFollowUp').value='';
+  var title=document.getElementById('decisionFormTitle');if(title)title.innerHTML='&#x2795; Log a Decision';
+  var btn=document.getElementById('djSaveBtn');if(btn)btn.textContent='Save Decision';
+  f.style.display='block';
+  if(el('djDecision'))el('djDecision').focus();
+}
+
+function editDecisionEntry(id){
+  var entries=getDecisionEntries();
+  var entry=entries.find(function(e){return e.id===id;});
+  if(!entry)return;
+  _editingDecisionId=id;
+  var f=document.getElementById('addDecisionForm');if(!f)return;
+  var el=function(eid){return document.getElementById(eid);};
+  if(el('djDate'))el('djDate').value=entry.date||'';
+  if(el('djDecision'))el('djDecision').value=entry.decision||'';
+  if(el('djReasoning'))el('djReasoning').value=entry.reasoning||'';
+  if(el('djExpected'))el('djExpected').value=entry.expectedOutcome||'';
+  if(el('djConfidence'))el('djConfidence').value=entry.confidence||'';
+  if(el('djFollowUp'))el('djFollowUp').value=entry.followUpDate||'';
+  var title=document.getElementById('decisionFormTitle');if(title)title.innerHTML='&#x270F;&#xFE0F; Edit Decision';
+  var btn=document.getElementById('djSaveBtn');if(btn)btn.textContent='Update Decision';
+  f.style.display='block';
+  f.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function saveDecisionEntry(){
+  var el=function(id){return document.getElementById(id);};
+  var date=el('djDate')&&el('djDate').value;
+  var decision=(el('djDecision')&&el('djDecision').value||'').trim();
+  if(!date){alert('Please select a date.');return;}
+  if(!decision){alert('Please describe the decision.');return;}
+  var entries=getDecisionEntries();
+  var existing=_editingDecisionId?entries.find(function(e){return e.id===_editingDecisionId;}):null;
+  var entry={
+    id:_editingDecisionId||('dj_'+Date.now()),
+    date:date,
+    decision:decision,
+    reasoning:(el('djReasoning')&&el('djReasoning').value||'').trim(),
+    expectedOutcome:(el('djExpected')&&el('djExpected').value||'').trim(),
+    confidence:(el('djConfidence')&&el('djConfidence').value||'').trim(),
+    followUpDate:(el('djFollowUp')&&el('djFollowUp').value||'').trim(),
+    status:existing?existing.status:'pending',
+    actualOutcome:existing?(existing.actualOutcome||''):'',
+    lessonLearned:existing?(existing.lessonLearned||''):'',
+    resolvedDate:existing?(existing.resolvedDate||''):''
+  };
+  if(_editingDecisionId){
+    var idx=entries.findIndex(function(e){return e.id===_editingDecisionId;});
+    if(idx>=0)entries[idx]=entry;else entries.push(entry);
+  } else {
+    entries.push(entry);
+  }
+  saveDecisionEntries(entries);
+  _editingDecisionId=null;
+  var f=document.getElementById('addDecisionForm');if(f)f.style.display='none';
+  renderDecisionJournal();
+}
+
+function deleteDecisionEntry(id){
+  if(!confirm('Delete this decision entry?'))return;
+  var entries=getDecisionEntries().filter(function(e){return e.id!==id;});
+  saveDecisionEntries(entries);
+  renderDecisionJournal();
+}
+
+function toggleReviewDecision(id){
+  var el=document.getElementById('dj_review_'+id);
+  if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+function saveDecisionReview(id){
+  var entries=getDecisionEntries();
+  var idx=entries.findIndex(function(e){return e.id===id;});
+  if(idx<0)return;
+  var outEl=document.getElementById('dj_actual_'+id);
+  var lessonEl=document.getElementById('dj_lesson_'+id);
+  entries[idx].actualOutcome=(outEl&&outEl.value||'').trim();
+  entries[idx].lessonLearned=(lessonEl&&lessonEl.value||'').trim();
+  entries[idx].status='resolved';
+  entries[idx].resolvedDate=dk(new Date());
+  saveDecisionEntries(entries);
+  renderDecisionJournal();
+}
+
+function reopenDecision(id){
+  var entries=getDecisionEntries();
+  var idx=entries.findIndex(function(e){return e.id===id;});
+  if(idx<0)return;
+  entries[idx].status='pending';
+  saveDecisionEntries(entries);
+  renderDecisionJournal();
+}
+
+function renderDecisionJournal(){
+  var container=document.getElementById('decisionJournalList');
+  if(!container)return;
+  var entries=getDecisionEntries().slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
+  var countEl=document.getElementById('djCount');
+  if(countEl){
+    var pending=entries.filter(function(e){return e.status!=='resolved';}).length;
+    countEl.textContent=entries.length+' total \xb7 '+pending+' pending review';
+  }
+  if(!entries.length){
+    container.innerHTML='<div style="text-align:center;color:#aaa;padding:20px 0;font-size:0.85rem;">No decisions logged yet. Tap <strong>+ Log Decision</strong> to record your first one.</div>';
+    return;
+  }
+  container.innerHTML=entries.map(function(e){
+    var isResolved=e.status==='resolved';
+    var dateLabel=e.date?new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
+    var followUpBadge=(!isResolved&&e.followUpDate)?('<span style="background:#fdebd0;color:#d35400;border-radius:8px;padding:2px 8px;font-size:0.7rem;font-weight:700;margin-left:6px;">Revisit '+new Date(e.followUpDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</span>'):'';
+    var confBadge=e.confidence?('<span style="background:#eaf3fb;color:#1a5276;border-radius:8px;padding:2px 8px;font-size:0.7rem;font-weight:700;margin-left:6px;">Confidence '+e.confidence+'/10</span>'):'';
+    var statusBadge=isResolved?'<span style="background:#eafaf1;color:#1e8449;border-radius:8px;padding:2px 8px;font-size:0.7rem;font-weight:700;">&#x2705; Resolved</span>':'<span style="background:#fff3cd;color:#8a6d00;border-radius:8px;padding:2px 8px;font-size:0.7rem;font-weight:700;">&#x23F3; Pending</span>';
+    return '<div style="border:1px solid #f0e0c8;border-radius:9px;padding:12px;margin-bottom:10px;background:#fff;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;flex-wrap:wrap;">'
+      +'<div style="font-size:0.75rem;color:#888;">'+dateLabel+'</div>'
+      +'<div>'+statusBadge+confBadge+followUpBadge+'</div>'
+      +'</div>'
+      +'<div style="font-size:0.9rem;font-weight:600;color:#2c3e50;margin-bottom:6px;">'+escHtml(e.decision)+'</div>'
+      +(e.reasoning?('<div style="font-size:0.82rem;color:#555;margin-bottom:4px;"><strong>Reasoning:</strong> '+escHtml(e.reasoning)+'</div>'):'')
+      +(e.expectedOutcome?('<div style="font-size:0.82rem;color:#555;margin-bottom:4px;"><strong>Expected:</strong> '+escHtml(e.expectedOutcome)+'</div>'):'')
+      +(isResolved?('<div style="font-size:0.82rem;color:#1e8449;margin-bottom:4px;"><strong>Actual outcome:</strong> '+escHtml(e.actualOutcome||'')+'</div>'+(e.lessonLearned?('<div style="font-size:0.82rem;color:#1e8449;margin-bottom:4px;"><strong>Lesson:</strong> '+escHtml(e.lessonLearned)+'</div>'):'')):'')
+      +'<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">'
+      +(!isResolved?('<button onclick="toggleReviewDecision(\''+e.id+'\')" style="background:#d35400;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;">&#x2705; Review Outcome</button>'):('<button onclick="reopenDecision(\''+e.id+'\')" style="background:#f0f0f0;color:#555;border:none;border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;">&#x21BA; Reopen</button>'))
+      +'<button onclick="editDecisionEntry(\''+e.id+'\')" style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;">&#x270E; Edit</button>'
+      +'<button onclick="deleteDecisionEntry(\''+e.id+'\')" style="background:#fef2f2;color:#dc2626;border:1px solid #fca5a5;border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;">&#x2715; Delete</button>'
+      +'</div>'
+      +(!isResolved?('<div id="dj_review_'+e.id+'" style="display:none;margin-top:10px;border-top:1px dashed #eee;padding-top:10px;">'
+        +'<div style="margin-bottom:6px;"><label style="font-size:0.78rem;font-weight:600;color:#555;">What actually happened?</label><textarea id="dj_actual_'+e.id+'" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px;font-size:0.82rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea></div>'
+        +'<div style="margin-bottom:8px;"><label style="font-size:0.78rem;font-weight:600;color:#555;">What did you learn?</label><textarea id="dj_lesson_'+e.id+'" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px;font-size:0.82rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea></div>'
+        +'<button onclick="saveDecisionReview(\''+e.id+'\')" style="background:#1e8449;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:0.8rem;cursor:pointer;font-weight:600;">Save Review</button>'
+        +'</div>'):'')
+      +'</div>';
+  }).join('');
+}
+
 function saveThinkingEntry(type,inputId,outputId){
   var input=(document.getElementById(inputId)||{}).value||'';
   var output=(document.getElementById(outputId)||{}).textContent||'';
@@ -7266,7 +7447,7 @@ function switchTab(tab,e){
   if(tab==='activities'){_actFirstLoad=true;collapseAllActs();loadCurrentPlan();refreshTrainingPreview();}
   if(tab==='bible')renderBibleTab();
   if(tab==='skill-log')renderSkillLog();
-  if(tab==='thinking'){if(typeof mmStart==='function')mmStart();renderThinkingArchive();}
+  if(tab==='thinking'){if(typeof mmStart==='function')mmStart();renderThinkingArchive();renderDecisionJournal();}
   if(tab==='nutrition'){renderFoodItems();renderFavsList();}
   if(tab==='habits'){renderCustomHabits();renderHabitScorecard();var dl=document.getElementById('habitTabDate');if(dl)dl.textContent=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});}
   if(tab==='meditate'){meditInitTab();}
