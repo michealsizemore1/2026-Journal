@@ -663,6 +663,10 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <input type="checkbox" id="reviewCheck" onchange="save()" style="width:16px;height:16px;cursor:pointer;accent-color:#667eea;flex-shrink:0;">
     &#x1F50D; Review Tasks, Goals &amp; Calendar
   </label>
+  <label class="section-title" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+    <input type="checkbox" id="prepJournalCheck" onchange="save()" style="width:16px;height:16px;cursor:pointer;accent-color:#667eea;flex-shrink:0;">
+    &#x1F4D6; Go Through Journal to Prepare for Tomorrow
+  </label>
 </div>
 <div class="day-score-bar" style="flex-wrap:wrap;">
   <label style="font-size:0.92rem;color:#555;font-weight:600;white-space:nowrap;">&#x2B50; Day Score:</label>
@@ -2219,6 +2223,7 @@ function save(){
   document.querySelectorAll('.tri-check').forEach(el=>{if(el.dataset.key)d[el.dataset.key]=el.dataset.state||'';});
   // Plain review checkbox
   const rc=document.getElementById('reviewCheck');if(rc)d.reviewCheck=rc.checked;
+  const pjc=document.getElementById('prepJournalCheck');if(pjc)d.prepJournalCheck=pjc.checked;
   // Text fields
   TXS.forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});
   NMS.forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});
@@ -2616,6 +2621,7 @@ function load(){
     });
     // Plain review checkbox
     const rc=document.getElementById('reviewCheck');if(rc)rc.checked=!!d.reviewCheck;
+    const pjc=document.getElementById('prepJournalCheck');if(pjc)pjc.checked=!!d.prepJournalCheck;
     // Text fields
     TXS.forEach(id=>{const e=document.getElementById(id);if(e)e.value=d[id]||'';});
     NMS.forEach(id=>{const e=document.getElementById(id);if(e)e.value=d[id]||'';});
@@ -2662,6 +2668,7 @@ function load(){
 
 function attachListeners(){
   const rc=document.getElementById('reviewCheck');if(rc)rc.onchange=save;
+  const pjc=document.getElementById('prepJournalCheck');if(pjc)pjc.onchange=save;
   TXS.forEach(id=>{const e=document.getElementById(id);if(e)e.oninput=save;});
   NMS.forEach(id=>{const e=document.getElementById(id);if(e)e.oninput=save;});
   renderCustomHabits();
