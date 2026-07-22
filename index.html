@@ -1833,6 +1833,37 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <div class="tab-panel" id="tab-thinking"><div class="panel">
   <h2 style="margin:0 0 16px;font-size:1.1rem;color:#8e44ad;">&#x1F9E0; Thinking Tools</h2>
 
+  <!-- DECISION JOURNAL -->
+  <div style="background:linear-gradient(135deg,#fff8f0,#fffefb);border:1px solid #f0c080;border-radius:12px;padding:16px;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="tri-check" data-key="ctDecision" onclick="triClick(this)" title="Mark Decision Journal complete"></div>
+        <div style="font-weight:700;color:#d35400;font-size:1rem;">&#x1F4D3; Decision Journal</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="djCount" style="font-size:0.8rem;color:#888;"></span>
+        <button onclick="toggleAddDecision()" style="background:#d35400;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:0.8rem;cursor:pointer;font-weight:600;">+ Log Decision</button>
+      </div>
+    </div>
+    <div style="font-size:0.78rem;color:#916428;margin-bottom:12px;">Record decisions as you make them — reasoning, confidence, and what you expect to happen — then revisit later to see how your judgment held up.</div>
+    <div id="addDecisionForm" style="display:none;background:#fffaf3;border:1px solid #f0c080;border-radius:10px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:0.85rem;font-weight:700;color:#d35400;margin-bottom:8px;" id="decisionFormTitle">&#x2795; Log a Decision</div>
+      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Date</label><input type="date" id="djDate" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;"></div>
+      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">What decision are you making?</label><textarea id="djDecision" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="e.g. Taking the new job offer..."></textarea></div>
+      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Reasoning</label><textarea id="djReasoning" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="Why? What's driving this decision?"></textarea></div>
+      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Expected outcome</label><textarea id="djExpected" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="What do you think will happen?"></textarea></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        <div style="flex:1;min-width:130px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Confidence (1-10)</label><input type="number" id="djConfidence" min="1" max="10" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;" placeholder="7"></div>
+        <div style="flex:1;min-width:150px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Revisit on</label><input type="date" id="djFollowUp" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;"></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button onclick="toggleAddDecision()" style="background:#f0f0f0;color:#555;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:0.88rem;">Cancel</button>
+        <button onclick="saveDecisionEntry()" id="djSaveBtn" style="background:#d35400;color:white;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:0.88rem;font-weight:600;">Save Decision</button>
+      </div>
+    </div>
+    <div id="decisionJournalList"></div>
+  </div>
+
   <!-- MENTAL MODELS FLASHCARD TRAINER -->
   <div style="background:linear-gradient(135deg,#f5eef8,#fdfbff);border:1px solid #d0aaff;border-radius:12px;padding:16px;margin-bottom:16px;">
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
@@ -1876,34 +1907,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
     <div id="sotSaveRow" style="display:none;margin-top:8px;text-align:right;">
       <button onclick="saveThinkingEntry('Second-Order Thinking','sotInput','sotOutput')" style="background:#1e6b3a;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:0.8rem;cursor:pointer;">&#x1F4BE; Save to Archive</button>
     </div>
-  </div>
-
-  <!-- DECISION JOURNAL -->
-  <div style="background:linear-gradient(135deg,#fff8f0,#fffefb);border:1px solid #f0c080;border-radius:12px;padding:16px;margin-bottom:16px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
-      <div style="font-weight:700;color:#d35400;font-size:1rem;">&#x1F4D3; Decision Journal</div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span id="djCount" style="font-size:0.8rem;color:#888;"></span>
-        <button onclick="toggleAddDecision()" style="background:#d35400;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:0.8rem;cursor:pointer;font-weight:600;">+ Log Decision</button>
-      </div>
-    </div>
-    <div style="font-size:0.78rem;color:#916428;margin-bottom:12px;">Record decisions as you make them — reasoning, confidence, and what you expect to happen — then revisit later to see how your judgment held up.</div>
-    <div id="addDecisionForm" style="display:none;background:#fffaf3;border:1px solid #f0c080;border-radius:10px;padding:14px;margin-bottom:14px;">
-      <div style="font-size:0.85rem;font-weight:700;color:#d35400;margin-bottom:8px;" id="decisionFormTitle">&#x2795; Log a Decision</div>
-      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Date</label><input type="date" id="djDate" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;"></div>
-      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">What decision are you making?</label><textarea id="djDecision" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="e.g. Taking the new job offer..."></textarea></div>
-      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Reasoning</label><textarea id="djReasoning" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="Why? What's driving this decision?"></textarea></div>
-      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Expected outcome</label><textarea id="djExpected" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="What do you think will happen?"></textarea></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-        <div style="flex:1;min-width:130px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Confidence (1-10)</label><input type="number" id="djConfidence" min="1" max="10" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;" placeholder="7"></div>
-        <div style="flex:1;min-width:150px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Revisit on</label><input type="date" id="djFollowUp" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;"></div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button onclick="toggleAddDecision()" style="background:#f0f0f0;color:#555;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:0.88rem;">Cancel</button>
-        <button onclick="saveDecisionEntry()" id="djSaveBtn" style="background:#d35400;color:white;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:0.88rem;font-weight:600;">Save Decision</button>
-      </div>
-    </div>
-    <div id="decisionJournalList"></div>
   </div>
 
   <!-- THINKING ARCHIVE -->
