@@ -2749,8 +2749,30 @@ function streak(fn,cache){
 function hasActivityOnDate(dateKey){
   return getActivities().some(function(a){return a.date===dateKey;});
 }
-// Sermon notes now live in the Bible tab's rich Sermon fields (bible_<date> storage),
-// not in the old flat spSermonText field. This reads that store for report/AI text.
+// One-time migration: when "Chronological Bible"/"Daily Prayer" were retired in favor of
+// "Bible & Worship"/"AI Prayer", the code was repointed to the new field names, but already-
+// saved daily records still had their checked days under the OLD field names (spChronBible/
+// spPrayer). That silently zeroed out existing streaks. This copies old green days forward
+// into the new fields (without overwriting any day already marked green under the new name).
+function migrateLegacySpiritStreaks(){
+  if(localStorage.getItem('legacy_spirit_migrated'))return;
+  try{
+    let migrated=0;
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(!k||!k.startsWith('planner_'))continue;
+      const raw=localStorage.getItem(k);
+      if(!raw)continue;
+      let dd;try{dd=JSON.parse(raw);}catch(e){continue;}
+      let changed=false;
+      if(dd.spChronBible==='green'&&dd.spBibleAudio!=='green'){dd.spBibleAudio='green';changed=true;}
+      if(dd.spPrayer==='green'&&dd.spAIPrayer!=='green'){dd.spAIPrayer='green';changed=true;}
+      if(changed){localStorage.setItem(k,JSON.stringify(dd));migrated++;}
+    }
+    localStorage.setItem('legacy_spirit_migrated','1');
+    if(migrated)console.log('Restored legacy Bible/Prayer streak data for '+migrated+' day(s).');
+  }catch(e){console.error('migrateLegacySpiritStreaks error:',e);}
+}
 function getSermonNotes(dateKey){
   try{
     const raw=localStorage.getItem('bible_'+dateKey);
@@ -7501,6 +7523,7 @@ function jaSearch(){
 window.addEventListener('load',function(){jaRenderList();});
 window.addEventListener('load',function(){loadAllTabNotes();});
 window.addEventListener('load',function(){
+  migrateLegacySpiritStreaks(); // restore Bible/Prayer streak history from pre-rename field names
   load(); // Always initialize _foodLog and daily fields from localStorage
   var lastTab=localStorage.getItem('last_active_tab');
   var validTabs=['daily','weekly','monthly','yearly','dashboard','review','nutrition','habits','meditate','bible','library','activities','skill-log','thinking'];
