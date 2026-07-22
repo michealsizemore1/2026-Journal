@@ -1354,12 +1354,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 <div class="tab-panel" id="tab-bible">
   <div style="padding:12px;max-width:700px;margin:0 auto;">
 
-    <!-- Today's Basics: Chronological Bible + Daily Prayer -->
-    <div style="background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;gap:20px;flex-wrap:wrap;">
-      <div class="task-row" style="margin-bottom:0;"><div class="tri-check" data-key="spChronBible" onclick="triClick(this)"></div><label>&#x1F4D6; Chronological Bible</label></div>
-      <div class="task-row" style="margin-bottom:0;"><div class="tri-check" data-key="spPrayer" onclick="triClick(this)"></div><label>&#x1F64F; Daily Prayer</label></div>
-    </div>
-
     <!-- Scripture Focus -->
     <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1px solid #c4b5fd;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
@@ -2771,8 +2765,8 @@ function renderStreaks(){
   const actIdx=_buildActivityDateIndex();
   const _streakCache={};
   const DEFS=[
-    {id:'stBible',  label:'📖',  tip:'Bible',    fn:d=>d.spChronBible==='green'},
-    {id:'stPrayer', label:'🙏',  tip:'Prayer',   fn:d=>d.spPrayer==='green'},
+    {id:'stBible',  label:'📖',  tip:'Bible',    fn:d=>d.spBibleAudio==='green'},
+    {id:'stPrayer', label:'🙏',  tip:'Prayer',   fn:d=>d.spAIPrayer==='green'},
     {id:'stExercise',label:'🏃', tip:'Running',  fn:(d,dk)=>d.exRun==='green'||!!actIdx.run[dk]},
     {id:'stWater',  label:'💧',  tip:'Water',    fn:d=>(parseFloat(d.waterOz)||parseFloat(d.waterCount)*8||0)>0}
   ];
@@ -2864,10 +2858,10 @@ function getNuDay(dateKey){
 function getSpiritDay(dateKey){
   var pr=localStorage.getItem('planner_'+dateKey);
   var pd=pr?JSON.parse(pr):{};
-  // Bible column reflects ONLY the Chronological Bible tri-check on the daily tab
+  // Bible/Prayer columns are driven by the Bible & Worship / AI Prayer checkboxes on the Bible tab
   return{
-    hasBible:pd.spChronBible==='green',
-    hasPrayer:pd.spPrayer==='green',
+    hasBible:pd.spBibleAudio==='green',
+    hasPrayer:pd.spAIPrayer==='green',
     hasSermon:pd.spSermon==='green',
     hasMeditation:pd.spMeditation==='green',
     hasAIPrayer:pd.spAIPrayer==='green',
@@ -2983,8 +2977,8 @@ function renderMonthly(){const now=new Date(),ref=new Date(now.getFullYear(),now
         const r=localStorage.getItem('planner_'+dStr);
         let score=0;
         if(r){const dd=JSON.parse(r);
-          if(dd.spChronBible==='green')score++;
-          if(dd.spPrayer==='green')score++;
+          if(dd.spBibleAudio==='green')score++;
+          if(dd.spAIPrayer==='green')score++;
           if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green')score++;
           if((parseFloat(dd.waterOz)||parseFloat(dd.waterCount)*8||0)>=48)score++;
         }
@@ -3009,8 +3003,8 @@ function renderDashboard(){const ws=wkStart(dashOff2),we=new Date(ws);we.setDate
 // Weekly habit trend: days-hit (0-7) for Bible / Prayer / Exercise / Water over the dashboard week.
 function renderHabitStreakChart(ws){
   var habitDefs=[
-    {k:'bible',   l:'Bible',    c:'#f0b429', fn:function(d,dateKey){return d.spChronBible==='green';}},
-    {k:'prayer',  l:'Prayer',   c:'#8e44ad', fn:function(d,dateKey){return d.spPrayer==='green';}},
+    {k:'bible',   l:'Bible',    c:'#f0b429', fn:function(d,dateKey){return d.spBibleAudio==='green';}},
+    {k:'prayer',  l:'Prayer',   c:'#8e44ad', fn:function(d,dateKey){return d.spAIPrayer==='green';}},
     {k:'exercise',l:'Exercise', c:'#e67e22', fn:function(d,dateKey){return d.exRun==='green'||d.exStrength==='green'||d.exBike==='green'||d.exWalk==='green'||hasActivityOnDate(dateKey);}},
     {k:'water',   l:'Water',    c:'#3498db', fn:function(d){return (parseFloat(d.waterOz)||parseFloat(d.waterCount)*8||0)>0;}}
   ];
@@ -3315,8 +3309,8 @@ function aiMotivate(){
   const d=JSON.parse(localStorage.getItem('planner_'+dk(today))||'{}');
   const dateStr=today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const done=[];
-  if(d.spChronBible==='green')done.push('Bible reading');
-  if(d.spPrayer==='green')done.push('prayer');
+  if(d.spBibleAudio==='green')done.push('Bible reading');
+  if(d.spAIPrayer==='green')done.push('prayer');
   if(d.exRun==='green'||d.exStrength==='green'||d.exBike==='green'||d.exWalk==='green')done.push('exercise');
   if(d.gaAudiobook==='green')done.push('audiobook');
   const miles=parseFloat(d.exMiles)||0;
@@ -3347,7 +3341,7 @@ function aiGoals(){
       const r=localStorage.getItem('planner_'+dk(d));if(!r)continue;
       const dd=JSON.parse(r);
       wMiles+=parseFloat(dd.exMiles)||0;
-      if(dd.spChronBible==='green')wBible++;
+      if(dd.spBibleAudio==='green')wBible++;
       if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green')wEx++;
       if(dd.gaAudiobook==='green')wAudio++;
     }
@@ -3400,8 +3394,8 @@ function aiWeeklyAnalysis(){
   days.forEach(d=>{
     if(!d)return;logged++;
     miles+=parseFloat(d.exMiles)||0;
-    if(d.spChronBible==='green')bibleD++;
-    if(d.spPrayer==='green')prayD++;
+    if(d.spBibleAudio==='green')bibleD++;
+    if(d.spAIPrayer==='green')prayD++;
     if(d.exRun==='green'||d.exStrength==='green'||d.exBike==='green'||d.exWalk==='green')exD++;
     audioMin+=parseMins(d.gaAudiobookTime);
     steps+=parseFloat(d.exSteps)||0;
@@ -3442,7 +3436,7 @@ function aiReviewAnalysis(){
 }
 function changeDashOff(n){dashOff2+=n;renderDashboard();renderBPChart();}
 let revOff2=0;
-function renderReview(){const ws=wkStart(revOff2),we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('revLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const r=localStorage.getItem('review_'+dk(ws)),rv=r?JSON.parse(r):{};['revWins','revImprove','revFocus','revLessons'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=rv[id]||'';});let logged=0,bible=0,prayer=0,ex=0,steps=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r2=localStorage.getItem('planner_'+dk(d));if(!r2)continue;logged++;const dd=JSON.parse(r2);if(dd.spChronBible==='green')bible++;if(dd.spPrayer==='green')prayer++;if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green'||hasActivityOnDate(dk(d)))ex++;steps+=parseFloat(dd.exSteps)||0;}document.getElementById('revStats').innerHTML=[{l:'Days Logged',v:logged+'/7'},{l:'Bible Days',v:bible+'/7'},{l:'Prayer Days',v:prayer+'/7'},{l:'Exercise Days',v:ex+'/7'},{l:'Total Steps',v:Math.round(steps).toLocaleString()}].map(({l,v})=>'<div class="review-stat"><strong>'+v+'</strong>'+l+'</div>').join('');}
+function renderReview(){const ws=wkStart(revOff2),we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('revLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const r=localStorage.getItem('review_'+dk(ws)),rv=r?JSON.parse(r):{};['revWins','revImprove','revFocus','revLessons'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=rv[id]||'';});let logged=0,bible=0,prayer=0,ex=0,steps=0;for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r2=localStorage.getItem('planner_'+dk(d));if(!r2)continue;logged++;const dd=JSON.parse(r2);if(dd.spBibleAudio==='green')bible++;if(dd.spAIPrayer==='green')prayer++;if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green'||hasActivityOnDate(dk(d)))ex++;steps+=parseFloat(dd.exSteps)||0;}document.getElementById('revStats').innerHTML=[{l:'Days Logged',v:logged+'/7'},{l:'Bible Days',v:bible+'/7'},{l:'Prayer Days',v:prayer+'/7'},{l:'Exercise Days',v:ex+'/7'},{l:'Total Steps',v:Math.round(steps).toLocaleString()}].map(({l,v})=>'<div class="review-stat"><strong>'+v+'</strong>'+l+'</div>').join('');}
 function saveReview(){const ws=wkStart(revOff2),d={};['revWins','revImprove','revFocus','revLessons'].forEach(id=>{const e=document.getElementById(id);if(e)d[id]=e.value;});localStorage.setItem('review_'+dk(ws),JSON.stringify(d));const btn=document.querySelector('[onclick="saveReview()"]');if(btn){btn.textContent='Saved!';btn.style.background='#27ae60';setTimeout(()=>{btn.textContent='Save Review';btn.style.background='#667eea';},2000);}}
 function changeRevOff(n){revOff2+=n;renderReview();}
 function aiWeeklyTakeaways(){
@@ -5193,11 +5187,11 @@ function submitAskJournal(){
     const label=d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
     const parts=[];
     // Spirituality
-    if(dd.spChronBible==='green')parts.push('Chronological Bible: ✓ completed');
+    if(dd.spBibleAudio==='green')parts.push('Bible & Worship: ✓ completed');
     if(dd.spDailyBreadText)parts.push('Daily Bread: '+dd.spDailyBreadText);
     if(dd.spMeditation==='green'||dd.spMeditationText)parts.push('Meditation: '+(dd.spMeditationText||'✓')+
       (dd.spMeditationVal?' ('+dd.spMeditationVal+' min)':''));
-    if(dd.spPrayer==='green')parts.push('Daily Prayer: ✓ completed');
+    if(dd.spAIPrayer==='green')parts.push('AI Prayer: ✓ completed');
     if(dd.spSermon==='green'||dd.spSermonText)parts.push('Sermon: '+(dd.spSermonText||'✓'));
     // Growth & Learning
     if(dd.gaAudiobook==='green'||dd.gaAudiobookText)parts.push('Audiobook: '+(dd.gaAudiobookText||'✓')+(dd.gaAudiobookTime?' ('+dd.gaAudiobookTime+')':''));
@@ -9071,8 +9065,8 @@ function renderGoals(){
     const dd=JSON.parse(r);
     miles+=parseFloat(dd.exMiles)||0;
     audioMin+=parseMins(dd.gaAudiobookTime);
-    if(dd.spChronBible==='green')bibleD++;
-    if(dd.spPrayer==='green')prayerD++;
+    if(dd.spBibleAudio==='green')bibleD++;
+    if(dd.spAIPrayer==='green')prayerD++;
     if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green')exD++;
   }
   const actuals=[
@@ -9108,8 +9102,8 @@ function autoFillWins(){
     runTime+=parseMins(dd.exTotalTime);
     steps+=parseFloat(dd.exSteps)||0;
     audioMin+=parseMins(dd.gaAudiobookTime);
-    if(dd.spChronBible==='green')bibleD++;
-    if(dd.spPrayer==='green')prayerD++;
+    if(dd.spBibleAudio==='green')bibleD++;
+    if(dd.spAIPrayer==='green')prayerD++;
     if(dd.exRun==='green'||dd.exStrength==='green'||dd.exBike==='green'||dd.exWalk==='green')exD++;
     const bp=parseBP(dd.wBPVal);if(bp.sys)bpReadings.push(bp);
   }
