@@ -2328,11 +2328,6 @@ body{
         <div id="journalStorageHealth" class="storage-health">Checking journal storage...</div>
       </div>
       <div class="journal-settings-group">
-        <h3>Air Quality</h3>
-        <div style="font-size:.8rem;color:#667085;line-height:1.45;margin-bottom:7px;">The header AQI badge uses a free modeled estimate by default. Paste a free <a href="https://aqicn.org/data-platform/token/" target="_blank" rel="noopener">aqicn.org token</a> here to switch to real ground-station readings for Meridian (closer to what IQAir shows).</div>
-        <input type="text" id="settingWaqiToken" placeholder="Optional aqicn.org token" style="width:100%;box-sizing:border-box;border:1px solid #d0d5dd;border-radius:6px;padding:6px 8px;font-size:.82rem;">
-      </div>
-      <div class="journal-settings-group">
         <h3>Private Cloud Sync</h3>
         <div style="font-size:.8rem;color:#667085;line-height:1.45;">Your journal saves on this device first, then securely synchronizes with your Supabase account.</div>
         <div class="cloud-account-bar">
@@ -11942,16 +11937,12 @@ function loadJournalSettings(){
   document.querySelectorAll('[data-home-pref]').forEach(function(cb){cb.checked=p.homeCards.indexOf(cb.dataset.homePref)>=0;});
   var ai=document.getElementById('settingAIContext');if(ai)ai.checked=p.aiContext!==false;
   var days=document.getElementById('settingBackupDays');if(days)days.value=String(p.backupDays||7);
-  var waqi=document.getElementById('settingWaqiToken');if(waqi)waqi.value=localStorage.getItem('waqi_token')||'';
   journalStorageHealth();
 }
 function saveJournalSettings(){
   var cards=Array.from(document.querySelectorAll('[data-home-pref]:checked')).map(function(cb){return cb.dataset.homePref;});
   var ai=document.getElementById('settingAIContext'),days=document.getElementById('settingBackupDays');
   localStorage.setItem('journal_ui_prefs',JSON.stringify({homeCards:cards,aiContext:!ai||ai.checked,backupDays:parseInt(days&&days.value||'7',10)}));
-  var waqi=document.getElementById('settingWaqiToken'),waqiVal=(waqi&&waqi.value||'').trim();
-  if(waqiVal)localStorage.setItem('waqi_token',waqiVal);else localStorage.removeItem('waqi_token');
-  updateMeridianAirQuality();
   renderJournalHome();closeSettings();v26Toast('Settings saved');
 }
 function journalAIContext(){
@@ -12411,45 +12402,21 @@ function meridianAqiCategory(value){
   if(value<=300)return{label:'Very unhealthy',color:'#a855f7'};
   return{label:'Hazardous',color:'#7f1d1d'};
 }
-// Ground-station reading (aqicn.org / World Air Quality Index project) \u2014 used when the
-// user has pasted a free token in Settings. Returns null (not throws) so the caller can
-// silently fall back to the modeled estimate below.
-async function fetchWaqiMeridianAqi(){
-  var token=(localStorage.getItem('waqi_token')||'').trim();
-  if(!token)return null;
-  try{
-    var response=await fetch('https://api.waqi.info/feed/geo:43.6121;-116.3915/?token='+encodeURIComponent(token),{cache:'no-store'});
-    if(!response.ok)return null;
-    var data=await response.json();
-    if(!data||data.status!=='ok'||!data.data)return null;
-    var aqi=Math.round(Number(data.data.aqi));
-    if(!Number.isFinite(aqi))return null;
-    return{aqi:aqi,time:data.data.time&&data.data.time.s,source:'Ground station via aqicn.org ('+(data.data.city&&data.data.city.name||'Meridian')+')'};
-  }catch(error){return null;}
-}
 async function updateMeridianAirQuality(){
   var meter=document.getElementById('meridianAqi'),marker=document.getElementById('meridianAqiMarker'),valueLabel=document.getElementById('meridianAqiValue');
   if(!meter||!marker||!valueLabel)return;
   try{
-    var ground=await fetchWaqiMeridianAqi();
-    var aqi,updated,source;
-    if(ground){
-      aqi=ground.aqi;updated=ground.time;source=ground.source;
-    }else{
-      var response=await fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=43.6121&longitude=-116.3915&current=us_aqi&timezone=America%2FBoise',{cache:'no-store'});
-      if(!response.ok)throw new Error('Air quality unavailable');
-      var data=await response.json(),current=data&&data.current;
-      aqi=Math.round(Number(current&&current.us_aqi));
-      if(!Number.isFinite(aqi))throw new Error('Air quality unavailable');
-      updated=current.time;source='Modeled estimate via Open-Meteo / CAMS (add a free aqicn.org token in Settings for ground-station data)';
-    }
+    var response=await fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=43.6121&longitude=-116.3915&current=us_aqi&timezone=America%2FBoise',{cache:'no-store'});
+    if(!response.ok)throw new Error('Air quality unavailable');
+    var data=await response.json(),current=data&&data.current,aqi=Math.round(Number(current&&current.us_aqi));
+    if(!Number.isFinite(aqi))throw new Error('Air quality unavailable');
     var category=meridianAqiCategory(aqi);
     marker.style.left=Math.min(Math.max(aqi,0),300)/300*100+'%';
     marker.style.background=category.color;
     valueLabel.textContent='AQI '+aqi+' \u00B7 '+category.label;
     meter.setAttribute('aria-valuenow',String(aqi));
     meter.setAttribute('aria-valuetext',aqi+' AQI, '+category.label);
-    meter.title='Current Meridian, Idaho U.S. AQI: '+aqi+' ('+category.label+')'+(updated?' \u2022 Updated '+String(updated).replace('T',' '):'')+' \u2022 Air quality: '+source;
+    meter.title='Current Meridian, Idaho U.S. AQI: '+aqi+' ('+category.label+')'+(current.time?' \u2022 Updated '+current.time.replace('T',' '):'')+' \u2022 Air quality: Open-Meteo / CAMS (modeled estimate)';
   }catch(error){
     marker.style.left='0%';marker.style.background='#94a3b8';
     valueLabel.innerHTML='AQI &mdash;';
