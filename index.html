@@ -742,7 +742,7 @@ textarea{line-height:1.55;}
 .v26-save-dot{width:7px;height:7px;border-radius:50%;background:#22a06b;box-shadow:0 0 0 3px rgba(34,160,107,.12);}
 .v26-toast{position:fixed;right:22px;bottom:22px;z-index:3000;background:#172033;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.22);font-size:.84rem;opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s;}
 .v26-toast.show{opacity:1;transform:translateY(0);}
-body.v26-focus .tabs-wrapper,body.v26-focus #tabNotesBar,body.v26-focus #aiToolbar,body.v26-focus #streakBar,body.v26-focus #todayWorkoutCard,body.v26-focus .header>:not(h1):not(.date-nav):not(.header-control-stack),body.v26-focus .header-actions>:not(.v26-focus-btn):not(.v26-weather),body.v26-focus .header-status-row{display:none!important;}
+body.v26-focus .tabs-wrapper,body.v26-focus #tabNotesBar,body.v26-focus #aiToolbar,body.v26-focus #streakBar,body.v26-focus #todayWorkoutCard,body.v26-focus .header>:not(h1):not(.date-nav):not(.header-control-stack),body.v26-focus .header-actions>:not(.v26-focus-pair),body.v26-focus .header-status-row{display:none!important;}
 body.v26-focus .container{max-width:none;}
 body.v26-focus .v26-toolbar{justify-content:flex-end;}
 body.v26-focus .v26-focus-btn{background:#ededff;color:var(--brand);border-color:#c9c9f5;}
@@ -1149,8 +1149,10 @@ body{
         </div>
       </details>
       <button class="v26-quiet-btn" type="button" id="journalCloudSyncBtn" onclick="journalCloudSmartSync()" title="Check for newer information on this device and in the private cloud">&#x21BB; Sync</button>
-      <button class="v26-quiet-btn v26-focus-btn" type="button" onclick="v26ToggleFocus()" id="v26FocusBtn" title="Hide distractions (F)">Focus</button>
-      <span class="v26-weather" id="meridianWeather" title="Current temperature for Meridian, Idaho">&#x1F321;&#xFE0F; Meridian &mdash;&deg;</span>
+      <div class="v26-focus-pair" style="display:flex;align-items:center;gap:7px;flex-wrap:nowrap;">
+        <button class="v26-quiet-btn v26-focus-btn" type="button" onclick="v26ToggleFocus()" id="v26FocusBtn" title="Hide distractions (F)">Focus</button>
+        <span class="v26-weather" id="meridianWeather" title="Current temperature for Meridian, Idaho">&#x1F321;&#xFE0F; Meridian &mdash;&deg;</span>
+      </div>
     </div>
     <div class="header-status-row">
       <span class="v26-save header-save-status" title="Your entries save automatically on this device"><span class="v26-save-dot"></span><span id="v26SaveText">Saved on this device</span></span>
