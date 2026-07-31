@@ -1354,6 +1354,7 @@ body{
   <h2>Day Score</h2><div id="wDayScore"></div>
   <h2>Growth</h2><div id="wGrowth"></div><h2>Critical Thinking</h2><div id="wCritical"></div><h2>Fitness</h2><div id="wFitness"></div><h2>Wellness</h2><div id="wWellness"></div>
 <h2>Nutrition</h2><div id="wNutrition"></div>
+<h2>Micronutrients</h2><div id="wNutritionMicro"></div>
 <h2>Spirituality</h2><div id="wSpirituality"></div>
 
 </div></div>
@@ -1380,12 +1381,14 @@ body{
 <h2>Day Score</h2><div id="mDayScore"></div>
 <h2>Growth</h2><div id="mGrowth"></div><h2>Fitness</h2><div id="mFitness"></div><h2>Wellness</h2><div id="mWellness"></div>
 <h2>Nutrition</h2><div id="mNutrition"></div>
+<h2>Micronutrients</h2><div id="mNutritionMicro"></div>
 <h2>Spirituality</h2><div id="mSpirituality"></div>
 
 </div></div>
 <div id="tab-yearly" class="tab-panel"><div class="panel"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;"><div class="week-nav" style="margin-bottom:0;"><button onclick="changeYearOff(-1)">&#8249; Prev</button><span id="yearLabel"></span><button onclick="changeYearOff(1)">Next &#8250;</button></div></div><h2>Day Score</h2><div id="yDayScore"></div>
 <h2>Growth</h2><div id="yGrowth"></div><h2>Fitness</h2><div id="yFitness"></div><h2>Wellness</h2><div id="yWellness"></div>
 <h2>Nutrition</h2><div id="yNutrition"></div>
+<h2>Micronutrients</h2><div id="yNutritionMicro"></div>
 <h2>Spirituality</h2><div id="ySpirituality"></div>
 
 </div></div>
@@ -4083,10 +4086,12 @@ function mkT(h,r,t){return h+r.join('')+t+'</tbody></table>';}
 let weekOff2=0;
 // ── Nutrition + Spirituality summary helpers ──────────────────────────────
 const nuH='<table class="summary-table"><thead><tr><th>Period</th><th>Calories</th><th>Protein (g)</th><th>Fat (g)</th><th>Carbs (g)</th><th>Water (oz)</th></tr></thead><tbody>';
+const nuMicroH='<table class="summary-table"><thead><tr><th>Period</th><th>Fiber (g)</th><th>Sugar (g)</th><th>Sodium (mg)</th><th>Vit A (mcg)</th><th>Vit C (mg)</th><th>Vit D (mcg)</th><th>Calcium (mg)</th><th>Iron (mg)</th><th>Potassium (mg)</th></tr></thead><tbody>';
 const spirH='<table class="summary-table"><thead><tr><th>Period</th><th>Sermon</th><th>Meditation</th><th>AI Prayer</th><th>Bible Audio</th><th>Daily Bread</th></tr></thead><tbody>';
 
 function getNuDay(dateKey){
   var cal=0,prot=0,fat=0,carbs=0;
+  var micro={fiber:0,sugar:0,sodium:0,vitA:0,vitC:0,vitD:0,calcium:0,iron:0,potassium:0};
   // New format: foodLog inside planner record
   var pr=localStorage.getItem('planner_'+dateKey);
   if(pr){
@@ -4098,6 +4103,7 @@ function getNuDay(dateKey){
         prot+=(parseFloat(f.prot)||0)*s;
         fat+=(parseFloat(f.fat)||0)*s;
         carbs+=(parseFloat(f.carbs)||0)*s;
+        MICRO_FIELDS.forEach(function(mf){micro[mf]+=(parseFloat(f[mf])||0)*s;});
       });
     }
   }
@@ -4130,7 +4136,7 @@ function getNuDay(dateKey){
     // Water from planner data
   var water=0;
   if(pr){try{var pd3=JSON.parse(pr);water=parseFloat(pd3.waterOz)||(parseFloat(pd3.waterCount)*8)||0;}catch(e){}}
-  return{cal:cal,prot:prot,fat:fat,carbs:carbs,water:water};
+  return{cal:cal,prot:prot,fat:fat,carbs:carbs,water:water,fiber:micro.fiber,sugar:micro.sugar,sodium:micro.sodium,vitA:micro.vitA,vitC:micro.vitC,vitD:micro.vitD,calcium:micro.calcium,iron:micro.iron,potassium:micro.potassium};
 }
 
 function getSpiritDay(dateKey){
@@ -4147,7 +4153,9 @@ function getSpiritDay(dateKey){
 
 function aggNu(arr){
   return arr.reduce(function(a,n){
-    return{cal:a.cal+n.cal,prot:a.prot+n.prot,fat:a.fat+n.fat,carbs:a.carbs+n.carbs,water:a.water+(n.water||0)};
+    var r={cal:a.cal+n.cal,prot:a.prot+n.prot,fat:a.fat+n.fat,carbs:a.carbs+n.carbs,water:a.water+(n.water||0)};
+    MICRO_FIELDS.forEach(function(f){r[f]=(a[f]||0)+(n[f]||0);});
+    return r;
   },{cal:0,prot:0,fat:0,carbs:0,water:0});
 }
 
@@ -4173,6 +4181,21 @@ function nuRow(l,n,isTot){
     +'<td>'+(n.water?Math.round(n.water)+' oz':'-')+'</td></tr>';
 }
 
+function nuMicroRow(l,n,isTot){
+  var b=isTot?'background:#f8f9fa;font-weight:700':'';
+  var v=function(x){return x?Math.round(x):'-';};
+  return '<tr style="'+b+'"><td>'+l+'</td>'
+    +'<td>'+v(n.fiber)+'</td>'
+    +'<td>'+v(n.sugar)+'</td>'
+    +'<td>'+v(n.sodium)+'</td>'
+    +'<td>'+v(n.vitA)+'</td>'
+    +'<td>'+v(n.vitC)+'</td>'
+    +'<td>'+v(n.vitD)+'</td>'
+    +'<td>'+v(n.calcium)+'</td>'
+    +'<td>'+v(n.iron)+'</td>'
+    +'<td>'+v(n.potassium)+'</td></tr>';
+}
+
 function spirRow(l,s,isTot){
   var b=isTot?'background:#f0f4e8;font-weight:700':'';
   // Single-day (boolean fields)
@@ -4194,8 +4217,8 @@ function spirRow(l,s,isTot){
     +'<td>'+n(s.dailyBread)+'</td></tr>';
 }
 
-function renderNutritionSpirit(dateKeys,labels,nuContainerId,spirContainerId){
-  var nuRows=[],spirRows=[],allNu=[],allSpir=[];
+function renderNutritionSpirit(dateKeys,labels,nuContainerId,spirContainerId,nuMicroContainerId){
+  var nuRows=[],spirRows=[],nuMicroRows=[],allNu=[],allSpir=[];
   dateKeys.forEach(function(keys,i){
     var arr=Array.isArray(keys)?keys:[keys];
     var nus=arr.map(function(k){return getNuDay(k);});
@@ -4204,11 +4227,11 @@ function renderNutritionSpirit(dateKeys,labels,nuContainerId,spirContainerId){
     var sp=aggSpir(spirs);
     allNu.push.apply(allNu,nus);
     allSpir.push.apply(allSpir,spirs);
+    nuRows.push(nuRow(labels[i],nu));
+    nuMicroRows.push(nuMicroRow(labels[i],nu));
     if(arr.length===1){
-      nuRows.push(nuRow(labels[i],nu));
       spirRows.push(spirRow(labels[i],spirs[0]));
     } else {
-      nuRows.push(nuRow(labels[i],nu));
       spirRows.push(spirRow(labels[i],sp));
     }
   });
@@ -4216,16 +4239,18 @@ function renderNutritionSpirit(dateKeys,labels,nuContainerId,spirContainerId){
   var totSpir=aggSpir(allSpir);
   var nuEl=document.getElementById(nuContainerId);
   var spEl=document.getElementById(spirContainerId);
+  var nuMicroEl=nuMicroContainerId?document.getElementById(nuMicroContainerId):null;
   if(nuEl)nuEl.innerHTML=mkT(nuH,nuRows,nuRow('TOTAL',totNu,true));
   if(spEl)spEl.innerHTML=mkT(spirH,spirRows,spirRow('TOTAL',totSpir,true));
+  if(nuMicroEl)nuMicroEl.innerHTML=mkT(nuMicroH,nuMicroRows,nuMicroRow('TOTAL',totNu,true));
 }
 
 function renderWeekly(){const ws=wkStart(weekOff2),days=[],lbls=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r=localStorage.getItem('planner_'+dk(d));var _dk=dk(d);days.push(r?getDM(JSON.parse(r),_dk):{miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,audiobook:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,headache:0});lbls.push(d.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'}));}const we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('weekLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const tot=agg(days);document.getElementById('wDayScore').innerHTML=mkT(dsH,days.map((m,i)=>dsRow(lbls[i],m)),dsRow('AVG',tot,true));document.getElementById('wGrowth').innerHTML=mkT(gH,days.map((m,i)=>gRow(lbls[i],m)),gRow('TOTAL',tot,true));var wct=document.getElementById('wCritical');if(wct)wct.innerHTML=mkT(ctH,days.map((m,i)=>ctRow(lbls[i],m)),ctRow('TOTAL',tot,true));document.getElementById('wFitness').innerHTML=mkT(fH,days.map((m,i)=>fRow(lbls[i],m)),fRow('TOTAL/AVG',tot,true));document.getElementById('wWellness').innerHTML=mkT(wH,days.map((m,i)=>wRow(lbls[i],m)),wRow('TOTAL/AVG',tot,true));
-  const wDayKeys=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);wDayKeys.push(dk(d));}renderNutritionSpirit(wDayKeys,lbls,'wNutrition','wSpirituality');}
+  const wDayKeys=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);wDayKeys.push(dk(d));}renderNutritionSpirit(wDayKeys,lbls,'wNutrition','wSpirituality','wNutritionMicro');}
 function changeWeekOff(n){weekOff2+=n;renderWeekly();renderGoals();}
 let monthOff2=0;
 function renderMonthly(){const now=new Date(),ref=new Date(now.getFullYear(),now.getMonth()+monthOff2,1);const yr=ref.getFullYear(),mo=ref.getMonth(),dim=new Date(yr,mo+1,0).getDate();const wmap={};for(let d=1;d<=dim;d++){const dt=new Date(yr,mo,d);const ws=wkStartOf(dt);const k=dk(ws);if(!wmap[k])wmap[k]={ws,ms:[]};const r=localStorage.getItem('planner_'+dk(dt));if(r)wmap[k].ms.push(getDM(JSON.parse(r),dk(dt)));}document.getElementById('monthLabel').textContent=ref.toLocaleDateString('en-US',{month:'long',year:'numeric'});const wks=Object.values(wmap).sort((a,b)=>a.ws-b.ws),allM=[],gR=[],fR=[],wR=[],dsR=[];wks.forEach(({ws,ms})=>{const we=new Date(ws);we.setDate(ws.getDate()+6);const lb=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'-'+we.toLocaleDateString('en-US',{day:'numeric'});const a=agg(ms);allM.push(...ms);gR.push(gRow('Wk '+lb,a));fR.push(fRow('Wk '+lb,a));wR.push(wRow('Wk '+lb,a));dsR.push(dsRow('Wk '+lb,a));});const tot=agg(allM);document.getElementById('mDayScore').innerHTML=mkT(dsH,dsR,dsRow('AVG',tot,true));document.getElementById('mGrowth').innerHTML=mkT(gH,gR,gRow('TOTAL',tot,true));document.getElementById('mFitness').innerHTML=mkT(fH,fR,fRow('TOTAL/AVG',tot,true));document.getElementById('mWellness').innerHTML=mkT(wH,wR,wRow('TOTAL/AVG',tot,true));
-  const mWkKeys=[],mWkLbls=[];wks.forEach(({ws,ms})=>{const we=new Date(ws);we.setDate(ws.getDate()+6);const lb=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'-'+we.toLocaleDateString('en-US',{day:'numeric'});const keys=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);keys.push(dk(d));}mWkKeys.push(keys);mWkLbls.push('Wk '+lb);});renderNutritionSpirit(mWkKeys,mWkLbls,'mNutrition','mSpirituality');
+  const mWkKeys=[],mWkLbls=[];wks.forEach(({ws,ms})=>{const we=new Date(ws);we.setDate(ws.getDate()+6);const lb=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'-'+we.toLocaleDateString('en-US',{day:'numeric'});const keys=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);keys.push(dk(d));}mWkKeys.push(keys);mWkLbls.push('Wk '+lb);});renderNutritionSpirit(mWkKeys,mWkLbls,'mNutrition','mSpirituality','mNutritionMicro');
   // Render heatmap
   const hmGrid=document.getElementById('hmGrid');
   const hmMonth=document.getElementById('hmMonth');
@@ -4264,7 +4289,7 @@ function renderYearly(){const yr=new Date().getFullYear()+yearOff2;document.getE
   const yr2=new Date().getFullYear()+yearOff2;
   const yMoKeys=[],yMoLbls=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   for(let mi=0;mi<12;mi++){const dim=new Date(yr2,mi+1,0).getDate();const keys=[];for(let d=1;d<=dim;d++)keys.push(dk(new Date(yr2,mi,d)));yMoKeys.push(keys);}
-  renderNutritionSpirit(yMoKeys,yMoLbls,'yNutrition','ySpirituality');}
+  renderNutritionSpirit(yMoKeys,yMoLbls,'yNutrition','ySpirituality','yNutritionMicro');}
 function changeYearOff(n){yearOff2+=n;renderYearly();}
 let dashOff2=0;
 function renderDashboard(){
