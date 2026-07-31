@@ -1148,7 +1148,7 @@ body{
           <button type="button" onclick="openSettings();closeHeaderTools()">&#x2699;&#xFE0F; Settings</button>
         </div>
       </details>
-      <button class="v26-quiet-btn" type="button" id="journalCloudSyncBtn" onclick="journalCloudSmartSync()" title="Check for newer information on this device and in the private cloud">&#x21BB; Sync</button>
+      <button class="v26-quiet-btn" type="button" id="journalCloudSyncBtn" onclick="journalCloudSmartSync()" title="Check for newer information on this device and in the private cloud">Sync</button>
       <div class="v26-focus-pair" style="display:flex;align-items:center;gap:7px;flex-wrap:nowrap;">
         <button class="v26-quiet-btn v26-focus-btn" type="button" onclick="v26ToggleFocus()" id="v26FocusBtn" title="Hide distractions (F)">Focus</button>
         <span class="v26-weather" id="meridianWeather" title="Current temperature for Meridian, Idaho">&#x1F321;&#xFE0F; Meridian &mdash;&deg;</span>
@@ -12285,7 +12285,7 @@ async function journalCloudSmartSync(){
     alert('The sync check did not complete. Your journal remains safely saved on this device.');
   }finally{
     journalCloudBusy=false;
-    if(btn){btn.disabled=false;btn.innerHTML='&#x21BB; Sync';}
+    if(btn){btn.disabled=false;btn.innerHTML='Sync';}
   }
 }
 function journalCloudSyncNow(){journalCloudSmartSync();}
