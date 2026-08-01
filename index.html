@@ -107,23 +107,24 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 #tab-skill-log .summary-table th:not(:first-child),#tab-skill-log .summary-table td:not(:first-child),
 #tab-thinking .summary-table th:not(:first-child),#tab-thinking .summary-table td:not(:first-child),
 #tab-wellness .summary-table th:not(:first-child),#tab-wellness .summary-table td:not(:first-child),
-#tab-file-uploads .summary-table th:not(:first-child),#tab-file-uploads .summary-table td:not(:first-child){text-align:center;}
+#tab-file-uploads .summary-table th:not(:first-child),#tab-file-uploads .summary-table td:not(:first-child),
+#tab-dashboard .summary-table th:not(:first-child),#tab-dashboard .summary-table td:not(:first-child){text-align:center;}
 @media(max-width:768px){
   body.tab-weekly-active .container,body.tab-monthly-active .container,body.tab-yearly-active .container,
   body.tab-nutrition-active .container,body.tab-habits-active .container,body.tab-meditate-active .container,
   body.tab-bible-active .container,body.tab-library-active .container,body.tab-activities-active .container,
   body.tab-skill-log-active .container,body.tab-thinking-active .container,body.tab-wellness-active .container,
-  body.tab-file-uploads-active .container{width:100%;max-width:none;margin:0;border:none;border-radius:0;box-shadow:none;}
+  body.tab-file-uploads-active .container,body.tab-dashboard-active .container{width:100%;max-width:none;margin:0;border:none;border-radius:0;box-shadow:none;}
   body.tab-weekly-active,body.tab-monthly-active,body.tab-yearly-active,
   body.tab-nutrition-active,body.tab-habits-active,body.tab-meditate-active,
   body.tab-bible-active,body.tab-library-active,body.tab-activities-active,
   body.tab-skill-log-active,body.tab-thinking-active,body.tab-wellness-active,
-  body.tab-file-uploads-active{padding-left:6px;padding-right:6px;}
+  body.tab-file-uploads-active,body.tab-dashboard-active{padding-left:6px;padding-right:6px;}
   #tab-weekly .panel,#tab-monthly .panel,#tab-yearly .panel,
   #tab-nutrition .panel,#tab-habits .panel,#tab-meditate .panel,
   #tab-bible .panel,#tab-library .panel,#tab-activities .panel,
   #tab-skill-log .panel,#tab-thinking .panel,#tab-wellness .panel,
-  #tab-file-uploads .panel{padding-left:8px;padding-right:8px;}
+  #tab-file-uploads .panel,#tab-dashboard .panel{padding-left:8px;padding-right:8px;}
 }
 .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:16px;}
 .dash-card{background:#f8f9fa;border-radius:8px;padding:12px;min-width:0;}
@@ -9959,7 +9960,7 @@ function meditInitTab(){
 /* ========= END MEDITATION JS ========= */
 
 var _hmTabs=['nutrition','habits','meditate','bible','library','activities','skill-log','thinking','wellness','file-uploads'];
-var _cardTabs=['weekly','monthly','yearly'].concat(_hmTabs);
+var _cardTabs=['weekly','monthly','yearly','dashboard'].concat(_hmTabs);
 function toggleHamburger(e){
   if(e)e.stopPropagation();
   var sidebar=document.getElementById('hmSidebar');
