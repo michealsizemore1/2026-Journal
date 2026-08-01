@@ -95,11 +95,13 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   .summary-table th:last-child,.summary-table td:last-child{width:100%;}
 }
 .panel > div:has(> .summary-table){overflow-x:auto;}
-#tab-weekly .summary-table th:not(:first-child),#tab-weekly .summary-table td:not(:first-child){text-align:center;}
+#tab-weekly .summary-table th:not(:first-child),#tab-weekly .summary-table td:not(:first-child),
+#tab-monthly .summary-table th:not(:first-child),#tab-monthly .summary-table td:not(:first-child),
+#tab-yearly .summary-table th:not(:first-child),#tab-yearly .summary-table td:not(:first-child){text-align:center;}
 @media(max-width:768px){
-  body.tab-weekly-active .container{width:100%;max-width:none;margin:0;border:none;border-radius:0;box-shadow:none;}
-  body.tab-weekly-active{padding-left:6px;padding-right:6px;}
-  #tab-weekly .panel{padding-left:8px;padding-right:8px;}
+  body.tab-weekly-active .container,body.tab-monthly-active .container,body.tab-yearly-active .container{width:100%;max-width:none;margin:0;border:none;border-radius:0;box-shadow:none;}
+  body.tab-weekly-active,body.tab-monthly-active,body.tab-yearly-active{padding-left:6px;padding-right:6px;}
+  #tab-weekly .panel,#tab-monthly .panel,#tab-yearly .panel{padding-left:8px;padding-right:8px;}
 }
 .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:16px;}
 .dash-card{background:#f8f9fa;border-radius:8px;padding:12px;min-width:0;}
@@ -9963,6 +9965,8 @@ function makeHabitsInformational(){
 }
 function switchTab(tab,e){
   document.body.classList.toggle('tab-weekly-active',tab==='weekly');
+  document.body.classList.toggle('tab-monthly-active',tab==='monthly');
+  document.body.classList.toggle('tab-yearly-active',tab==='yearly');
   saveTabNote();_currentNoteTab=tab;loadTabNote(tab);
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
