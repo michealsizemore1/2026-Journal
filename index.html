@@ -95,6 +95,12 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   .summary-table th:last-child,.summary-table td:last-child{width:100%;}
 }
 .panel > div:has(> .summary-table){overflow-x:auto;}
+#tab-weekly .summary-table th:not(:first-child),#tab-weekly .summary-table td:not(:first-child){text-align:center;}
+@media(max-width:768px){
+  body.tab-weekly-active .container{width:100%;max-width:none;margin:0;border:none;border-radius:0;box-shadow:none;}
+  body.tab-weekly-active{padding-left:0;padding-right:0;}
+  #tab-weekly .panel{padding-left:0;padding-right:0;}
+}
 .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:16px;}
 .dash-card{background:#f8f9fa;border-radius:8px;padding:12px;min-width:0;}
 .dash-card h3{font-size:0.82rem;font-weight:700;text-transform:uppercase;color:#667eea;margin-bottom:8px;}
@@ -9956,6 +9962,7 @@ function makeHabitsInformational(){
   panel.querySelectorAll('.tri-check,input[type="checkbox"]').forEach(function(el){el.remove();});
 }
 function switchTab(tab,e){
+  document.body.classList.toggle('tab-weekly-active',tab==='weekly');
   saveTabNote();_currentNoteTab=tab;loadTabNote(tab);
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
