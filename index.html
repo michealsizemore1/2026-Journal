@@ -97,11 +97,33 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 .panel > div:has(> .summary-table){overflow-x:auto;}
 #tab-weekly .summary-table th:not(:first-child),#tab-weekly .summary-table td:not(:first-child),
 #tab-monthly .summary-table th:not(:first-child),#tab-monthly .summary-table td:not(:first-child),
-#tab-yearly .summary-table th:not(:first-child),#tab-yearly .summary-table td:not(:first-child){text-align:center;}
+#tab-yearly .summary-table th:not(:first-child),#tab-yearly .summary-table td:not(:first-child),
+#tab-nutrition .summary-table th:not(:first-child),#tab-nutrition .summary-table td:not(:first-child),
+#tab-habits .summary-table th:not(:first-child),#tab-habits .summary-table td:not(:first-child),
+#tab-meditate .summary-table th:not(:first-child),#tab-meditate .summary-table td:not(:first-child),
+#tab-bible .summary-table th:not(:first-child),#tab-bible .summary-table td:not(:first-child),
+#tab-library .summary-table th:not(:first-child),#tab-library .summary-table td:not(:first-child),
+#tab-activities .summary-table th:not(:first-child),#tab-activities .summary-table td:not(:first-child),
+#tab-skill-log .summary-table th:not(:first-child),#tab-skill-log .summary-table td:not(:first-child),
+#tab-thinking .summary-table th:not(:first-child),#tab-thinking .summary-table td:not(:first-child),
+#tab-wellness .summary-table th:not(:first-child),#tab-wellness .summary-table td:not(:first-child),
+#tab-file-uploads .summary-table th:not(:first-child),#tab-file-uploads .summary-table td:not(:first-child){text-align:center;}
 @media(max-width:768px){
-  body.tab-weekly-active .container,body.tab-monthly-active .container,body.tab-yearly-active .container{width:100%;max-width:none;margin:0;border:none;border-radius:0;box-shadow:none;}
-  body.tab-weekly-active,body.tab-monthly-active,body.tab-yearly-active{padding-left:6px;padding-right:6px;}
-  #tab-weekly .panel,#tab-monthly .panel,#tab-yearly .panel{padding-left:8px;padding-right:8px;}
+  body.tab-weekly-active .container,body.tab-monthly-active .container,body.tab-yearly-active .container,
+  body.tab-nutrition-active .container,body.tab-habits-active .container,body.tab-meditate-active .container,
+  body.tab-bible-active .container,body.tab-library-active .container,body.tab-activities-active .container,
+  body.tab-skill-log-active .container,body.tab-thinking-active .container,body.tab-wellness-active .container,
+  body.tab-file-uploads-active .container{width:100%;max-width:none;margin:0;border:none;border-radius:0;box-shadow:none;}
+  body.tab-weekly-active,body.tab-monthly-active,body.tab-yearly-active,
+  body.tab-nutrition-active,body.tab-habits-active,body.tab-meditate-active,
+  body.tab-bible-active,body.tab-library-active,body.tab-activities-active,
+  body.tab-skill-log-active,body.tab-thinking-active,body.tab-wellness-active,
+  body.tab-file-uploads-active{padding-left:6px;padding-right:6px;}
+  #tab-weekly .panel,#tab-monthly .panel,#tab-yearly .panel,
+  #tab-nutrition .panel,#tab-habits .panel,#tab-meditate .panel,
+  #tab-bible .panel,#tab-library .panel,#tab-activities .panel,
+  #tab-skill-log .panel,#tab-thinking .panel,#tab-wellness .panel,
+  #tab-file-uploads .panel{padding-left:8px;padding-right:8px;}
 }
 .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:16px;}
 .dash-card{background:#f8f9fa;border-radius:8px;padding:12px;min-width:0;}
@@ -9937,6 +9959,7 @@ function meditInitTab(){
 /* ========= END MEDITATION JS ========= */
 
 var _hmTabs=['nutrition','habits','meditate','bible','library','activities','skill-log','thinking','wellness','file-uploads'];
+var _cardTabs=['weekly','monthly','yearly'].concat(_hmTabs);
 function toggleHamburger(e){
   if(e)e.stopPropagation();
   var sidebar=document.getElementById('hmSidebar');
@@ -9964,9 +9987,7 @@ function makeHabitsInformational(){
   panel.querySelectorAll('.tri-check,input[type="checkbox"]').forEach(function(el){el.remove();});
 }
 function switchTab(tab,e){
-  document.body.classList.toggle('tab-weekly-active',tab==='weekly');
-  document.body.classList.toggle('tab-monthly-active',tab==='monthly');
-  document.body.classList.toggle('tab-yearly-active',tab==='yearly');
+  _cardTabs.forEach(function(t){document.body.classList.toggle('tab-'+t+'-active',tab===t);});
   saveTabNote();_currentNoteTab=tab;loadTabNote(tab);
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
