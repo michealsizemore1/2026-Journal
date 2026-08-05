@@ -7949,12 +7949,28 @@ function h2StartWeek(date){var d=new Date(date),day=d.getDay();d.setDate(d.getDa
 function h2Log(state,id,dateKey){return(state.logs[dateKey]&&state.logs[dateKey][id])||{value:0,status:''};}
 function h2IsComplete(habit,log){return log&&((log.status==='done')||Number(log.value)>=Number(habit.target||1));}
 function h2WeekDone(state,habit,date){var start=h2StartWeek(date),count=0;for(var i=0;i<7;i++){var d=new Date(start);d.setDate(d.getDate()+i);if(h2IsComplete(habit,h2Log(state,habit.id,h2Key(d))))count++;}return count;}
+// Directly correlate the "Complete Training" habit with the My Schedule card's
+// own rest-day detection, so it doesn't ask for training on days the active
+// Training Plan schedules no workout.
+function journalIsRestDay(date){
+  try{
+    var raw=localStorage.getItem('current_training_plan'),plan=raw?JSON.parse(raw):null;
+    if(!plan||!plan.text||!plan.startDate)return false;
+    var text=extractWorkoutFromActivePlan(plan,date)||'';
+    if(!text)return false;
+    return /rest day|no workout scheduled/i.test(text);
+  }catch(e){return false;}
+}
 function h2IsDue(habit,date,state){
   if(habit.archived)return false;
   var created=habit.created?new Date(habit.created):null;if(created&&date<new Date(created.getFullYear(),created.getMonth(),created.getDate()))return false;
   if(habit.schedule==='weekdays')return date.getDay()!==0&&date.getDay()!==6;
   if(habit.schedule==='custom')return(habit.days||[]).indexOf(date.getDay())!==-1;
-  if(habit.schedule==='weekly')return h2WeekDone(state,habit,date)<Number(habit.weeklyTarget||3)||h2IsComplete(habit,h2Log(state,habit.id,h2Key(date)));
+  if(habit.schedule==='weekly'){
+    var weekOK=h2WeekDone(state,habit,date)<Number(habit.weeklyTarget||3),isDone=h2IsComplete(habit,h2Log(state,habit.id,h2Key(date)));
+    if(habit.autoSource==='training'&&!isDone&&journalIsRestDay(date))return false;
+    return weekOK||isDone;
+  }
   return true;
 }
 function h2ScheduleLabel(h){if(h.schedule==='weekdays')return'Weekdays';if(h.schedule==='custom')return(h.days||[]).map(function(d){return['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d];}).join(', ')||'Custom';if(h.schedule==='weekly')return(h.weeklyTarget||3)+' times/week';return'Every day';}
