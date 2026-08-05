@@ -5743,11 +5743,13 @@ function renderFoodItems(){
         grid.appendChild(_mkMacroCell('Carbs','carbs',it.carbs,false,it.id));
         div.appendChild(grid);
 
-        // Total line (when servings > 1)
-        if(svgs>1){
+        // Total line (whenever servings isn't exactly 1 — covers partial servings like 0.25 too)
+        if(svgs!==1){
+          var totalFat=Math.round((parseFloat(it.fat)||0)*svgs*10)/10;
+          var totalCarbs=Math.round((parseFloat(it.carbs)||0)*svgs*10)/10;
           var tot=document.createElement('div');
           tot.style.cssText='font-size:0.72rem;color:#e67e22;text-align:right;margin-bottom:3px;';
-          tot.textContent='Total: '+totalCal+' cal · '+totalProt+'g prot (×'+svgs+')';
+          tot.textContent='Total (×'+svgs+'): '+totalCal+' cal · '+totalProt+'g prot · '+totalFat+'g fat · '+totalCarbs+'g carbs';
           div.appendChild(tot);
         }
 
@@ -5768,6 +5770,15 @@ function renderFoodItems(){
             microGrid.appendChild(_mkMacroCell(meta.icon+' '+meta.label+' ('+meta.unit+')',f,it[f],false,it.id));
           });
           div.appendChild(microGrid);
+          if(svgs!==1){
+            var microTot=document.createElement('div');
+            microTot.style.cssText='font-size:0.7rem;color:#0f766e;background:#f0fdfa;border:1px solid #ccfbf1;border-radius:6px;padding:5px 7px;margin:-2px 0 5px;line-height:1.5;';
+            microTot.textContent='Total (×'+svgs+'): '+MICRO_FIELDS.map(function(f){
+              var meta=MICRO_META[f],raw=parseFloat(it[f])||0;
+              return meta.label+' '+(Math.round(raw*svgs*10)/10)+meta.unit;
+            }).join(' · ');
+            div.appendChild(microTot);
+          }
         }
 
         // Row 3: Copy + Move-to dropdown
