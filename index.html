@@ -13208,6 +13208,7 @@ function renderJournalSchedule(){
     {time:'5:30 AM',mins:330,label:'Wellness check and water',detail:'Weight, sleep and morning metrics',done:!!(d.wWghtVal||d.wSleepVal||d.wBPVal),tab:'wellness'},
     {time:'5:45 AM',mins:345,label:'Bible reading and prayer',detail:'Daily spiritual anchors',done:d.spBibleAudio==='green'&&d.spAIPrayer==='green',tab:'bible'},
     {time:'6:30 AM',mins:390,label:'Today’s training',detail:training,done:activityDone,tab:'activities'},
+    {time:'6:45 AM',mins:405,label:'Stretching',detail:'Keep muscles loose and prevent injury',done:d.exStretch==='green',tab:'activities'},
     {time:'7:45 AM',mins:465,label:'Breakfast',detail:'Recovery meal and hydration after training',done:mealComplete('breakfast',465),tab:'nutrition'},
     {time:'12:00 PM',mins:720,label:'Water checkpoint: 32 oz',detail:'Drink at least 32 ounces by noon',done:water>=32,tab:'nutrition'},
     {time:'12:00 PM',mins:720,label:'Lunch',detail:'Midday meal and hydration',done:mealComplete('lunch',720),tab:'nutrition'},
