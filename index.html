@@ -13793,8 +13793,9 @@ async function updateMeridianAQI(retry){
     text.textContent='Meridian AQI '+aqi+' · '+String(data.category||'');dot.style.background=meridianAqiColor(aqi);wrap.href=data.sourceUrl||wrap.href;wrap.title='Official monitor-based AQI · '+String(data.pollutant||'AQI')+' · '+String(data.reportingArea||'Meridian area')+(data.observedDate?' · Observed '+data.observedDate+' '+data.observedHour+':00':'')+' · Source: EPA AirNow / Idaho DEQ';
     try{localStorage.setItem('meridian_airnow_cache',JSON.stringify({data:data,savedAt:Date.now()}));}catch(ignore){}
   }catch(error){
+    console.warn('Meridian AQI refresh failed:',error&&error.message||error);
     var cached=null;try{cached=JSON.parse(localStorage.getItem('meridian_airnow_cache')||'null');}catch(ignore2){}
-    if(cached&&cached.data&&Number.isFinite(Number(cached.data.aqi))){var age=Math.round((Date.now()-Number(cached.savedAt||0))/3600000);text.textContent='Meridian AQI '+Math.round(Number(cached.data.aqi))+' · cached';dot.style.background=meridianAqiColor(Number(cached.data.aqi));wrap.title='Last official EPA AirNow / Idaho DEQ reading · cached '+age+' hour'+(age===1?'':'s')+' ago';}
+    if(cached&&cached.data&&Number.isFinite(Number(cached.data.aqi))){var age=Math.round((Date.now()-Number(cached.savedAt||0))/3600000);text.textContent='Meridian AQI '+Math.round(Number(cached.data.aqi))+' · cached';dot.style.background=meridianAqiColor(Number(cached.data.aqi));wrap.title='Last official EPA AirNow / Idaho DEQ reading · cached '+age+' hour'+(age===1?'':'s')+' ago · Refresh failed: '+((error&&error.message)||'unknown error');}
     else{text.textContent='Meridian AQI unavailable';dot.style.background='#94a3b8';wrap.title=(error&&error.message)||'Official AQI is temporarily unavailable';}
   }
 }
