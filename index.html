@@ -8012,13 +8012,18 @@ function h2SyncFromJournal(){
     if(trainingHabit&&trainingHabit.color==='#dc2626')trainingHabit.color='#4f46e5';
     localStorage.setItem('habits2_training_color_v1','1');
   }
-  if(!localStorage.getItem('habits2_stretch_link_v1')){
-    var stretchHabit=state.habits.find(function(h){return h.autoSource==='stretch'||/^(daily\s+)?stretch(ing)?$/i.test(String(h.name||'').trim());});
-    if(stretchHabit){stretchHabit.autoSource=stretchHabit.autoSource||'stretch';}
-    else{state.habits.push({id:'h2-auto-stretch',name:'Daily Stretching',category:'Health',color:'#0d9488',type:'check',target:1,schedule:'daily',weeklyTarget:7,days:[0,1,2,3,4,5,6],why:'Keep muscles loose and prevent injury.',cue:'',minimum:'',created:new Date().toISOString(),autoSource:'stretch'});}
-    state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='stretch';});
-    localStorage.setItem('habits2_stretch_link_v1','1');
+  // Re-checked on every sync (not a one-shot flag) so the link self-heals if the
+  // habit's autoSource is ever lost — e.g. an older cloud-sync snapshot overwriting
+  // local data would otherwise leave "Daily Stretching" permanently unlinked.
+  if(!state.habits.some(function(h){return h.autoSource==='stretch';})){
+    var stretchHabit=state.habits.find(function(h){return /stretch/i.test(String(h.name||'').trim());});
+    if(stretchHabit){stretchHabit.autoSource='stretch';state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='stretch';});}
+    else if(!localStorage.getItem('habits2_stretch_link_v1')){
+      state.habits.push({id:'h2-auto-stretch',name:'Daily Stretching',category:'Health',color:'#0d9488',type:'check',target:1,schedule:'daily',weeklyTarget:7,days:[0,1,2,3,4,5,6],why:'Keep muscles loose and prevent injury.',cue:'',minimum:'',created:new Date().toISOString(),autoSource:'stretch'});
+      state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='stretch';});
+    }
   }
+  localStorage.setItem('habits2_stretch_link_v1','1');
   var sources=[
     {id:'bible',name:'Bible Reading',category:'Faith',color:'#8b5e34',schedule:'daily',weeklyTarget:7,why:'Stay grounded in Scripture.'},
     {id:'prayer',name:'Prayer',category:'Faith',color:'#6d28d9',schedule:'daily',weeklyTarget:7,why:'Make time for prayer and reflection.'},
