@@ -3880,6 +3880,7 @@ function load(){
   try{
     // Tri-state checkboxes
     document.querySelectorAll('.tri-check').forEach(el=>{if(el.dataset.key)applyTriState(el,d[el.dataset.key]||'');});
+    updateCompactSectionCounts();
     // Restore priority done state
     PTIDS.forEach(id=>{
       const row=document.getElementById(id);
@@ -7990,13 +7991,18 @@ function h2SyncFromJournal(){
     state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='language';});
     localStorage.setItem('habits2_language_lessons_v1','1');
   }
+  if(!localStorage.getItem('habits2_training_color_v1')){
+    var trainingHabit=state.habits.find(function(h){return h.autoSource==='training';});
+    if(trainingHabit&&trainingHabit.color==='#dc2626')trainingHabit.color='#4f46e5';
+    localStorage.setItem('habits2_training_color_v1','1');
+  }
   var sources=[
     {id:'bible',name:'Bible Reading',category:'Faith',color:'#8b5e34',schedule:'daily',weeklyTarget:7,why:'Stay grounded in Scripture.'},
     {id:'prayer',name:'Prayer',category:'Faith',color:'#6d28d9',schedule:'daily',weeklyTarget:7,why:'Make time for prayer and reflection.'},
     {id:'meditation',name:'Meditation',category:'Faith',color:'#7c3aed',schedule:'daily',weeklyTarget:7,why:'Practice intentional quiet and reflection.'},
     {id:'hydration',name:'Track Hydration',category:'Health',color:'#0284c7',schedule:'daily',weeklyTarget:7,why:'Keep daily water intake visible.'},
     {id:'nutrition',name:'Log Nutrition',category:'Health',color:'#16a34a',schedule:'daily',weeklyTarget:7,why:'Build awareness of daily nutrition.'},
-    {id:'training',name:'Complete Training',category:'Fitness',color:'#dc2626',schedule:'weekly',weeklyTarget:4,why:'Follow the active training plan.'},
+    {id:'training',name:'Complete Training',category:'Fitness',color:'#4f46e5',schedule:'weekly',weeklyTarget:4,why:'Follow the active training plan.'},
     {id:'steps',name:'Track Steps',category:'Fitness',color:'#ea580c',schedule:'daily',weeklyTarget:7,why:'Keep everyday movement visible.'},
     {id:'library',name:'Library Learning',category:'Growth',color:'#2563eb',schedule:'daily',weeklyTarget:7,why:'Learn from reading or audiobooks every day.'},
     {id:'language',name:'Language Lessons',category:'Growth',color:'#0891b2',schedule:'weekdays',weeklyTarget:5,why:'Complete language lessons five days each week.'},
