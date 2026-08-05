@@ -8012,12 +8012,20 @@ function h2SyncFromJournal(){
     if(trainingHabit&&trainingHabit.color==='#dc2626')trainingHabit.color='#4f46e5';
     localStorage.setItem('habits2_training_color_v1','1');
   }
+  if(!localStorage.getItem('habits2_stretch_link_v1')){
+    var stretchHabit=state.habits.find(function(h){return h.autoSource==='stretch'||/^(daily\s+)?stretch(ing)?$/i.test(String(h.name||'').trim());});
+    if(stretchHabit){stretchHabit.autoSource=stretchHabit.autoSource||'stretch';}
+    else{state.habits.push({id:'h2-auto-stretch',name:'Daily Stretching',category:'Health',color:'#0d9488',type:'check',target:1,schedule:'daily',weeklyTarget:7,days:[0,1,2,3,4,5,6],why:'Keep muscles loose and prevent injury.',cue:'',minimum:'',created:new Date().toISOString(),autoSource:'stretch'});}
+    state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='stretch';});
+    localStorage.setItem('habits2_stretch_link_v1','1');
+  }
   var sources=[
     {id:'bible',name:'Bible Reading',category:'Faith',color:'#8b5e34',schedule:'daily',weeklyTarget:7,why:'Stay grounded in Scripture.'},
     {id:'prayer',name:'Prayer',category:'Faith',color:'#6d28d9',schedule:'daily',weeklyTarget:7,why:'Make time for prayer and reflection.'},
     {id:'meditation',name:'Meditation',category:'Faith',color:'#7c3aed',schedule:'daily',weeklyTarget:7,why:'Practice intentional quiet and reflection.'},
     {id:'hydration',name:'Track Hydration',category:'Health',color:'#0284c7',schedule:'daily',weeklyTarget:7,why:'Keep daily water intake visible.'},
     {id:'nutrition',name:'Log Nutrition',category:'Health',color:'#16a34a',schedule:'daily',weeklyTarget:7,why:'Build awareness of daily nutrition.'},
+    {id:'stretch',name:'Daily Stretching',category:'Health',color:'#0d9488',schedule:'daily',weeklyTarget:7,why:'Keep muscles loose and prevent injury.'},
     {id:'training',name:'Complete Training',category:'Fitness',color:'#4f46e5',schedule:'weekly',weeklyTarget:4,why:'Follow the active training plan.'},
     {id:'steps',name:'Track Steps',category:'Fitness',color:'#ea580c',schedule:'daily',weeklyTarget:7,why:'Keep everyday movement visible.'},
     {id:'library',name:'Library Learning',category:'Growth',color:'#2563eb',schedule:'daily',weeklyTarget:7,why:'Learn from reading or audiobooks every day.'},
@@ -8041,6 +8049,7 @@ function h2SyncFromJournal(){
     if(row.spMeditation==='green')mark('meditation',key);
     if((parseFloat(row.waterOz)||parseFloat(row.waterCount)*8||0)>0)mark('hydration',key);
     if((Array.isArray(row.foodLog)&&row.foodLog.length)||parseFloat(row.nuCalVal)>0||parseFloat(row.nuProtVal)>0)mark('nutrition',key);
+    if(row.exStretch==='green')mark('stretch',key);
     if((parseFloat(row.exSteps)||0)>0)mark('steps',key);
     if(parseTimedMins(row.gaAudiobookTime)>0||String(row.gaAudiobookText||'').trim())mark('library',key);
     if(row.ctMentalModels==='green'||row.ctAssumption==='green'||row.ctSecondOrder==='green'||row.ctFinancialModels==='green'||row.ctFrameworks==='green')mark('thinking',key);
