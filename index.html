@@ -3367,11 +3367,9 @@ function collectDailyChecks(){
   var selectedKey=dk(today);
   var skillEntries=getSkillEntries();
   var hasCoding=skillEntries.some(function(entry){return entry.date===selectedKey&&(entry.category==='Coding'||entry.category==='Coding / Tech');});
-  var hasGunRange=skillEntries.some(function(entry){return entry.date===selectedKey&&entry.category==='Gun Range';});
   var hasLanguage=skillEntries.some(function(entry){return entry.date===selectedKey&&entry.category==='Language';});
   var hasYouTube=fvItems().some(function(video){return video.watched&&video.watchedAt&&dk(new Date(video.watchedAt))===selectedKey;});
   items.push({key:'',id:'skillLogContainer',tab:'skill-log',group:'Growth',status:hasCoding?'green':'blank',label:'Coding / Tech'});
-  items.push({key:'',id:'skillLogContainer',tab:'skill-log',group:'Growth',status:hasGunRange?'green':'blank',label:'Gun Range'});
   items.push({key:'',id:'skillLogContainer',tab:'skill-log',group:'Growth',status:hasLanguage?'green':'blank',label:'Language'});
   items.push({key:'',id:'fvVideoList',tab:'financial-videos',group:'Growth',status:hasYouTube?'green':'blank',label:'YouTube Financial Video'});
   return items;
