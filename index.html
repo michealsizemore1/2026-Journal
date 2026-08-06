@@ -2149,7 +2149,7 @@ body{
       <div><label class="act-label">Title / Name</label><input type="text" id="actTitle" class="act-input" placeholder="e.g. Morning Run"></div>
       <div><label class="act-label">Code / ID</label><input type="text" id="actCode" class="act-input" placeholder="e.g. 293WZ3"></div>
       <div><label class="act-label">Distance (miles)</label><input type="number" id="actDistance" class="act-input" placeholder="0.0" step="0.01"></div>
-      <div><label class="act-label">Time (H:MM:SS or minutes)</label><input type="text" id="actDuration" class="act-input" placeholder="0:25:30 or 25 min" title="Enter H:MM:SS, H:MM, or minutes"></div>
+      <div><label class="act-label">Time (MM:SS, H:MM:SS, or minutes)</label><input type="text" id="actDuration" class="act-input" placeholder="32:15 or 1:32:15 or 32 min" title="Enter MM:SS for under an hour, H:MM:SS for over an hour, or a plain number of minutes"></div>
       <div><label class="act-label">Avg Pace (MM:SS/mi)</label><input type="text" id="actPace" class="act-input" placeholder="8:30"></div>
       <div><label class="act-label">Avg Power (W)</label><input type="number" id="actPower" class="act-input" placeholder="0"></div>
       <div><label class="act-label">Avg HR (bpm)</label><input type="number" id="actHR" class="act-input" placeholder="0"></div>
@@ -3195,7 +3195,7 @@ function dk(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),
 function fmtD(d){return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});}
 function wkStart(off=0){const t=new Date();t.setDate(t.getDate()+off*7);const dow=(t.getDay()+6)%7;const ws=new Date(t);ws.setDate(t.getDate()-dow);ws.setHours(0,0,0,0);return ws;}
 function wkStartOf(d){const dow=(d.getDay()+6)%7;const ws=new Date(d);ws.setDate(d.getDate()-dow);ws.setHours(0,0,0,0);return ws;}
-function parseMins(s){if(!s)return 0;s=s.trim();let m=s.match(/(\d+)\s*hr?s?\s*(\d*)\s*min?s?/i);if(m)return+m[1]*60+(+m[2]||0);m=s.match(/(\d+)\s*min?s?/i);if(m)return+m[1];m=s.match(/^(\d+):(\d{2}):(\d{2})$/);if(m)return+m[1]*60+ +m[2]+ +m[3]/60;m=s.match(/^(\d+):(\d{2})$/);if(m)return+m[1]*60+ +m[2];const n=parseFloat(s);return isNaN(n)?0:Math.round(n);}
+function parseMins(s){if(!s)return 0;s=s.trim();let m=s.match(/(\d+)\s*hr?s?\s*(\d*)\s*min?s?/i);if(m)return+m[1]*60+(+m[2]||0);m=s.match(/(\d+)\s*min?s?/i);if(m)return+m[1];m=s.match(/^(\d+):(\d{2}):(\d{2})$/);if(m)return+m[1]*60+ +m[2]+ +m[3]/60;m=s.match(/^(\d+):(\d{2})$/);if(m)return+m[1]+ +m[2]/60;const n=parseFloat(s);return isNaN(n)?0:Math.round(n);}
 function fmtMins(m){if(!m)return'-';m=Math.round(m);return m<60?m+'m':Math.floor(m/60)+'h '+(m%60)+'m';}
 function parseTimedMins(s){
   if(!s)return 0;
@@ -8027,18 +8027,6 @@ function h2SyncFromJournal(){
     if(trainingHabit&&trainingHabit.color==='#dc2626')trainingHabit.color='#4f46e5';
     localStorage.setItem('habits2_training_color_v1','1');
   }
-  // Re-checked on every sync (not a one-shot flag) so the link self-heals if the
-  // habit's autoSource is ever lost — e.g. an older cloud-sync snapshot overwriting
-  // local data would otherwise leave "Daily Stretching" permanently unlinked.
-  if(!state.habits.some(function(h){return h.autoSource==='stretch';})){
-    var stretchHabit=state.habits.find(function(h){return /stretch/i.test(String(h.name||'').trim());});
-    if(stretchHabit){stretchHabit.autoSource='stretch';state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='stretch';});}
-    else if(!localStorage.getItem('habits2_stretch_link_v1')){
-      state.habits.push({id:'h2-auto-stretch',name:'Daily Stretching',category:'Health',color:'#0d9488',type:'check',target:1,schedule:'daily',weeklyTarget:7,days:[0,1,2,3,4,5,6],why:'Keep muscles loose and prevent injury.',cue:'',minimum:'',created:new Date().toISOString(),autoSource:'stretch'});
-      state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='stretch';});
-    }
-  }
-  localStorage.setItem('habits2_stretch_link_v1','1');
   var sources=[
     {id:'bible',name:'Bible Reading',category:'Faith',color:'#8b5e34',schedule:'daily',weeklyTarget:7,why:'Stay grounded in Scripture.'},
     {id:'prayer',name:'Prayer',category:'Faith',color:'#6d28d9',schedule:'daily',weeklyTarget:7,why:'Make time for prayer and reflection.'},
@@ -8054,6 +8042,23 @@ function h2SyncFromJournal(){
     {id:'thinking',name:'Thinking Practice',category:'Growth',color:'#7c3aed',schedule:'weekly',weeklyTarget:4,why:'Strengthen deliberate thinking and decision-making.'},
     {id:'financial-video',name:'Financial Video Learning',category:'Growth',color:'#b45309',schedule:'weekly',weeklyTarget:2,why:'Continue retirement and investing education.'}
   ];
+  // Self-heal every auto-linked habit on every sync (not just once) — if a habit's
+  // autoSource is ever lost (e.g. an older cloud-sync snapshot overwriting local
+  // data, or the habit was created manually before auto-linking existed), find it
+  // again by name instead of leaving it stuck "not linked" forever. This previously
+  // only covered Stretching; generalized so Training/Coding/etc. self-heal too.
+  function normHabitName(value){return String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,'').trim();}
+  sources.forEach(function(source){
+    if(state.habits.some(function(h){return h.autoSource===source.id;}))return;
+    var match=state.habits.find(function(h){return !h.autoSource&&normHabitName(h.name)===normHabitName(source.name);});
+    if(match){match.autoSource=source.id;state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!==source.id;});}
+  });
+  // "Daily Stretching" additionally gets auto-created if it doesn't exist anywhere yet (once only).
+  if(!state.habits.some(function(h){return h.autoSource==='stretch';})&&!localStorage.getItem('habits2_stretch_link_v1')){
+    state.habits.push({id:'h2-auto-stretch',name:'Daily Stretching',category:'Health',color:'#0d9488',type:'check',target:1,schedule:'daily',weeklyTarget:7,days:[0,1,2,3,4,5,6],why:'Keep muscles loose and prevent injury.',cue:'',minimum:'',created:new Date().toISOString(),autoSource:'stretch'});
+    state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='stretch';});
+  }
+  localStorage.setItem('habits2_stretch_link_v1','1');
   sources.forEach(function(s){evidence[s.id]={};});
   function mark(source,key){if(!key||key>todayKey)return;evidence[source][key]=true;if(!firstSeen[source]||key<firstSeen[source])firstSeen[source]=key;}
   var activityDates={};
