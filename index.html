@@ -1420,10 +1420,15 @@ body{
       <div class="priority-item" id="dg0"><div class="tri-check" data-key="dg0c" onclick="triClickPriority(this,'dg0')"></div><input type="text" id="dg0t" placeholder="Goal 1..."></div>
       <div class="priority-item" id="dg1"><div class="tri-check" data-key="dg1c" onclick="triClickPriority(this,'dg1')"></div><input type="text" id="dg1t" placeholder="Goal 2..."></div>
       <div class="priority-item" id="dg2"><div class="tri-check" data-key="dg2c" onclick="triClickPriority(this,'dg2')"></div><input type="text" id="dg2t" placeholder="Goal 3..."></div>
-      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <button type="button" onclick="copyItemsToNextDay(['dg0','dg1','dg2'],'copyGoalsConfirm')" style="background:#7c3aed;color:#fff;border:none;border-radius:7px;padding:5px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;">&#x27A1;&#xFE0F; Copy Goals to Tomorrow</button>
         <span id="copyGoalsConfirm" style="font-size:0.78rem;color:#16a34a;display:none;">✓ Copied!</span>
       </div>
+      <div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button type="button" id="aiGoalsBtn" onclick="aiSetDailyGoals(true)" style="background:#0f766e;color:#fff;border:none;border-radius:7px;padding:5px 14px;font-size:0.8rem;font-weight:600;cursor:pointer;">&#x2728; AI: Suggest Goals</button>
+        <span id="aiGoalsStatus" style="font-size:0.72rem;"></span>
+      </div>
+      <div style="font-size:0.68rem;color:#94a3b8;margin-top:4px;">Looks at your last 7 days and picks your weakest areas. Runs automatically each morning if your goals are still blank — tap the button anytime to refresh.</div>
       </div>
     </div>
   </div>
@@ -3939,6 +3944,7 @@ function load(){
   try{initHandwritingPad();}catch(e){console.error('handwriting pad:',e);}
   var calendar=document.getElementById('journalCalendar');
   if(calendar&&calendar.open){journalCalendarMonth=new Date(today.getFullYear(),today.getMonth(),1);renderJournalCalendar();}
+  try{aiAutoAttemptDailyGoals();}catch(e){console.error('aiAutoAttemptDailyGoals:',e);}
 }
 
 function attachListeners(){
@@ -13395,6 +13401,84 @@ function journalInstallAIProxy(){
 function journalAIAvailable(){return !!(journalCloudClient&&journalCloudUser);}
 function journalAIKey(){
   return journalAIAvailable()?'supabase-managed':'';
+}
+
+// ── AI Daily Goals: scan the last 7 days for shortcomings, suggest 3 goals ──
+function journalGatherShortfalls(){
+  var totals={bible:0,prayer:0,meditation:0,stretch:0,thinking:0,library:0,training:0,waterSum:0,waterDays:0,mealsDays:0};
+  var days=7;
+  for(var i=days-1;i>=0;i--){
+    var d=new Date();d.setDate(d.getDate()-i);var key=dk(d),row={};
+    try{row=JSON.parse(localStorage.getItem('planner_'+key)||'{}')||{};}catch(e){}
+    if(row.spBibleAudio==='green')totals.bible++;
+    if(row.spAIPrayer==='green')totals.prayer++;
+    if(row.spMeditation==='green')totals.meditation++;
+    if(row.exStretch==='green')totals.stretch++;
+    if(row.ctMentalModels==='green'||row.ctAssumption==='green'||row.ctSecondOrder==='green'||row.ctFinancialModels==='green'||row.ctFrameworks==='green')totals.thinking++;
+    if(parseTimedMins(row.gaAudiobookTime)>0||String(row.gaAudiobookText||'').trim())totals.library++;
+    var w=parseFloat(row.waterOz)||(parseFloat(row.waterCount)*8||0);
+    if(w>0){totals.waterSum+=w;totals.waterDays++;}
+    if(Array.isArray(row.foodLog)&&row.foodLog.length)totals.mealsDays++;
+    try{if(hasActivityOnDate(key))totals.training++;}catch(e){}
+  }
+  var languageDays={};
+  try{
+    var since=dk(new Date(Date.now()-6*86400000));
+    (getSkillEntries()||[]).forEach(function(entry){if(entry&&entry.date>=since&&entry.category==='Language')languageDays[entry.date]=true;});
+  }catch(e){}
+  var lines=[
+    'Bible reading: '+totals.bible+'/7 days',
+    'Prayer: '+totals.prayer+'/7 days',
+    'Meditation: '+totals.meditation+'/7 days',
+    'Stretching: '+totals.stretch+'/7 days',
+    'Training/workouts logged: '+totals.training+'/7 days',
+    'Thinking practice: '+totals.thinking+'/7 days',
+    'Library learning: '+totals.library+'/7 days',
+    'Language lessons: '+Object.keys(languageDays).length+'/7 days',
+    'Meals logged: '+totals.mealsDays+'/7 days',
+    'Average water intake: '+(totals.waterDays?Math.round(totals.waterSum/totals.waterDays):0)+' oz on the '+totals.waterDays+'/7 days it was logged'
+  ];
+  try{
+    var state=h2State();
+    var stats=state.habits.map(function(h){return{name:h.name,rate:h2HabitStats(state,h).rate};}).sort(function(a,b){return a.rate-b.rate;});
+    var weakest=stats.slice(0,5).map(function(s){return s.name+' ('+s.rate+'% consistency)';});
+    if(weakest.length)lines.push('Weakest tracked habits, 90-day consistency: '+weakest.join(', '));
+  }catch(e){}
+  return lines.join('\n');
+}
+function aiSetDailyGoals(force){
+  var g0=document.getElementById('dg0t'),g1=document.getElementById('dg1t'),g2=document.getElementById('dg2t');
+  if(!g0||!g1||!g2)return;
+  var hasExisting=!!(g0.value.trim()||g1.value.trim()||g2.value.trim());
+  if(hasExisting&&force&&!confirm('Replace today\'s current goals with new AI-suggested goals?'))return;
+  var btn=document.getElementById('aiGoalsBtn'),status=document.getElementById('aiGoalsStatus');
+  if(btn){btn.disabled=true;btn.textContent='⏳ Thinking...';}
+  if(status){status.textContent='';}
+  var prompt='You are a supportive personal accountability coach. Below is a summary of my last 7 days from my personal journal.\n\n'
+    +journalGatherShortfalls()
+    +'\n\nBased on the areas I am most inconsistent in, suggest exactly 3 specific, actionable goals for TODAY that would help me improve. Each goal must be under 12 words, concrete, and doable today — not vague encouragement. Return ONLY the 3 goals, one per line, no numbering, no bullets, no extra commentary.';
+  aiCall(prompt,300,function(text){
+    var lines=text.split(/\n+/).map(function(l){return l.replace(/^[\-\*•\d.\)]+\s*/,'').trim();}).filter(Boolean).slice(0,3);
+    g0.value=lines[0]||g0.value;g1.value=lines[1]||g1.value;g2.value=lines[2]||g2.value;
+    save();
+    if(btn){btn.disabled=false;btn.textContent='✨ AI: Suggest Goals';}
+    if(status){status.style.color='#16a34a';status.textContent='✓ Suggested '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+    try{localStorage.setItem('ai_goals_auto_'+dk(today),'1');}catch(e){}
+  },function(err){
+    if(btn){btn.disabled=false;btn.textContent='✨ AI: Suggest Goals';}
+    if(status){status.style.color='#b91c1c';status.textContent='Could not generate goals: '+err;}
+  });
+}
+function aiAutoAttemptDailyGoals(){
+  try{
+    if(dk(today)!==dk(new Date()))return; // only auto-suggest when viewing the real current day
+    if(!journalAIAvailable())return;
+    if(localStorage.getItem('ai_goals_auto_'+dk(today)))return; // once per real day
+    var g0=document.getElementById('dg0t'),g1=document.getElementById('dg1t'),g2=document.getElementById('dg2t');
+    if(!g0||!g1||!g2)return;
+    if(g0.value.trim()||g1.value.trim()||g2.value.trim())return; // never overwrite goals you already set
+    aiSetDailyGoals(false);
+  }catch(e){}
 }
 async function journalProtectedFunction(body){
   if(!journalCloudClient||!journalCloudUser)throw new Error('Sign in to your private journal first.');
