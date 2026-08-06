@@ -13245,6 +13245,45 @@ function journalTodayTrainingSummary(){
   var useful=lines.find(function(line){return !/^(week|day)\s*\d*|^(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.test(line);});
   return useful||lines[0]||'Workout scheduled';
 }
+function journalAverageRecentPaceMinutes(){
+  try{
+    var runs=(getActivities()||[]).filter(function(a){return a&&a.pace&&/run/i.test(String(a.type||''));});
+    var recent=runs.slice(-10),totalSec=0,n=0;
+    recent.forEach(function(a){var p=parsePace(a.pace);if(p>0){totalSec+=p;n++;}});
+    return n?(totalSec/n/60):0;
+  }catch(e){return 0;}
+}
+// Estimate how long today's training will realistically take, so My Schedule can push
+// later items (stretching, breakfast) back instead of assuming every workout magically
+// finishes in under 15 minutes. Prefers a real logged duration when the workout has
+// already happened; otherwise estimates from the training-plan text.
+function journalTodayTrainingMinutesEstimate(trainingText,dateKey){
+  try{
+    var acts=(getActivities()||[]).filter(function(a){return a&&a.date===dateKey&&a.type!=='Rest Day';});
+    var withDuration=acts.find(function(a){return a.duration&&parseMins(a.duration)>0;});
+    if(withDuration)return Math.round(parseMins(withDuration.duration));
+  }catch(e){}
+  var text=String(trainingText||'');
+  if(!text||/rest day/i.test(text)||/no\s+workout\s+scheduled/i.test(text))return 0;
+  var distMatch=text.match(/\b(\d+(?:\.\d+)?)\s*(?:miles?|mi)\b/i);
+  if(distMatch){
+    var miles=parseFloat(distMatch[1])||0;
+    if(miles>0){var pace=journalAverageRecentPaceMinutes()||9.5;return Math.round(miles*pace);}
+  }
+  if(/long\s+run/i.test(text))return 75;
+  if(/interval|repeats?|speed\s*work/i.test(text))return 55;
+  if(/tempo|threshold/i.test(text))return 50;
+  if(/recovery\s+run/i.test(text))return 30;
+  if(/easy\s+run/i.test(text))return 40;
+  if(/\brace\b/i.test(text))return 90;
+  if(/strength/i.test(text))return 45;
+  if(/cross[- ]training/i.test(text))return 45;
+  return 45;
+}
+function journalMinsToClock(mins){
+  var total=((Math.round(mins)%1440)+1440)%1440,h=Math.floor(total/60),m=total%60,ap=h>=12?'PM':'AM',h12=h%12;if(h12===0)h12=12;
+  return h12+':'+String(m).padStart(2,'0')+' '+ap;
+}
 function journalHomeStreakSummary(){
   var actIdx=_buildActivityDateIndex(),cache={};
   var defs=[
@@ -13293,14 +13332,20 @@ function renderJournalSchedule(){
   }
   var reflected=['jAccomplish','jImprov','jGratitude','jNotes'].some(function(key){return String(d[key]||'').trim();});
   var restDay=/rest day|no workout scheduled/i.test(training),activityDone=hasActivityOnDate(dateKey)||restDay;
+  // Training duration varies a lot — a 12 mile run and a rest day shouldn't both hand off
+  // to stretching 15 minutes later. Estimate real duration and push stretching/breakfast
+  // back accordingly instead of using fixed slots that only work for a short easy day.
+  var trainingStartMins=390,trainingMinsEstimate=journalTodayTrainingMinutesEstimate(training,dateKey);
+  var stretchMins=trainingMinsEstimate>15?(trainingStartMins+trainingMinsEstimate):405;
+  var breakfastMins=Math.min(660,Math.max(465,stretchMins+25));
   var items=[
     {time:'5:30 AM',mins:330,label:'Review priorities, goals, calendar and email',detail:'Matches Review Tasks, Goals & Calendar',done:!!d.reviewCheck,tab:'daily'},
     {time:'5:30 AM',mins:330,label:'Meditation',detail:'Begin the day with meditation and stillness',done:d.spMeditation==='green',tab:'meditate'},
     {time:'5:30 AM',mins:330,label:'Wellness check and water',detail:'Weight, sleep and morning metrics',done:!!(d.wWghtVal||d.wSleepVal||d.wBPVal),tab:'wellness'},
     {time:'5:45 AM',mins:345,label:'Bible reading and prayer',detail:'Daily spiritual anchors',done:d.spBibleAudio==='green'&&d.spAIPrayer==='green',tab:'bible'},
-    {time:'6:30 AM',mins:390,label:'Today’s training',detail:training,done:activityDone,tab:'activities'},
-    {time:'6:45 AM',mins:405,label:'Stretching',detail:'Keep muscles loose and prevent injury',done:d.exStretch==='green',tab:'activities'},
-    {time:'7:45 AM',mins:465,label:'Breakfast',detail:'Recovery meal and hydration after training',done:mealComplete('breakfast',465),tab:'nutrition'},
+    {time:journalMinsToClock(trainingStartMins),mins:trainingStartMins,label:'Today’s training',detail:training+(trainingMinsEstimate>15?' (~'+trainingMinsEstimate+' min)':''),done:activityDone,tab:'activities'},
+    {time:journalMinsToClock(stretchMins),mins:stretchMins,label:'Stretching',detail:'Keep muscles loose and prevent injury',done:d.exStretch==='green',tab:'activities'},
+    {time:journalMinsToClock(breakfastMins),mins:breakfastMins,label:'Breakfast',detail:'Recovery meal and hydration after training',done:mealComplete('breakfast',breakfastMins),tab:'nutrition'},
     {time:'12:00 PM',mins:720,label:'Water checkpoint: 32 oz',detail:'Drink at least 32 ounces by noon',done:water>=32,tab:'nutrition'},
     {time:'12:00 PM',mins:720,label:'Lunch',detail:'Midday meal and hydration',done:mealComplete('lunch',720),tab:'nutrition'},
     {time:'12:30 PM',mins:750,label:'Library learning',detail:'Read, listen to an audiobook, or add book notes',done:!!parseTimedMins(d.gaAudiobookTime),tab:'library'},
