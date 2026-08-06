@@ -265,6 +265,7 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 .act-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 @media(max-width:500px){.act-form-grid{grid-template-columns:1fr;}}
 .act-input{width:100%;border:1px solid #d0d8ff;border-radius:6px;padding:7px;font-size:0.88rem;outline:none;font-family:inherit;background:white;box-sizing:border-box;}
+.act-input:disabled{background:#f0f0f0;color:#aaa;cursor:not-allowed;}
 .act-label{display:block;font-size:0.78rem;font-weight:600;color:#555;margin-bottom:3px;}
 .act-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center;}
 .act-filter select,.act-filter input{border:1px solid #e9ecef;border-radius:6px;padding:5px 10px;font-size:0.84rem;color:#555;outline:none;background:white;}
@@ -2140,10 +2141,11 @@ body{
     <div class="act-form-grid">
       <div><label class="act-label">Date</label><input type="date" id="actDate" class="act-input"></div>
       <div><label class="act-label">Type</label>
-        <select id="actType" class="act-input">
+        <select id="actType" class="act-input" onchange="handleActTypeChange()">
           <option value="Run">Run</option><option value="Ride">Ride</option>
           <option value="Walk">Walk</option><option value="Swim">Swim</option>
-          <option value="Strength">Strength</option><option value="Other">Other</option>
+          <option value="Strength">Strength</option><option value="Rest Day">Rest Day</option>
+          <option value="Other">Other</option>
         </select>
       </div>
       <div><label class="act-label">Title / Name</label><input type="text" id="actTitle" class="act-input" placeholder="e.g. Morning Run"></div>
@@ -2196,7 +2198,8 @@ body{
       <option value="">All Types</option>
       <option value="Run">Run</option><option value="Ride">Ride</option>
       <option value="Walk">Walk</option><option value="Swim">Swim</option>
-      <option value="Strength">Strength</option><option value="Other">Other</option>
+      <option value="Strength">Strength</option><option value="Rest Day">Rest Day</option>
+      <option value="Other">Other</option>
     </select>
     <select id="actFilterSource" onchange="renderActivities()">
       <option value="all">All Sources</option>
@@ -7969,6 +7972,11 @@ function h2WeekDone(state,habit,date){var start=h2StartWeek(date),count=0;for(va
 // Training Plan schedules no workout.
 function journalIsRestDay(date){
   try{
+    var key=h2Key(date);
+    var hasRestDayActivity=(getActivities()||[]).some(function(a){return a&&a.date===key&&a.type==='Rest Day';});
+    if(hasRestDayActivity)return true;
+  }catch(eAct){}
+  try{
     var raw=localStorage.getItem('current_training_plan'),plan=raw?JSON.parse(raw):null;
     if(!plan||!plan.text||!plan.startDate)return false;
     var text=extractWorkoutFromActivePlan(plan,date)||'';
@@ -7980,7 +7988,14 @@ function h2IsDue(habit,date,state){
   if(habit.archived)return false;
   var created=habit.created?new Date(habit.created):null;if(created&&date<new Date(created.getFullYear(),created.getMonth(),created.getDate()))return false;
   if(habit.schedule==='weekdays')return date.getDay()!==0&&date.getDay()!==6;
-  if(habit.schedule==='custom')return(habit.days||[]).indexOf(date.getDay())!==-1;
+  if(habit.schedule==='custom'){
+    if((habit.days||[]).indexOf(date.getDay())===-1)return false;
+    if(habit.autoSource==='training'){
+      var customDone=h2IsComplete(habit,h2Log(state,habit.id,h2Key(date)));
+      if(!customDone&&journalIsRestDay(date))return false;
+    }
+    return true;
+  }
   if(habit.schedule==='weekly'){
     var weekOK=h2WeekDone(state,habit,date)<Number(habit.weeklyTarget||3),isDone=h2IsComplete(habit,h2Log(state,habit.id,h2Key(date)));
     if(habit.autoSource==='training'&&!isDone&&journalIsRestDay(date))return false;
@@ -8062,7 +8077,7 @@ function h2SyncFromJournal(){
   sources.forEach(function(s){evidence[s.id]={};});
   function mark(source,key){if(!key||key>todayKey)return;evidence[source][key]=true;if(!firstSeen[source]||key<firstSeen[source])firstSeen[source]=key;}
   var activityDates={};
-  try{(getActivities()||[]).forEach(function(a){if(a&&a.date){activityDates[a.date]=true;mark('training',a.date);}});}catch(ignore){}
+  try{(getActivities()||[]).forEach(function(a){if(a&&a.date&&a.type!=='Rest Day'){activityDates[a.date]=true;mark('training',a.date);}});}catch(ignore){}
   var skills=[];try{skills=getSkillEntries()||[];}catch(ignore2){}
   skills.forEach(function(entry){var key=entry&&entry.date,cat=String(entry&&entry.category||'').toLowerCase();if(!key)return;if(cat==='language')mark('language',key);if(cat==='coding'||cat==='coding / tech')mark('coding',key);});
   try{(fvItems()||[]).forEach(function(video){if(video&&video.watched&&video.watchedAt){var d=new Date(video.watchedAt);if(!isNaN(d.getTime()))mark('financial-video',h2Key(d));}});}catch(ignore3){}
@@ -8079,22 +8094,6 @@ function h2SyncFromJournal(){
     if(parseTimedMins(row.gaAudiobookTime)>0||String(row.gaAudiobookText||'').trim())mark('library',key);
     if(row.ctMentalModels==='green'||row.ctAssumption==='green'||row.ctSecondOrder==='green'||row.ctFinancialModels==='green'||row.ctFrameworks==='green')mark('thinking',key);
   }
-  try{
-    var _last14=[];for(var _o=13;_o>=0;_o--){var _d=new Date(todayDate);_d.setDate(todayDate.getDate()-_o);_last14.push(h2Key(_d));}
-    window._h2Debug2={
-      todayKey:todayKey,
-      last14Days:_last14,
-      trainingEvidence14:_last14.map(function(k){return evidence.training[k]?k:null;}).filter(Boolean),
-      codingEvidence14:_last14.map(function(k){return evidence.coding[k]?k:null;}).filter(Boolean),
-      languageEvidence14:_last14.map(function(k){return evidence.language[k]?k:null;}).filter(Boolean),
-      trainingTotalDays:Object.keys(evidence.training).length,
-      codingTotalDays:Object.keys(evidence.coding).length,
-      languageTotalDays:Object.keys(evidence.language).length,
-      trainingHabitFound:!!state.habits.find(function(h){return h.autoSource==='training';}),
-      codingHabitFound:!!state.habits.find(function(h){return h.autoSource==='coding';}),
-      languageHabitFound:!!state.habits.find(function(h){return h.autoSource==='language';})
-    };
-  }catch(ignoreDbg){}
   var dismissed=state.dismissedAuto||[],manualNames={};
   function norm(value){return String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,'').trim();}
   state.habits.forEach(function(h){if(!h.autoSource)manualNames[norm(h.name)]=true;});
@@ -8152,18 +8151,7 @@ function h2Render(){
     var log=h2Log(state,h.id,key),done=h2IsComplete(h,log),dueNow=h2IsDue(h,h2ViewDate,state),stats=h2HabitStats(state,h),control;
     if(h.type==='check')control='<div class="h2-today-control"><button class="'+(done?'done':'')+'" onclick="h2SetLog(\''+h.id+'\',\'done\')">&#x2713; Complete</button><button class="'+(log.status==='partial'?'partial':'')+'" onclick="h2SetLog(\''+h.id+'\',\'partial\')">Partial</button><button class="'+(log.status==='skip'?'skip':'')+'" onclick="h2SetLog(\''+h.id+'\',\'skip\')">Skip</button></div>';
     else control='<div class="h2-value-control"><button onclick="h2Adjust(\''+h.id+'\',-1)">−</button><span>'+Number(log.value||0)+' / '+Number(h.target||1)+(h.type==='duration'?' min':'')+'</span><button onclick="h2Adjust(\''+h.id+'\',1)">+</button></div>';
-    var debugLine2='';
-    if(window._h2Debug2&&(h.autoSource==='training'||h.autoSource==='coding'||h.autoSource==='language')){
-      var _dbg=window._h2Debug2,_src=h.autoSource;
-      var _wkStart=h2StartWeek(h2ViewDate),_dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],_dayDump=[];
-      for(var _wi=0;_wi<7;_wi++){
-        var _wd=new Date(_wkStart);_wd.setDate(_wkStart.getDate()+_wi);
-        var _wk=h2Key(_wd),_wlog=h2Log(state,h.id,_wk);
-        _dayDump.push(_dayNames[_wi]+'('+_wk+')='+(_wlog.status||'blank'));
-      }
-      debugLine2='<div class="h2-habit-meta" style="color:#b45309;word-break:break-word;">DEBUG['+_src+']: linked='+_dbg[_src+'HabitFound']+' | habit.id='+h.id+' | evidence(14d): '+JSON.stringify(_dbg[_src+'Evidence14'])+'<br>week strip computed: '+_dayDump.join(', ')+'</div>';
-    }
-    return'<div class="h2-habit-card" style="--habit-color:'+h.color+'"><div class="h2-habit-top"><div><div class="h2-habit-name">'+escHtml(h.name)+(done?' <span class="h2-done-badge">&#x2713; Completed today</span>':'')+'</div><div class="h2-habit-meta">'+escHtml(h.category)+' &bull; '+h2ScheduleLabel(h)+' &bull; '+h2TypeLabel(h)+(h.autoSource?' &bull; Journal-linked':'')+(dueNow?'':' &bull; Not scheduled')+'</div>'+debugLine2+(h.why?'<div class="h2-habit-why">“'+escHtml(h.why)+'”</div>':'')+'</div><div class="h2-habit-actions"><button onclick="h2Edit(\''+h.id+'\')" title="Edit">&#x270E;</button><button onclick="h2Delete(\''+h.id+'\')" title="Delete">&#x1F5D1;</button></div></div><div class="h2-progress-row">'+control+'<div class="h2-stats"><span><strong>'+stats.streak+'d</strong> streak</span><span><strong>'+stats.rate+'%</strong> consistency</span><span><strong>'+stats.best+'d</strong> best</span></div></div>'+(h.cue||h.minimum?'<div class="h2-habit-meta" style="margin-top:8px;">'+(h.cue?'After I '+escHtml(h.cue)+', ':'')+(h.minimum?'minimum: '+escHtml(h.minimum):'')+'</div>':'')+'<div class="h2-week-strip">'+h2WeekStrip(state,h)+'</div></div>';
+    return'<div class="h2-habit-card" style="--habit-color:'+h.color+'"><div class="h2-habit-top"><div><div class="h2-habit-name">'+escHtml(h.name)+(done?' <span class="h2-done-badge">&#x2713; Completed today</span>':'')+'</div><div class="h2-habit-meta">'+escHtml(h.category)+' &bull; '+h2ScheduleLabel(h)+' &bull; '+h2TypeLabel(h)+(h.autoSource?' &bull; Journal-linked':'')+(dueNow?'':' &bull; Not scheduled')+'</div>'+(h.why?'<div class="h2-habit-why">“'+escHtml(h.why)+'”</div>':'')+'</div><div class="h2-habit-actions"><button onclick="h2Edit(\''+h.id+'\')" title="Edit">&#x270E;</button><button onclick="h2Delete(\''+h.id+'\')" title="Delete">&#x1F5D1;</button></div></div><div class="h2-progress-row">'+control+'<div class="h2-stats"><span><strong>'+stats.streak+'d</strong> streak</span><span><strong>'+stats.rate+'%</strong> consistency</span><span><strong>'+stats.best+'d</strong> best</span></div></div>'+(h.cue||h.minimum?'<div class="h2-habit-meta" style="margin-top:8px;">'+(h.cue?'After I '+escHtml(h.cue)+', ':'')+(h.minimum?'minimum: '+escHtml(h.minimum):'')+'</div>':'')+'<div class="h2-week-strip">'+h2WeekStrip(state,h)+'</div></div>';
   }).join('');
   h2RenderInsights(state);
 }
@@ -11866,6 +11854,7 @@ function toggleAddActivity(){
   document.getElementById('actSaveBtn').textContent='Save Activity';
   clearActForm();
   document.getElementById('actDate').value=dk(new Date());
+  handleActTypeChange();
   f.style.display='block';
   setTimeout(()=>document.getElementById('actTitle').focus(),50);
 }
@@ -11876,6 +11865,19 @@ function clearActForm(){
   });
   document.getElementById('actSource').value='manual';
   document.getElementById('actType').value='Run';
+  handleActTypeChange();
+}
+var ACT_REST_DAY_FIELDS=['actTitle','actCode','actDistance','actDuration','actPace','actPower','actHR','actCadence','actCalories','actElevGain','actTemp','actExecScore','actNotes'];
+function handleActTypeChange(){
+  var typeEl=document.getElementById('actType');if(!typeEl)return;
+  var isRestDay=typeEl.value==='Rest Day';
+  ACT_REST_DAY_FIELDS.forEach(function(id){
+    var e=document.getElementById(id);if(!e)return;
+    e.disabled=isRestDay;
+    if(isRestDay)e.value='';
+  });
+  var sourceEl=document.getElementById('actSource');
+  if(sourceEl){sourceEl.disabled=isRestDay;if(isRestDay)sourceEl.value='manual';}
 }
 function getActFormValues(){
   return{
@@ -11959,6 +11961,7 @@ function editActivity(id){
   document.getElementById('actExecScore').value=act.execScore||'';
   document.getElementById('actNotes').value=act.notes||'';
   document.getElementById('actSource').value=act.source||'manual';
+  handleActTypeChange();
   f.style.display='block';
   setTimeout(function(){f.scrollIntoView({behavior:'smooth',block:'start'});},50);
 }
@@ -13168,6 +13171,7 @@ function journalHomeCard(id,title,body){
 function journalTodayTrainingSummary(){
   var dateKey=dk(today);
   var acts=getActivities().filter(function(a){return a.date===dateKey;});
+  if(acts.some(function(a){return a.type==='Rest Day';}))return'Rest Day';
   var text='';
   try{
     var raw=localStorage.getItem('current_training_plan'),plan=raw?JSON.parse(raw):null;
