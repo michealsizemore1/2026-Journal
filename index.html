@@ -12667,7 +12667,7 @@ function renderJournalSchedule(){
   }
   var reflected=['jAccomplish','jImprov','jGratitude','jNotes'].some(function(key){return String(d[key]||'').trim();});
   var restDay=/rest day|no workout scheduled/i.test(training),activityDone=hasActivityOnDate(dateKey)||restDay;
-  var runToday=getActivities().some(function(a){return a&&a.date===dateKey&&a.type==='Run';});
+  var runToday=/\brun\b|\brace\b/i.test(training)||getActivities().some(function(a){return a&&a.date===dateKey&&a.type==='Run';});
   // Training duration varies a lot — a 12 mile run and a rest day shouldn't both hand off
   // to stretching 15 minutes later. Estimate real duration and push stretching/breakfast
   // back accordingly instead of using fixed slots that only work for a short easy day.
