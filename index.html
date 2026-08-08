@@ -12667,6 +12667,7 @@ function renderJournalSchedule(){
   }
   var reflected=['jAccomplish','jImprov','jGratitude','jNotes'].some(function(key){return String(d[key]||'').trim();});
   var restDay=/rest day|no workout scheduled/i.test(training),activityDone=hasActivityOnDate(dateKey)||restDay;
+  var runToday=getActivities().some(function(a){return a&&a.date===dateKey&&a.type==='Run';});
   // Training duration varies a lot — a 12 mile run and a rest day shouldn't both hand off
   // to stretching 15 minutes later. Estimate real duration and push stretching/breakfast
   // back accordingly instead of using fixed slots that only work for a short easy day.
@@ -12680,6 +12681,7 @@ function renderJournalSchedule(){
     {time:'5:45 AM',mins:345,label:'Bible reading and prayer',detail:'Daily spiritual anchors',done:d.spBibleAudio==='green'&&d.spAIPrayer==='green',tab:'bible'},
     {time:journalMinsToClock(trainingStartMins),mins:trainingStartMins,label:'Today’s training',detail:training+(trainingMinsEstimate>15?' (~'+trainingMinsEstimate+' min)':''),done:activityDone,tab:'activities'},
     {time:journalMinsToClock(stretchMins),mins:stretchMins,label:'Stretching',detail:'Keep muscles loose and prevent injury',done:d.exStretch==='green',tab:'activities'},
+    {time:journalMinsToClock(stretchMins+20),mins:stretchMins+20,label:'Massage',detail:'Post-run recovery massage',done:d.exMassage==='green',tab:'activities',skip:!runToday},
     {time:journalMinsToClock(breakfastMins),mins:breakfastMins,label:'Breakfast',detail:'Recovery meal and hydration after training',done:mealComplete('breakfast',breakfastMins),tab:'nutrition'},
     {time:'12:00 PM',mins:720,label:'Water checkpoint: 32 oz',detail:'Drink at least 32 ounces by noon',done:water>=32,tab:'nutrition'},
     {time:'12:00 PM',mins:720,label:'Lunch',detail:'Midday meal and hydration',done:mealComplete('lunch',720),tab:'nutrition'},
