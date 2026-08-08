@@ -2731,6 +2731,7 @@ body{
           <option value="Music">&#x1F3B5; Music</option>
           <option value="Health">&#x1FA7A; Health / Fitness</option>
           <option value="Gun Range">&#x1F3AF; Gun Range</option>
+          <option value="Retirement Videos">&#x1F4FA; Retirement Videos</option>
           <option value="Leadership">&#x1F91D; Leadership</option>
           <option value="Other">&#x1F4A1; Other</option>
         </select>
@@ -7385,7 +7386,7 @@ function importSkillLog(ev){
 var SKILL_CAT_COLORS={
   'Coding':'#2980b9','Finance':'#27ae60','Language':'#8e44ad','Design':'#e67e22',
   'Writing':'#16a085','Music':'#d35400','Health':'#c0392b','Gun Range':'#8b5e3c',
-  'Leadership':'#2c3e50','Other':'#7f8c8d'
+  'Retirement Videos':'#b45309','Leadership':'#2c3e50','Other':'#7f8c8d'
 };
 
 function toggleSkillNotes(id){
@@ -7908,7 +7909,8 @@ function h2SyncFromJournal(){
     {id:'steps',name:'Track Steps',category:'Fitness',color:'#ea580c',schedule:'daily',weeklyTarget:7,why:'Keep everyday movement visible.'},
     {id:'library',name:'Library Learning',category:'Growth',color:'#2563eb',schedule:'daily',weeklyTarget:7,why:'Learn from reading or audiobooks every day.'},
     {id:'language',name:'Language Lessons',category:'Growth',color:'#0891b2',schedule:'weekdays',weeklyTarget:5,why:'Complete language lessons five days each week.'},
-    {id:'coding',name:'Coding / Tech',category:'Growth',color:'#0f766e',schedule:'weekly',weeklyTarget:3,why:'Keep technical skills growing.'}
+    {id:'coding',name:'Coding / Tech',category:'Growth',color:'#0f766e',schedule:'weekly',weeklyTarget:3,why:'Keep technical skills growing.'},
+    {id:'retirement-videos',name:'Retirement Videos',category:'Growth',color:'#b45309',schedule:'weekly',weeklyTarget:2,why:'Continue retirement and investing education.'}
   ];
   // Build the evidence/firstSeen picture BEFORE any habit gets created or backdated below,
   // so one-time creation migrations can stamp a realistic "created" date instead of "now".
@@ -7917,7 +7919,7 @@ function h2SyncFromJournal(){
   var activityDates={};
   try{(getActivities()||[]).forEach(function(a){if(a&&a.date&&a.type!=='Rest Day'){activityDates[a.date]=true;mark('training',a.date);}});}catch(ignore){}
   var skills=[];try{skills=getSkillEntries()||[];}catch(ignore2){}
-  skills.forEach(function(entry){var key=entry&&entry.date,cat=String(entry&&entry.category||'').toLowerCase();if(!key)return;if(cat==='language')mark('language',key);if(cat==='coding'||cat==='coding / tech')mark('coding',key);});
+  skills.forEach(function(entry){var key=entry&&entry.date,cat=String(entry&&entry.category||'').toLowerCase();if(!key)return;if(cat==='language')mark('language',key);if(cat==='coding'||cat==='coding / tech')mark('coding',key);if(cat==='retirement videos')mark('retirement-videos',key);});
   for(var offset=89;offset>=0;offset--){
     var date=new Date(todayDate);date.setDate(todayDate.getDate()-offset);var key=h2Key(date),row={};
     try{row=JSON.parse(localStorage.getItem('planner_'+key)||'{}')||{};}catch(ignore4){}
@@ -10395,23 +10397,26 @@ function renderWeeklyGrowthTable(start,end,days,labels){
     var cat=skillCategory(entry),search=String([entry&&entry.name,entry&&entry.resource,entry&&entry.notes].filter(Boolean).join(' ')).toLowerCase();
     if(category==='coding')return cat==='coding'||cat==='coding tech'||(!cat&&/coding|programming|software|technology/.test(search));
     if(category==='range')return cat==='gun range'||cat==='shooting'||(!cat&&/gun range|shooting|firearm/.test(search));
+    if(category==='retirement')return cat==='retirement videos'||(!cat&&/retirement video/.test(search));
     return cat==='language'||cat==='spanish'||cat==='language learning'||(!cat&&/language|spanish/.test(search));
   }
   function skillDisplay(minutes,count,isTotal){if(minutes)return fmtMinsSeconds(minutes);if(!count)return'-';return isTotal?count+' session'+(count===1?'':'s'):'&#x2705;';}
-  var codingTotal=0,rangeTotal=0,languageTotal=0,codingSessions=0,rangeSessions=0,languageSessions=0,rows=[];
+  var codingTotal=0,rangeTotal=0,languageTotal=0,retirementTotal=0,codingSessions=0,rangeSessions=0,languageSessions=0,retirementSessions=0,rows=[];
   for(var i=0;i<7;i++){
     var date=new Date(start);date.setDate(start.getDate()+i);var key=dk(date);
     var codingEntries=skills.filter(function(entry){return entry.date===key&&skillMatches(entry,'coding');});
     var rangeEntries=skills.filter(function(entry){return entry.date===key&&skillMatches(entry,'range');});
     var languageEntries=skills.filter(function(entry){return entry.date===key&&skillMatches(entry,'language');});
+    var retirementEntries=skills.filter(function(entry){return entry.date===key&&skillMatches(entry,'retirement');});
     var coding=codingEntries.reduce(function(total,entry){return total+parseSkillTimeMins(entry.time);},0);
     var range=rangeEntries.reduce(function(total,entry){return total+parseSkillTimeMins(entry.time);},0);
     var language=languageEntries.reduce(function(total,entry){var minutes=parseSkillTimeMins(entry.time);return total+(minutes||15);},0);
-    codingTotal+=coding;rangeTotal+=range;languageTotal+=language;codingSessions+=codingEntries.length;rangeSessions+=rangeEntries.length;languageSessions+=languageEntries.length;
-    rows.push('<tr><td>'+escHtml(labels[i])+'</td><td>'+fmtMinsSeconds((days[i]||{}).audiobook||0)+'</td><td>'+skillDisplay(coding,codingEntries.length,false)+'</td><td>'+skillDisplay(range,rangeEntries.length,false)+'</td><td>'+skillDisplay(language,languageEntries.length,false)+'</td></tr>');
+    var retirement=retirementEntries.reduce(function(total,entry){return total+parseSkillTimeMins(entry.time);},0);
+    codingTotal+=coding;rangeTotal+=range;languageTotal+=language;retirementTotal+=retirement;codingSessions+=codingEntries.length;rangeSessions+=rangeEntries.length;languageSessions+=languageEntries.length;retirementSessions+=retirementEntries.length;
+    rows.push('<tr><td>'+escHtml(labels[i])+'</td><td>'+fmtMinsSeconds((days[i]||{}).audiobook||0)+'</td><td>'+skillDisplay(coding,codingEntries.length,false)+'</td><td>'+skillDisplay(range,rangeEntries.length,false)+'</td><td>'+skillDisplay(language,languageEntries.length,false)+'</td><td>'+skillDisplay(retirement,retirementEntries.length,false)+'</td></tr>');
   }
-  rows.push('<tr style="background:#f8f9fa;font-weight:700"><td>TOTAL</td><td>'+fmtMinsSeconds(days.reduce(function(total,day){return total+((day||{}).audiobook||0);},0))+'</td><td>'+skillDisplay(codingTotal,codingSessions,true)+'</td><td>'+skillDisplay(rangeTotal,rangeSessions,true)+'</td><td>'+skillDisplay(languageTotal,languageSessions,true)+'</td></tr>');
-  host.innerHTML='<table class="summary-table"><thead><tr><th>Period</th><th>Audiobook</th><th>Coding / Tech</th><th>Gun Range</th><th>Language</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>';
+  rows.push('<tr style="background:#f8f9fa;font-weight:700"><td>TOTAL</td><td>'+fmtMinsSeconds(days.reduce(function(total,day){return total+((day||{}).audiobook||0);},0))+'</td><td>'+skillDisplay(codingTotal,codingSessions,true)+'</td><td>'+skillDisplay(rangeTotal,rangeSessions,true)+'</td><td>'+skillDisplay(languageTotal,languageSessions,true)+'</td><td>'+skillDisplay(retirementTotal,retirementSessions,true)+'</td></tr>');
+  host.innerHTML='<table class="summary-table"><thead><tr><th>Period</th><th>Audiobook</th><th>Coding / Tech</th><th>Gun Range</th><th>Language</th><th>Retirement Videos</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>';
 }
 
 var _hmTabs=['nutrition','habits2','meditate','bible','library','activities','skill-log','wellness','file-uploads'];
