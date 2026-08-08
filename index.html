@@ -113,7 +113,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
 #tab-library .summary-table th:not(:first-child),#tab-library .summary-table td:not(:first-child),
 #tab-activities .summary-table th:not(:first-child),#tab-activities .summary-table td:not(:first-child),
 #tab-skill-log .summary-table th:not(:first-child),#tab-skill-log .summary-table td:not(:first-child),
-#tab-thinking .summary-table th:not(:first-child),#tab-thinking .summary-table td:not(:first-child),
 #tab-wellness .summary-table th:not(:first-child),#tab-wellness .summary-table td:not(:first-child),
 #tab-file-uploads .summary-table th:not(:first-child),#tab-file-uploads .summary-table td:not(:first-child),
 #tab-financial-videos .summary-table th:not(:first-child),#tab-financial-videos .summary-table td:not(:first-child),
@@ -122,17 +121,17 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;paddi
   body.tab-weekly-active .container,body.tab-monthly-active .container,body.tab-yearly-active .container,
   body.tab-nutrition-active .container,body.tab-habits-active .container,body.tab-habits2-active .container,body.tab-meditate-active .container,
   body.tab-bible-active .container,body.tab-library-active .container,body.tab-activities-active .container,
-  body.tab-skill-log-active .container,body.tab-thinking-active .container,body.tab-wellness-active .container,
+  body.tab-skill-log-active .container,body.tab-wellness-active .container,
   body.tab-file-uploads-active .container,body.tab-financial-videos-active .container,body.tab-dashboard-active .container{width:100%;max-width:none;margin:0;border:none;border-radius:0;box-shadow:none;}
   body.tab-weekly-active,body.tab-monthly-active,body.tab-yearly-active,
   body.tab-nutrition-active,body.tab-habits-active,body.tab-habits2-active,body.tab-meditate-active,
   body.tab-bible-active,body.tab-library-active,body.tab-activities-active,
-  body.tab-skill-log-active,body.tab-thinking-active,body.tab-wellness-active,
+  body.tab-skill-log-active,body.tab-wellness-active,
   body.tab-file-uploads-active,body.tab-financial-videos-active,body.tab-dashboard-active{padding-left:6px;padding-right:6px;}
   #tab-weekly .panel,#tab-monthly .panel,#tab-yearly .panel,
   #tab-nutrition .panel,#tab-habits .panel,#tab-habits2 .panel,#tab-meditate .panel,
   #tab-bible .panel,#tab-library .panel,#tab-activities .panel,
-  #tab-skill-log .panel,#tab-thinking .panel,#tab-wellness .panel,
+  #tab-skill-log .panel,#tab-wellness .panel,
   #tab-file-uploads .panel,#tab-financial-videos .panel,#tab-dashboard .panel{padding-left:8px;padding-right:8px;}
   #tab-dashboard .dash-grid{padding-left:4px;padding-right:4px;}
 }
@@ -840,7 +839,6 @@ body.v26-compact .journal-col textarea{height:70px;}
   #tab-wellness.active,
   #tab-file-uploads.active,
   #tab-skill-log.active,
-  #tab-thinking.active,
   #tab-nutrition.active{
     width:100%;
     max-width:none;
@@ -1226,7 +1224,6 @@ body{
   <button id="hm-meditate" class="hm-nav-btn" onclick="hmSwitch('meditate',event)">&#x1F9D8; Meditate</button>
   <button id="hm-nutrition" class="hm-nav-btn" onclick="hmSwitch('nutrition',event)">&#x1F957; Nutrition</button>
   <button id="hm-skill-log" class="hm-nav-btn" onclick="hmSwitch('skill-log',event)">&#x1F6E0;&#xFE0F; Skills</button>
-  <button id="hm-thinking" class="hm-nav-btn" onclick="hmSwitch('thinking',event)">&#x1F9E0; Thinking</button>
   <button id="hm-financial-videos" class="hm-nav-btn" onclick="hmSwitch('financial-videos',event)">&#x1F4FA; Financial Videos</button>
   <button id="hm-wellness" class="hm-nav-btn" onclick="hmSwitch('wellness',event)">&#x2764;&#xFE0F; Wellness</button>
 </nav>
@@ -1494,7 +1491,7 @@ body{
   <div id="aiWeeklyBox" class="ai-box"></div>
   <div id="wDigest" class="week-digest"></div>
   <h2 class="day-score-heading">Day Score</h2><div id="wDayScore"></div>
-  <h2>Growth <small style="font-size:.62rem;font-weight:500;color:#64748b;">From Library, Skills and Financial Videos</small></h2><div id="wGrowth"></div><h2>Critical Thinking</h2><div id="wCritical"></div><h2>Fitness <small style="font-size:.62rem;font-weight:500;color:#64748b;">From Activities and Steps</small></h2><div id="wFitness"></div><h2>Wellness</h2><div id="wWellness"></div>
+  <h2>Growth <small style="font-size:.62rem;font-weight:500;color:#64748b;">From Library, Skills and Financial Videos</small></h2><div id="wGrowth"></div><h2>Fitness <small style="font-size:.62rem;font-weight:500;color:#64748b;">From Activities and Steps</small></h2><div id="wFitness"></div><h2>Wellness</h2><div id="wWellness"></div>
 <h2>Nutrition</h2><div id="wNutrition"></div>
 <h2>Micronutrients</h2><div id="wNutritionMicro"></div>
 <h2>Spirituality</h2><div id="wSpirituality"></div>
@@ -2781,122 +2778,6 @@ body{
   <div id="skillLogContainer"></div>
 </div></div>
 
-<div class="tab-panel" id="tab-thinking"><div class="panel">
-  <h2 style="margin:0 0 16px;font-size:1.1rem;color:#8e44ad;">&#x1F9E0; Thinking Tools</h2>
-
-  <!-- DECISION JOURNAL -->
-  <div style="background:linear-gradient(135deg,#fff8f0,#fffefb);border:1px solid #f0c080;border-radius:12px;padding:16px;margin-bottom:16px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <div class="tri-check" data-key="ctDecision" onclick="triClick(this)" title="Mark Decision Journal complete"></div>
-        <div style="font-weight:700;color:#d35400;font-size:1rem;">&#x1F4D3; Decision Journal</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span id="djCount" style="font-size:0.8rem;color:#888;"></span>
-        <button onclick="toggleAddDecision()" style="background:#d35400;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:0.8rem;cursor:pointer;font-weight:600;">+ Log Decision</button>
-      </div>
-    </div>
-    <div style="font-size:0.78rem;color:#916428;margin-bottom:12px;">Record decisions as you make them — reasoning, confidence, and what you expect to happen — then revisit later to see how your judgment held up.</div>
-    <div id="addDecisionForm" style="display:none;background:#fffaf3;border:1px solid #f0c080;border-radius:10px;padding:14px;margin-bottom:14px;">
-      <div style="font-size:0.85rem;font-weight:700;color:#d35400;margin-bottom:8px;" id="decisionFormTitle">&#x2795; Log a Decision</div>
-      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Date</label><input type="date" id="djDate" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;"></div>
-      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">What decision are you making?</label><textarea id="djDecision" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="e.g. Taking the new job offer..."></textarea></div>
-      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Reasoning</label><textarea id="djReasoning" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="Why? What's driving this decision?"></textarea></div>
-      <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Expected outcome</label><textarea id="djExpected" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;" placeholder="What do you think will happen?"></textarea></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-        <div style="flex:1;min-width:130px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Confidence (1-10)</label><input type="number" id="djConfidence" min="1" max="10" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;" placeholder="7"></div>
-        <div style="flex:1;min-width:150px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Revisit on</label><input type="date" id="djFollowUp" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px 10px;font-size:0.85rem;box-sizing:border-box;"></div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button onclick="toggleAddDecision()" style="background:#f0f0f0;color:#555;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:0.88rem;">Cancel</button>
-        <button onclick="saveDecisionEntry()" id="djSaveBtn" style="background:#d35400;color:white;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:0.88rem;font-weight:600;">Save Decision</button>
-      </div>
-    </div>
-    <div id="decisionJournalList"></div>
-  </div>
-
-  <!-- MENTAL MODELS FLASHCARD TRAINER -->
-  <div style="background:linear-gradient(135deg,#f5eef8,#fdfbff);border:1px solid #d0aaff;border-radius:12px;padding:16px;margin-bottom:16px;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-      <div class="tri-check" data-key="ctMentalModels" onclick="triClick(this)" title="Mark Mental Models complete"></div>
-      <div style="font-weight:700;color:#6c3483;font-size:1rem;">&#x1F9E0; Mental Models Flashcard Trainer</div>
-    </div>
-    <div id="mmTrainer">
-      <button onclick="mmStart()" style="background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:0.9rem;cursor:pointer;font-weight:600;">Start Session</button>
-    </div>
-  </div>
-
-  <!-- FINANCIAL MENTAL MODELS FLASHCARD TRAINER -->
-  <div style="background:linear-gradient(135deg,#fffbea,#fffef5);border:1px solid #f0d080;border-radius:12px;padding:16px;margin-bottom:16px;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-      <div class="tri-check" data-key="ctFinancialModels" onclick="triClick(this)" title="Mark Financial Mental Models complete"></div>
-      <div style="font-weight:700;color:#92400e;font-size:1rem;">&#x1F4B0; Financial Mental Models Trainer</div>
-    </div>
-    <div id="finTrainer">
-      <button onclick="finStart()" style="background:#b7791f;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:0.9rem;cursor:pointer;font-weight:600;">Start Session</button>
-    </div>
-  </div>
-
-  <!-- FRAMEWORKS FLASHCARD TRAINER -->
-  <div style="background:linear-gradient(135deg,#effcfa,#fdfffe);border:1px solid #99d8ce;border-radius:12px;padding:16px;margin-bottom:16px;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-      <div class="tri-check" data-key="ctFrameworks" onclick="triClick(this)" title="Mark Frameworks complete"></div>
-      <div style="font-weight:700;color:#0f766e;font-size:1rem;">&#x1F9E9; Frameworks Trainer</div>
-    </div>
-    <div id="frmTrainer">
-      <button onclick="frmStart()" style="background:#0f766e;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:0.9rem;cursor:pointer;font-weight:600;">Start Session</button>
-    </div>
-  </div>
-
-  <!-- ASSUMPTION BUSTER -->
-  <div style="background:linear-gradient(135deg,#eaf0fb,#fdfeff);border:1px solid #aac4ee;border-radius:12px;padding:16px;margin-bottom:16px;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-      <div class="tri-check" data-key="ctAssumption" onclick="triClick(this)" title="Mark Assumption Buster complete"></div>
-      <div style="font-weight:700;color:#1a4a8a;font-size:1rem;">&#x1F4A3; Assumption Buster</div>
-    </div>
-    <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Describe your belief, plan, or decision:</label>
-      <textarea id="abInput" rows="3" style="width:100%;border:1px solid #aac4ee;border-radius:7px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;margin-top:4px;" placeholder="e.g. I should start a podcast because everyone loves audio content..."></textarea>
-    </div>
-    <button onclick="runAssumptionBuster()" style="background:#1a4a8a;color:#fff;border:none;border-radius:7px;padding:7px 18px;font-size:0.85rem;cursor:pointer;font-weight:600;">&#x1F4A5; Bust Assumptions</button>
-    <div id="abStatus" style="display:none;color:#888;font-size:0.8rem;margin-top:8px;">Analyzing...</div>
-    <div id="abOutput" style="display:none;margin-top:12px;background:#fff;border:1px solid #c7d8f5;border-radius:8px;padding:12px;font-size:0.85rem;color:#2c3e50;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;"></div>
-    <div id="abSaveRow" style="display:none;margin-top:8px;text-align:right;">
-      <button onclick="saveThinkingEntry('Assumption Buster','abInput','abOutput')" style="background:#1a4a8a;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:0.8rem;cursor:pointer;">&#x1F4BE; Save to Archive</button>
-    </div>
-  </div>
-
-  <!-- SECOND-ORDER THINKING TRAINER -->
-  <div style="background:linear-gradient(135deg,#eafaf1,#fdfffe);border:1px solid #a9dfbf;border-radius:12px;padding:16px;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-      <div class="tri-check" data-key="ctSecondOrder" onclick="triClick(this)" title="Mark Second-Order Thinking complete"></div>
-      <div style="font-weight:700;color:#1e6b3a;font-size:1rem;">&#x1F501; Second-Order Thinking Trainer</div>
-    </div>
-    <div style="margin-bottom:8px;"><label style="font-size:0.82rem;font-weight:600;color:#555;">Describe a decision or action you're considering:</label>
-      <textarea id="sotInput" rows="3" style="width:100%;border:1px solid #a9dfbf;border-radius:7px;padding:8px;font-size:0.85rem;resize:vertical;font-family:inherit;box-sizing:border-box;margin-top:4px;" placeholder="e.g. I want to post my running workouts publicly on social media..."></textarea>
-    </div>
-    <button onclick="runSecondOrderThinking()" style="background:#1e6b3a;color:#fff;border:none;border-radius:7px;padding:7px 18px;font-size:0.85rem;cursor:pointer;font-weight:600;">&#x1F4CA; Explore 2nd-Order Effects</button>
-    <div id="sotStatus" style="display:none;color:#888;font-size:0.8rem;margin-top:8px;">Thinking deeper...</div>
-    <div id="sotOutput" style="display:none;margin-top:12px;background:#fff;border:1px solid #a9dfbf;border-radius:8px;padding:12px;font-size:0.85rem;color:#2c3e50;white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto;"></div>
-    <div id="sotSaveRow" style="display:none;margin-top:8px;text-align:right;">
-      <button onclick="saveThinkingEntry('Second-Order Thinking','sotInput','sotOutput')" style="background:#1e6b3a;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:0.8rem;cursor:pointer;">&#x1F4BE; Save to Archive</button>
-    </div>
-  </div>
-
-  <!-- THINKING ARCHIVE -->
-  <div style="border:1px solid #d0d0d0;border-radius:12px;overflow:hidden;margin-top:4px;">
-    <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.tarch-chev').textContent=this.nextElementSibling.style.display==='none'?'▸':'▾';"
-      style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f5f5f5;cursor:pointer;font-weight:700;color:#444;font-size:0.9rem;">
-      <span>&#x1F5C3;&#xFE0F; Thinking Archive</span>
-      <span class="tarch-chev" style="font-size:0.85rem;color:#888;">▸</span>
-    </div>
-    <div id="thinkingArchivePanel" style="display:none;padding:14px;background:#fafafa;">
-      <div id="thinkingArchiveList" style="font-size:0.85rem;color:#444;"></div>
-      <div id="thinkingArchiveEmpty" style="color:#aaa;font-size:0.83rem;text-align:center;padding:16px;">No saved entries yet. Use the Save to Archive button after an analysis.</div>
-    </div>
-  </div>
-
-</div></div>
-
 <!-- ═══════════════════════════════ NUTRITION TAB ═══════════════════════════════ -->
 <!-- FINANCIAL VIDEO LAB -->
 <div class="tab-panel" id="tab-financial-videos"><div class="panel">
@@ -3333,7 +3214,7 @@ var dailyCheckFilter='all';
 var DAILY_CHECK_TAB_NAMES={
   daily:'Daily',activities:'Activities',bible:'Bible',meditate:'Meditation',
   wellness:'Wellness',nutrition:'Nutrition',library:'Library',
-  'skill-log':'Skill Building',thinking:'Thinking',habits:'Habits'
+  'skill-log':'Skill Building',habits:'Habits'
 };
 function dailyCheckLabel(el){
   if(el.id==='reviewCheck')return'Review Tasks, Goals & Calendar';
@@ -3462,7 +3343,7 @@ function parseBP(s){if(!s)return{sys:0,dia:0};const m=s.match(/(\d+)\s*\/\s*(\d+
 function buildStars(){const ss=document.getElementById('scoreStars');if(!ss)return;ss.innerHTML='';for(let i=1;i<=5;i++){const s=document.createElement('span');s.className='star'+(i<=scoreVal?' active':'');s.textContent='★';s.onclick=()=>{scoreVal=(scoreVal===i)?i-1:i;buildStars();save();};ss.appendChild(s);}updateTodayGlance();}
 
 // All text/number fields
-const TXS=['spDailyBreadText','spMeditationText','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','ctMentalModelsText','ctAssumptionText','ctSecondOrderText','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jAccomplish','jImprov','jGratitude','jNotes','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports','mnotes-breakfast','mnotes-lunch','mnotes-dinner','mnotes-snack','mnotes-liquids','mnotes-sports'];
+const TXS=['spDailyBreadText','spMeditationText','gaAudiobookText','gaAudiobookTime','gaSkillText','gaSkillTime','wBPVal','wPulseVal','wMedsVal','wWghtVal','wSleepVal','wHeadacheNote','exStrengthVal','exBikeVal','exStretchVal','exMassageVal','exWalkVal','exDogWalkVal','nuCalVal','nuProtVal','nuFatVal','nuCarbsVal','jAccomplish','jImprov','jGratitude','jNotes','habitIdentity','habitReflection','mpBreakfast','mpLunch','mpDinner','mpSnack','mpSports','mnotes-breakfast','mnotes-lunch','mnotes-dinner','mnotes-snack','mnotes-liquids','mnotes-sports'];
 const NMS=['exSteps','wSleepScore'];
 const PTIDS=['pt0','pt1','pt2','dg0','dg1','dg2'];
 
@@ -4421,14 +4302,12 @@ function getDM(d,dateKey){
       if(a.pace&&parsePace(a.pace)){actPace+=parsePace(a.pace);actPaceN++;}
     });
   }
-  const bp=parseBP(d.wBPVal);return{miles:actMiles,pace:actPaceN?actPace/actPaceN:0,watts:actWattsN?actWatts/actWattsN:0,time:actTime,steps:parseFloat(d.exSteps)||0,score:parseFloat(d.score)||0,weight:parseFloat(d.wWghtVal)||0,sleep:parseMins(d.wSleepVal),sleepScore:parseFloat(d.wSleepScore)||0,calories:parseFloat(d.nuCalVal)||0,water:parseFloat(d.waterOz)||(parseFloat(d.waterCount)*8||0),audiobook:parseTimedMins(d.gaAudiobookTime),skill:parseMins(d.gaSkillTime),skillName:d.gaSkillText||'',skillDone:d.gaSkill==='green'?1:0,bpSys:bp.sys,bpDia:bp.dia,pulse:parseFloat(d.wPulseVal)||0,dogWalk:parseFloat(d.exDogWalkVal)||(d.exDogWalk==='green'?1:0),walk:parseFloat(d.exWalkVal)||(d.exWalk==='green'?1:0),headache:d.wHeadache==='green'?1:0,ctMM:d.ctMentalModels==='green'?1:0,ctAB:d.ctAssumption==='green'?1:0,ctSOT:d.ctSecondOrder==='green'?1:0,ctFin:d.ctFinancialModels==='green'?1:0,ctFrm:d.ctFrameworks==='green'?1:0};}
-function agg(arr){const t={miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,audiobook:0,skill:0,skillDone:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,walk:0,headache:0,ctMM:0,ctAB:0,ctSOT:0,ctFin:0,ctFrm:0};const c={pace:0,watts:0,score:0,weight:0,sleep:0,sleepScore:0,bp:0,pulse:0};arr.forEach(m=>{t.miles+=m.miles;t.time+=m.time;t.steps+=m.steps;t.calories+=m.calories;t.water+=m.water;t.audiobook+=m.audiobook;t.skill+=m.skill||0;t.skillDone+=(m.skillDone||0);t.dogWalk+=(m.dogWalk||0);t.walk+=(m.walk||0);t.headache+=(m.headache||0);t.ctMM+=(m.ctMM||0);t.ctAB+=(m.ctAB||0);t.ctSOT+=(m.ctSOT||0);t.ctFin+=(m.ctFin||0);t.ctFrm+=(m.ctFrm||0);if(m.pace){t.pace+=m.pace;c.pace++;}if(m.watts){t.watts+=m.watts;c.watts++;}if(m.score){t.score+=m.score;c.score++;}if(m.weight){t.weight+=m.weight;c.weight++;}if(m.sleep){t.sleep+=m.sleep;c.sleep++;}if(m.sleepScore){t.sleepScore+=m.sleepScore;c.sleepScore++;}if(m.bpSys){t.bpSys+=m.bpSys;t.bpDia+=m.bpDia;c.bp++;}if(m.pulse){t.pulse+=m.pulse;c.pulse++;}});return{miles:t.miles,pace:c.pace?t.pace/c.pace:0,watts:c.watts?t.watts/c.watts:0,time:t.time,steps:t.steps,calories:t.calories,water:t.water,score:c.score?t.score/c.score:0,weight:c.weight?t.weight/c.weight:0,sleep:c.sleep?t.sleep/c.sleep:0,sleepScore:c.sleepScore?t.sleepScore/c.sleepScore:0,audiobook:t.audiobook,skill:t.skill,skillDone:t.skillDone,bpSys:c.bp?t.bpSys/c.bp:0,bpDia:c.bp?t.bpDia/c.bp:0,pulse:c.pulse?t.pulse/c.pulse:0,dogWalk:t.dogWalk,walk:t.walk,headache:t.headache,ctMM:t.ctMM,ctAB:t.ctAB,ctSOT:t.ctSOT,ctFin:t.ctFin,ctFrm:t.ctFrm};}
+  const bp=parseBP(d.wBPVal);return{miles:actMiles,pace:actPaceN?actPace/actPaceN:0,watts:actWattsN?actWatts/actWattsN:0,time:actTime,steps:parseFloat(d.exSteps)||0,score:parseFloat(d.score)||0,weight:parseFloat(d.wWghtVal)||0,sleep:parseMins(d.wSleepVal),sleepScore:parseFloat(d.wSleepScore)||0,calories:parseFloat(d.nuCalVal)||0,water:parseFloat(d.waterOz)||(parseFloat(d.waterCount)*8||0),audiobook:parseTimedMins(d.gaAudiobookTime),skill:parseMins(d.gaSkillTime),skillName:d.gaSkillText||'',skillDone:d.gaSkill==='green'?1:0,bpSys:bp.sys,bpDia:bp.dia,pulse:parseFloat(d.wPulseVal)||0,dogWalk:parseFloat(d.exDogWalkVal)||(d.exDogWalk==='green'?1:0),walk:parseFloat(d.exWalkVal)||(d.exWalk==='green'?1:0),headache:d.wHeadache==='green'?1:0};}
+function agg(arr){const t={miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,audiobook:0,skill:0,skillDone:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,walk:0,headache:0};const c={pace:0,watts:0,score:0,weight:0,sleep:0,sleepScore:0,bp:0,pulse:0};arr.forEach(m=>{t.miles+=m.miles;t.time+=m.time;t.steps+=m.steps;t.calories+=m.calories;t.water+=m.water;t.audiobook+=m.audiobook;t.skill+=m.skill||0;t.skillDone+=(m.skillDone||0);t.dogWalk+=(m.dogWalk||0);t.walk+=(m.walk||0);t.headache+=(m.headache||0);if(m.pace){t.pace+=m.pace;c.pace++;}if(m.watts){t.watts+=m.watts;c.watts++;}if(m.score){t.score+=m.score;c.score++;}if(m.weight){t.weight+=m.weight;c.weight++;}if(m.sleep){t.sleep+=m.sleep;c.sleep++;}if(m.sleepScore){t.sleepScore+=m.sleepScore;c.sleepScore++;}if(m.bpSys){t.bpSys+=m.bpSys;t.bpDia+=m.bpDia;c.bp++;}if(m.pulse){t.pulse+=m.pulse;c.pulse++;}});return{miles:t.miles,pace:c.pace?t.pace/c.pace:0,watts:c.watts?t.watts/c.watts:0,time:t.time,steps:t.steps,calories:t.calories,water:t.water,score:c.score?t.score/c.score:0,weight:c.weight?t.weight/c.weight:0,sleep:c.sleep?t.sleep/c.sleep:0,sleepScore:c.sleepScore?t.sleepScore/c.sleepScore:0,audiobook:t.audiobook,skill:t.skill,skillDone:t.skillDone,bpSys:c.bp?t.bpSys/c.bp:0,bpDia:c.bp?t.bpDia/c.bp:0,pulse:c.pulse?t.pulse/c.pulse:0,dogWalk:t.dogWalk,walk:t.walk,headache:t.headache};}
 function gRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';const skillCell=m.skillDone?(t?m.skillDone+'d':'✅'):'-';return`<tr style="${b}"><td>${l}</td><td>${fmtMins(m.audiobook)}</td><td>${skillCell}</td></tr>`;}
 function fRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';return`<tr style="${b}"><td>${l}</td><td>${m.miles?m.miles.toFixed(1):'-'}</td><td>${m.pace?fmtPace(m.pace):'-'}</td><td>${m.watts?Math.round(m.watts):'-'}</td><td>${fmtMins(m.time)}</td><td>${m.steps?Math.round(m.steps):'-'}</td><td>${m.dogWalk?(Math.round(m.dogWalk*10)/10)%1===0?Math.round(m.dogWalk):+(m.dogWalk.toFixed(1)):'-'}</td><td>${m.walk?(Math.round(m.walk*10)/10)%1===0?Math.round(m.walk):+(m.walk.toFixed(1)):'-'}</td></tr>`;}
 function wRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';const bp=m.bpSys?Math.round(m.bpSys)+'/'+Math.round(m.bpDia):'-';const hd=m.headache?`<span style='color:#2563eb;font-weight:700;'>${t?m.headache+'d':'✓'}</span>`:'-';return`<tr style="${b}"><td>${l}</td><td>${m.weight?m.weight.toFixed(1):'-'}</td><td>${m.sleep?fmtMins(m.sleep):'-'}</td><td>${m.sleepScore?m.sleepScore.toFixed(0):'-'}</td><td>${bp}</td><td>${m.pulse?Math.round(m.pulse):'-'}</td><td>${hd}</td></tr>`;}
 const gH='<table class="summary-table"><thead><tr><th>Period</th><th>Audiobook</th><th>Skill Building</th></tr></thead><tbody>';
-const ctH='<table class="summary-table"><thead><tr><th>Period</th><th>Mental Models</th><th>Assumption Buster</th><th>2nd-Order</th><th>Financial Models</th><th>Frameworks</th></tr></thead><tbody>';
-function ctRow(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';return`<tr style="${b}"><td>${l}</td><td>${m.ctMM||'-'}</td><td>${m.ctAB||'-'}</td><td>${m.ctSOT||'-'}</td><td>${m.ctFin||'-'}</td><td>${m.ctFrm||'-'}</td></tr>`;}
 const fH='<table class="summary-table"><thead><tr><th>Period</th><th>Miles</th><th>Pace</th><th>Watts</th><th>Time</th><th>Steps</th><th>Dog Walk</th><th>Walk</th></tr></thead><tbody>';
 gRow=function(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';const skillCell=m.skillDone?(t?m.skillDone+'d':'&#x2705;'):'-';return`<tr style="${b}"><td>${l}</td><td>${fmtMinsSeconds(m.audiobook)}</td><td>${skillCell}</td></tr>`;};
 fRow=function(l,m,t){const b=t?'background:#f8f9fa;font-weight:700':'';return`<tr style="${b}"><td>${l}</td><td>${m.miles?m.miles.toFixed(1):'-'}</td><td>${m.pace?fmtPace(m.pace):'-'}</td><td>${m.watts?Math.round(m.watts):'-'}</td><td>${fmtMinsSeconds(m.time)}</td><td>${m.steps?Math.round(m.steps):'-'}</td><td>${m.dogWalk?(Math.round(m.dogWalk*10)/10)%1===0?Math.round(m.dogWalk):+(m.dogWalk.toFixed(1)):'-'}</td><td>${m.walk?(Math.round(m.walk*10)/10)%1===0?Math.round(m.walk):+(m.walk.toFixed(1)):'-'}</td></tr>`;};
@@ -4631,7 +4510,7 @@ function renderWeeklyDigest(days,tot,wDayKeys,lbls){
   var cards=[['&#x1F3AF; Goals on Track',goalText],['&#x2B50; Strongest Area',strongest],['&#x1F50E; Needs Attention',attention],['&#x2194;&#xFE0F; Change from Last Week',changeText]];
   el.innerHTML='<div class="wdig-title">&#x1F4CA; Weekly Snapshot</div><div class="wdig-chips">'+cards.map(function(card){return '<div class="wdig-chip"><strong>'+card[0]+'</strong>'+escHtml(card[1])+'</div>';}).join('')+'</div>';
 }
-function renderWeekly(){const ws=wkStart(weekOff2),days=[],lbls=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r=localStorage.getItem('planner_'+dk(d));var _dk=dk(d);days.push(r?getDM(JSON.parse(r),_dk):{miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,audiobook:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,headache:0});lbls.push(d.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'}));}const we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('weekLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const tot=agg(days);document.getElementById('wDayScore').innerHTML=mkT(dsH,days.map((m,i)=>dsRow(lbls[i],m)),dsRow('AVG',tot,true));document.getElementById('wGrowth').innerHTML=mkT(gH,days.map((m,i)=>gRow(lbls[i],m)),gRow('TOTAL',tot,true));var wct=document.getElementById('wCritical');if(wct)wct.innerHTML=mkT(ctH,days.map((m,i)=>ctRow(lbls[i],m)),ctRow('TOTAL',tot,true));document.getElementById('wFitness').innerHTML=mkT(fH,days.map((m,i)=>fRow(lbls[i],m)),fRow('TOTAL/AVG',tot,true));document.getElementById('wWellness').innerHTML=mkT(wH,days.map((m,i)=>wRow(lbls[i],m)),wRow('TOTAL/AVG',tot,true));
+function renderWeekly(){const ws=wkStart(weekOff2),days=[],lbls=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);const r=localStorage.getItem('planner_'+dk(d));var _dk=dk(d);days.push(r?getDM(JSON.parse(r),_dk):{miles:0,pace:0,watts:0,time:0,steps:0,score:0,weight:0,sleep:0,sleepScore:0,calories:0,water:0,audiobook:0,bpSys:0,bpDia:0,pulse:0,dogWalk:0,headache:0});lbls.push(d.toLocaleDateString('en-US',{weekday:'short',month:'numeric',day:'numeric'}));}const we=new Date(ws);we.setDate(ws.getDate()+6);document.getElementById('weekLabel').textContent=ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' - '+we.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const tot=agg(days);document.getElementById('wDayScore').innerHTML=mkT(dsH,days.map((m,i)=>dsRow(lbls[i],m)),dsRow('AVG',tot,true));document.getElementById('wGrowth').innerHTML=mkT(gH,days.map((m,i)=>gRow(lbls[i],m)),gRow('TOTAL',tot,true));document.getElementById('wFitness').innerHTML=mkT(fH,days.map((m,i)=>fRow(lbls[i],m)),fRow('TOTAL/AVG',tot,true));document.getElementById('wWellness').innerHTML=mkT(wH,days.map((m,i)=>wRow(lbls[i],m)),wRow('TOTAL/AVG',tot,true));
   fvRenderWeeklyGrowth(ws,we,days,lbls);
   const wDayKeys=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);wDayKeys.push(dk(d));}renderNutritionSpirit(wDayKeys,lbls,'wNutrition','wSpirituality','wNutritionMicro');}
 function changeWeekOff(n){weekOff2+=n;renderWeekly();renderGoals();}
@@ -5598,7 +5477,6 @@ function aiWeeklyTakeaways(){
     if(dd.spMeditationText)parts.push('Meditation/reflection: '+dd.spMeditationText);
     const sermonNotes=getSermonNotes(dk(d));
     if(sermonNotes)parts.push('Sermon notes: '+sermonNotes);
-    if(dd.ctMentalModelsText)parts.push('Mental models: '+dd.ctMentalModelsText);
     if(parts.length)entries.push('--- '+dayLabel+' ---\n'+parts.join('\n'));
   }
   if(!entries.length){
@@ -8062,7 +7940,6 @@ function h2SyncFromJournal(){
     {id:'library',name:'Library Learning',category:'Growth',color:'#2563eb',schedule:'daily',weeklyTarget:7,why:'Learn from reading or audiobooks every day.'},
     {id:'language',name:'Language Lessons',category:'Growth',color:'#0891b2',schedule:'weekdays',weeklyTarget:5,why:'Complete language lessons five days each week.'},
     {id:'coding',name:'Coding / Tech',category:'Growth',color:'#0f766e',schedule:'weekly',weeklyTarget:3,why:'Keep technical skills growing.'},
-    {id:'thinking',name:'Thinking Practice',category:'Growth',color:'#7c3aed',schedule:'weekly',weeklyTarget:4,why:'Strengthen deliberate thinking and decision-making.'},
     {id:'financial-video',name:'Financial Video Learning',category:'Growth',color:'#b45309',schedule:'weekly',weeklyTarget:2,why:'Continue retirement and investing education.'}
   ];
   // Build the evidence/firstSeen picture BEFORE any habit gets created or backdated below,
@@ -8085,7 +7962,12 @@ function h2SyncFromJournal(){
     if(row.exStretch==='green')mark('stretch',key);
     if((parseFloat(row.exSteps)||0)>0)mark('steps',key);
     if(parseTimedMins(row.gaAudiobookTime)>0||String(row.gaAudiobookText||'').trim())mark('library',key);
-    if(row.ctMentalModels==='green'||row.ctAssumption==='green'||row.ctSecondOrder==='green'||row.ctFinancialModels==='green'||row.ctFrameworks==='green')mark('thinking',key);
+  }
+  // Thinking section removed — drop any "Thinking Practice" habit card left over from before.
+  if(!localStorage.getItem('habits2_thinking_removed_v1')){
+    state.habits=state.habits.filter(function(h){return h.autoSource!=='thinking';});
+    state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='thinking';});
+    localStorage.setItem('habits2_thinking_removed_v1','1');
   }
   if(!localStorage.getItem('habits2_language_lessons_v1')){
     var languageHabit=state.habits.find(function(h){return h.autoSource==='language'||/^(language learning|language lessons)$/i.test(String(h.name||'').trim());});
@@ -8455,7 +8337,7 @@ function journalIsExternalAppKey(key){
 function storageLocalCategory(key){
   if(key.indexOf('planner_')===0)return'Daily entries';
   if(key.indexOf('bible_')===0)return'Bible & worship';
-  if(key==='ai_archive'||key.indexOf('thinking_archive')===0||key.indexOf('review_')===0)return'AI, thinking & reviews';
+  if(key==='ai_archive'||key.indexOf('review_')===0)return'AI & reviews';
   if(key.indexOf('handwriting_')===0)return'Handwritten notes';
   if(key.indexOf('training')!==-1||key.indexOf('plan')!==-1||key==='weekly_goals')return'Training plans';
   if(key.indexOf('library')!==-1||key.indexOf('book')!==-1||key.indexOf('audible')!==-1)return'Library';
@@ -9297,497 +9179,6 @@ function pasteDay(){
   if(!confirm('Paste copied day data to '+fmtD(today)+'?\n\nThis will overwrite any existing data for this date.'))return;
   localStorage.setItem('planner_'+dk(today),copiedDayData);load();
 }
-
-// ── Thinking Tools ─────────────────────────────────────────────────────────
-
-// Mental Models
-var MM_CARDS=[
-  {name:'First Principles',q:'Break this problem into its most basic, undeniable truths. What are the fundamental facts you can\'t dispute?',ex:'Instead of copying competitors, ask: what does the customer actually need at the atomic level?'},
-  {name:'Inversion',q:'Instead of asking how to succeed, ask: how would this definitely FAIL? List every way it could go wrong.',ex:'To build a great product, invert: what would make users hate it? Avoid those things.'},
-  {name:'Occam\'s Razor',q:'You have multiple explanations. Which requires the fewest assumptions? Is the simplest explanation most likely correct?',ex:'Car won\'t start: dead battery is more likely than a complex electrical fault.'},
-  {name:'Second-Order Thinking',q:'What happens after the immediate result? And after THAT? Map 2-3 levels of consequences for your current decision.',ex:'Hiring fast solves short-term need (1st) but may dilute culture (2nd) reducing retention (3rd).'},
-  {name:'Margin of Safety',q:'What buffer are you building in against being wrong? How bad does it need to get before you fail?',ex:'A bridge built for 10 tons when max load is 5 tons has a 2x margin of safety.'},
-  {name:'Circle of Competence',q:'Is today\'s key decision inside or outside your circle of competence? What don\'t you know that you should?',ex:'Buffett avoids tech stocks he doesn\'t understand — he stays in his circle.'},
-  {name:'Map vs Territory',q:'Are you reacting to reality or your mental model of it? Where might your map be wrong today?',ex:'A business plan is a map — the market is the territory. They rarely match exactly.'},
-  {name:'Hanlon\'s Razor',q:'Before assuming malice, ask: could someone\'s frustrating behavior be explained by ignorance or carelessness instead?',ex:'A slow email reply is more likely oversight than disrespect.'},
-  {name:'Opportunity Cost',q:'What are you giving up by choosing this path? What\'s the best alternative use of this time, money, or energy?',ex:'Spending $10k on a depreciating car means NOT investing it for 20 years of compound growth.'},
-  {name:'Compounding',q:'How does this decision compound over time? What\'s the 1-year, 5-year, 20-year effect of doing this daily?',ex:'Reading 30 minutes/day = 15+ books/year = 300+ books in 20 years.'},
-  {name:'Confirmation Bias',q:'Are you seeking information that confirms what you already believe? What evidence would actually change your mind?',ex:'An investor only reading bullish news on a stock they own is feeding confirmation bias.'},
-  {name:'Sunk Cost Fallacy',q:'Are you continuing something because of past investment rather than future value? What would you do if you started fresh today?',ex:'Staying in a bad job because of 3 years already spent — those years are gone either way.'},
-  {name:'Availability Heuristic',q:'Are you overweighting a recent or vivid example? What does the actual data say across a large sample?',ex:'Fearing plane crashes after seeing news coverage — even though driving is statistically far more dangerous.'},
-  {name:'Dunning-Kruger Effect',q:'Where are you most confident right now? Is that confidence earned by real knowledge, or is it the "peak of stupid"?',ex:'A beginner coder who just finished a tutorial feels more confident than a senior engineer who knows all the edge cases.'},
-  {name:'Pareto Principle (80/20)',q:'Which 20% of your efforts are producing 80% of your results? What low-value work could you cut today?',ex:'In sales, 20% of clients generate 80% of revenue — focus energy on those relationships.'},
-  {name:'Feedback Loops',q:'What feedback loops are active in your current situation? Are they reinforcing or balancing? How can you shorten the loop?',ex:'A thermostat is a balancing loop — it corrects temperature back to the setpoint.'},
-  {name:'Activation Energy',q:'What small first step would lower the activation energy for something you\'ve been procrastinating on?',ex:'Putting your running shoes by the bed removes friction — the hardest part is starting.'},
-  {name:'Chesterton\'s Fence',q:'Before removing or changing something that exists, ask: why was it put there in the first place?',ex:'A fence in the road should only be removed after understanding why someone built it there.'},
-  {name:'Regret Minimization',q:'Project yourself to age 80. Looking back, will you regret NOT doing this more than doing it and failing?',ex:'Bezos left a safe Wall Street job for Amazon — he knew he\'d regret not trying more than failing.'},
-  {name:'Skin in the Game',q:'Does the person giving you advice bear consequences if they\'re wrong? If not, weight their opinion accordingly.',ex:'A consultant who doesn\'t invest in your company has no skin in the game — be skeptical.'},
-  {name:'Via Negativa',q:'What could you REMOVE from your life, work, or plan today to make it better? Subtraction is often more powerful than addition.',ex:'Most diets fail by adding complexity. Removing one bad food habit beats adding ten supplements.'},
-  {name:'Asymmetric Risk',q:'Is the upside meaningfully larger than the downside? If the worst case is survivable and the best case is life-changing, that\'s asymmetric.',ex:'Writing a book: costs a few months of evenings. Upside: life-changing career or income.'},
-  {name:'Bottleneck Analysis',q:'Where is the single constraint slowing down your most important system right now? Improving non-bottlenecks is wasted effort.',ex:'In manufacturing, a slow machine that everyone queues behind is the bottleneck — fix that first.'},
-  {name:'Proximate vs Root Cause',q:'The obvious cause isn\'t always the real cause. Ask "why?" five times to find the root of this problem.',ex:'Employee quit (proximate) → felt undervalued (why?) → no feedback (why?) → manager not trained (root cause).'},
-  {name:'Narrative Fallacy',q:'Are you fitting events into a tidy story after the fact? What messy details are you glossing over to make it feel logical?',ex:'Startup founders often rewrite their founding story to sound inevitable — it rarely was.'},
-  {name:'Mere Exposure Effect',q:'Are you favoring something simply because you\'ve seen it more? Familiarity isn\'t the same as quality.',ex:'Preferring your hometown\'s pizza to objectively better options because you grew up with it.'},
-  {name:'Base Rate Neglect',q:'What\'s the realistic base rate for success in this domain? Are you assuming your situation is special?',ex:'90% of restaurants fail in 5 years. A passionate chef still planning to open one should know this.'},
-  {name:'Planning Fallacy',q:'How long do you think this will take? Now add 50%. What\'s the true cost and time if things go normally wrong?',ex:'Software projects routinely take 2x the estimated time — this is universal, not a one-off.'},
-  {name:'Parkinson\'s Law',q:'Work expands to fill the time available. If you gave yourself half the time, what would you cut to still get it done?',ex:'A report due in a week takes a week. The same report due tomorrow somehow gets done tomorrow.'},
-  {name:'Lindy Effect',q:'How long has this idea, technology, or practice already survived? Older things with staying power are likely to last longer.',ex:'A book that\'s been read for 100 years will probably be read for another 100. A 1-year-old app may not last.'},
-  {name:'Rubber Duck Debugging',q:'Explain your current problem out loud, step by step, as if teaching it to someone unfamiliar. Where does your explanation break down?',ex:'Programmers explain code to a rubber duck — the act of explaining reveals the bug.'},
-  {name:'Status Quo Bias',q:'Are you staying with the current option because it\'s truly better, or just because changing feels uncomfortable?',ex:'People keep the same insurance, bank, or job for years past the point it serves them — inertia feels safe.'},
-  {name:'Curse of Knowledge',q:'You know too much. Are you assuming others have context they don\'t? How would a complete beginner experience this?',ex:'An expert explaining their field uses jargon the audience doesn\'t know — they\'ve forgotten what not-knowing feels like.'},
-  {name:'Reciprocity',q:'Who have you received something from that you haven\'t acknowledged or returned? What relationships have an imbalance you should address?',ex:'A mentor who helped you early in your career — have you ever paid it forward to someone else?'},
-  {name:'Loss Aversion',q:'Are you working harder to avoid a loss than to achieve an equivalent gain? Is fear of loss distorting this decision?',ex:'Refusing to sell a losing stock because "it\'s not a real loss until you sell" — loss aversion at work.'},
-  {name:'Diminishing Returns',q:'At what point does adding more of this resource stop producing proportional results? Are you past that point?',ex:'Studying 2 hours vs 1 hour improves test scores. Studying 8 hours vs 7 hours barely helps — diminishing returns.'},
-  {name:'Forcing Function',q:'What constraint or deadline could you create that would force action and make failure more painful than starting?',ex:'Telling friends about your goal creates social accountability — a forcing function to follow through.'},
-  {name:'Thought Experiment',q:'If you couldn\'t do it the way you\'re planning, how else could it be done? List 3 completely different approaches.',ex:'Einstein imagined riding a beam of light — a thought experiment that led to special relativity.'},
-  {name:'Ergodicity',q:'Is the average outcome actually achievable by any individual? Or does variance mean most individuals experience something different?',ex:'Average salary stats look great but median tells a different story — a few high earners skew the average.'},
-  {name:'The 10/10/10 Rule',q:'How will you feel about this decision in 10 minutes? 10 months? 10 years? Which timeframe matters most right now?',ex:'Eating the cake feels great in 10 minutes. In 10 months of doing it daily, you regret it.'},
-  {name:'Pre-Mortem',q:'Imagine it\'s one year from now and this project has completely failed. What went wrong? Work backwards from failure to prevent it.',ex:'A product team imagines launch day disaster — they discover the shipping integration was never tested.'},
-  {name:'Steel-Manning',q:'State the strongest possible version of the opposing argument. If you can\'t represent it fairly, you don\'t understand it well enough to disagree.',ex:'Instead of dismissing a critic, articulate their point better than they did — then respond to that.'},
-  {name:'Motivated Reasoning',q:'What conclusion do you WANT to reach? Now work backwards — are you selectively gathering evidence to support it?',ex:'A manager who wants to hire their friend finds reasons to discount better candidates.'},
-  {name:'Dead Reckoning',q:'Without more data, what can you estimate from what you already know? Make your best guess explicit so you can test it.',ex:'A navigator without GPS uses known speed, direction, and time to estimate position.'},
-  {name:'The Adjacent Possible',q:'What new options become available to you now that weren\'t possible before your recent progress or resources?',ex:'Having one paying client makes getting the second far easier — the adjacent possible expands.'},
-  {name:'Entropy',q:'What systems in your life are naturally decaying toward disorder right now? What would maintenance look like before it becomes a crisis?',ex:'A relationship, fitness, or codebase left unattended drifts toward entropy — regular maintenance is cheaper than repair.'},
-  {name:'Signal vs Noise',q:'In the information you consumed this week, what was genuine signal (changed your thinking) vs noise (filled time)?',ex:'Checking stock prices hourly is noise. Reading a quarterly earnings call is signal.'},
-  {name:'Tolerance Stack-Up',q:'Each individual component has a small margin of error. When combined, how do the errors compound? Where is the system most fragile?',ex:'A machine with 10 parts each 99% reliable has only a 90% chance of all parts working together.'},
-  {name:'Keystone Habits',q:'What single habit, if established, would naturally trigger improvements in other areas of your life?',ex:'Daily exercise often leads to better sleep, eating, and mood — it\'s a keystone habit.'},
-  {name:'Intellectual Humility',q:'What\'s one belief you hold confidently that you\'d update if given the right evidence? What would that evidence look like?',ex:'A scientist says "my hypothesis is falsifiable — here\'s the data that would prove me wrong."'},
-  {name:'Barbell Strategy',q:'Are you exposed to safe, stable choices AND a small amount of high-upside risk, while avoiding the fragile middle ground? Where should you rebalance?',ex:'Keeping 90% of savings in low-risk index funds and 10% in high-risk startup investments — safe on both ends, no exposure to fragile "medium risk" bets.'},
-  {name:'Antifragility',q:'Does this system get stronger from stress and disorder, or does it just survive it? How could you build something that improves under pressure?',ex:'Muscles grow stronger after the stress of a workout — the system benefits from the shock rather than merely enduring it.'},
-  {name:'Survivorship Bias',q:'Are you only studying the winners? What do you know about everyone who tried and failed the same path?',ex:'Analyzing WWII planes that returned with bullet holes led engineers to almost armor the wrong spots — the planes hit elsewhere never made it back to be studied.'},
-  {name:'Halo Effect',q:'Is one positive trait about this person or product coloring your judgment of everything else about them? Would you rate the rest the same without that one impression?',ex:'A handsome, well-spoken candidate gets assumed to be more competent, even before their actual skills are evaluated.'},
-  {name:'Goodhart\'s Law',q:'Has this metric become the target instead of a genuine measure of the thing you actually care about? What\'s it distorting?',ex:'Measuring programmer output by lines of code encourages bloated, low-quality code instead of good solutions.'},
-  {name:'Peter Principle',q:'Is someone (possibly you) being promoted based on past success in a different role rather than the skills the new one actually needs?',ex:'A great individual salesperson is promoted to sales manager — a completely different skill set — and struggles.'},
-  {name:'Parkinson\'s Law of Triviality',q:'Is the group spending disproportionate time debating a trivial, easy-to-understand detail while the important complex decision gets rushed?',ex:'A committee spends an hour debating the color of a bike shed but five minutes approving a multi-million dollar nuclear plant design.'},
-  {name:'Streisand Effect',q:'Could trying to suppress or hide this actually draw far more attention to it than ignoring it would?',ex:'A celebrity\'s lawsuit to remove a photo of their house made millions more people seek it out.'},
-  {name:'Red Queen Effect',q:'Are you running just to stay in the same relative place? What are competitors doing that requires you to keep improving just to maintain your position?',ex:'Retailers must keep lowering prices and improving service just to keep pace with competitors doing the same — standing still means falling behind.'},
-  {name:'Local vs Global Maximum',q:'Are you optimizing something so well that it\'s actually trapping you from a bigger, better solution nearby?',ex:'Perfecting the horse-drawn carriage was a local maximum — the real breakthrough required abandoning the approach entirely for the automobile.'},
-  {name:'Anchoring Effect',q:'What was the first number or impression you encountered here? Is it quietly skewing everything you\'ve judged since?',ex:'A $500 shirt marked down to $150 feels like a bargain — because the anchor of $500 shaped your sense of value.'},
-  {name:'Normalcy Bias',q:'Are you underestimating the odds or impact of something bad simply because it hasn\'t happened before?',ex:'Residents in a flood zone who\'ve never seen a flood often delay evacuating even when warned — "it\'s never happened, so it won\'t."'},
-  {name:'Chekhov\'s Gun',q:'Everything in your plan should serve a purpose. What are you including that isn\'t actually needed and should be cut?',ex:'If a gun is shown on the wall in Act One, it must be fired by Act Three — unused elements should be removed.'},
-  {name:'Multiplier Effect',q:'What single input, if improved, would multiply the value of everything else you\'re already doing?',ex:'Hiring one excellent manager can multiply the output of an entire team far more than hiring one more individual contributor.'},
-  {name:'Optionality',q:'Does this choice preserve future choices, or does it lock you into a single path? How much is that flexibility worth?',ex:'Renting keeps your options open to move; buying a house commits you to one location — optionality has a price either way.'},
-  {name:'Iceberg Model',q:'What you\'re reacting to is just the visible event. What deeper pattern, structure, or mental model is really driving it below the surface?',ex:'A single late shipment (event) may reveal a recurring pattern (always late in Q4) rooted in an understaffed warehouse (structure).'},
-  {name:'Just-In-Time vs Just-In-Case',q:'Are you optimized for pure efficiency with no slack, or do you have buffer for when things go wrong? Which does this situation actually call for?',ex:'A factory with zero spare inventory is efficient until one supplier hiccup halts the entire line.'},
-  {name:'Hedonic Adaptation',q:'Will the happiness from this purchase or change actually last, or will you adapt back to your baseline within weeks?',ex:'A raise feels great for a few months, then the new salary becomes the new normal and satisfaction returns to baseline.'},
-  {name:'Spotlight Effect',q:'Are you assuming people are paying far more attention to you than they actually are?',ex:'You feel everyone noticed your stumble on stage — most people were checking their phones and forgot within minutes.'},
-  {name:'Ladder of Inference',q:'Trace backwards: what raw observation did you start from, and how many assumptions did you climb before reaching this conclusion?',ex:'She didn\'t reply to my text (fact) → she\'s ignoring me (assumption) → she\'s mad at me (conclusion) — each rung added unverified meaning.'},
-  {name:'Streetlight Effect',q:'Are you looking for the answer where it\'s easiest to look, rather than where the answer actually is?',ex:'A man searches for his lost keys under a streetlight, not because he lost them there, but because that\'s where the light is.'},
-  {name:'Pygmalion Effect',q:'What expectation are you placing on someone right now — and could raising it actually improve their performance?',ex:'Teachers told a random group of students were "gifted" saw those students perform better by year\'s end — the expectation itself shaped the outcome.'},
-  {name:'Self-Serving Bias',q:'Are you crediting your successes to skill and your failures to bad luck or other people? Would an outside observer agree?',ex:'A trader attributes winning trades to their skill and losing trades to "the market being irrational."'},
-  {name:'Endowment Effect',q:'Are you overvaluing this simply because you already own it? What would you actually pay for it if you saw it for the first time today?',ex:'People demand more money to sell a mug they own than they\'d be willing to pay to buy the same mug.'},
-  {name:'Black Swan Events',q:'Are you underpricing the possibility of a rare, high-impact event just because it feels unprecedented?',ex:'The 2008 financial crisis was rationalized as obvious in hindsight, but almost no models priced in the possibility beforehand.'},
-  {name:'Fermi Estimate',q:'Without exact data, can you rough out an answer using known quantities and reasonable approximations? What\'s your order-of-magnitude guess?',ex:'Estimating how many piano tuners exist in a city using population, piano ownership rates, and tuning frequency — no lookup required.'},
-  {name:'Cognitive Load',q:'Is this decision suffering because you\'re holding too many things in your head at once? What could you write down or remove to free up mental bandwidth?',ex:'Trying to plan a trip while also managing five other open tasks leads to worse decisions than focusing on one at a time.'},
-  {name:'Default Effect',q:'Are you sticking with this simply because it was the pre-set default, not because you actively chose it?',ex:'Employees auto-enrolled in a retirement plan stay in at far higher rates than those who must opt in manually.'},
-  {name:'Overton Window',q:'What ideas are currently considered acceptable to discuss in this group or industry — and how might that range shift if you pushed on its edges?',ex:'Remote work was once outside the "acceptable" range for most companies; a few years and one pandemic shifted the entire window.'},
-  {name:'Preparedness Paradox',q:'If your prevention effort succeeds, the disaster will look like it was never a real threat. Are you prepared for that lack of credit?',ex:'A company that patches a security flaw before a breach occurs gets no praise — success is invisible, while failure would have been very visible.'}
-];
-var FRAMEWORK_CARDS=[
-  {name:'Five Whys',q:'Ask "why" five times about the problem or frustration you\'re writing about today. What root cause sits beneath the surface-level symptom?',ex:'Missed the deadline (why?) → started too late (why?) → underestimated the scope (why?) → didn\'t break it into subtasks (why?) → no planning habit — that\'s the root cause.'},
-  {name:'SWOT Analysis',q:'Take stock of your current situation: what are your Strengths, Weaknesses, Opportunities, and Threats right now?',ex:'Strength: strong network. Weakness: inconsistent follow-up. Opportunity: a growing market. Threat: a well-funded competitor entering the space.'},
-  {name:'Six Thinking Hats',q:'Walk through this decision from six angles: the facts (White), your gut feelings (Red), the upside (Yellow), the risks (Black), new ideas (Green), and the big picture (Blue). What does each hat reveal?',ex:'Considering a career change: facts show a pay cut, feelings say excitement, risks include instability, but the big-picture view says it aligns with a 10-year goal.'},
-  {name:'Circle of Competence',q:'Outline exactly what you understand well and where your blind spots are. Does today\'s decision sit inside that circle, or are you reaching outside your expertise?',ex:'A skilled marketer tries to build their own accounting system from scratch instead of hiring someone who already knows it well — a decision made outside their circle of competence.'},
-  {name:'First Principles Thinking',q:'Strip away every assumption about this problem down to its basic, foundational truths. What could you build from there instead of relying on how it\'s always been done?',ex:'Rather than assuming cars must run on gasoline because that\'s tradition, first-principles thinking asks what\'s actually needed — energy storage and conversion — which opens the door to electric vehicles.'}
-];
-var FIN_CARDS=[
-  {name:'Rule of 72',q:'At your current interest or growth rate, how many years will it take to double your money? Divide 72 by the rate to estimate.',ex:'At 8% annual returns, 72\xf78=9 years to double an investment — a quick mental shortcut without a calculator.'},
-  {name:'Time Value of Money',q:'Would you rather have this dollar today or the same dollar in 5 years? What return would you need today\'s dollar to earn to make waiting worth it?',ex:'$1,000 today invested at 7% is worth about $1,400 in 5 years — money now has more potential than the same amount later.'},
-  {name:'Diversification',q:'If this one investment, client, or income source disappeared tomorrow, how much would it actually hurt? Are your risks truly uncorrelated?',ex:'Owning ten tech stocks isn\'t diversified — they tend to fall together. True diversification spreads risk across unrelated assets.'},
-  {name:'Dollar-Cost Averaging',q:'Are you trying to perfectly time this purchase, or would investing a fixed amount on a regular schedule remove the guesswork?',ex:'Investing $500 every month regardless of price smooths out the highs and lows — you buy more shares when prices are low, fewer when high.'},
-  {name:'Risk-Adjusted Return',q:'Is this investment\'s return actually good, or does it just look good because you\'re ignoring how much risk was taken to get it?',ex:'A 12% return from a wildly volatile stock may be worse than an 8% return from a stable one, once you account for the risk taken.'},
-  {name:'Behavior Gap',q:'Are your own emotional decisions (buying high in excitement, selling low in fear) costing you more than any fee or fund ever could?',ex:'Studies show the average investor earns less than the funds they\'re invested in, because they buy after gains and sell after drops.'},
-  {name:'Inflation Erosion',q:'Is the cash you\'re holding actually losing purchasing power every year it just sits there? What\'s your real (after-inflation) return?',ex:'Cash earning 1% while inflation runs 3% is quietly losing 2% of real value every year, even though the number in the account never goes down.'},
-  {name:'Leverage',q:'Are you using borrowed money to amplify this outcome? Have you sized the downside if it moves against you, not just the upside if it works?',ex:'Buying a house with a 20% down payment means a 20% price rise doubles your equity — but a 20% price drop wipes it out entirely.'},
-  {name:'Liquidity',q:'How quickly, and at what cost, could you convert this asset into usable cash if you suddenly needed it?',ex:'A house is valuable but illiquid — selling fast usually means accepting a lower price. Cash is instantly liquid but earns little.'},
-  {name:'Emergency Fund / Runway',q:'If all income stopped today, how many months could you cover expenses before real trouble starts?',ex:'Three to six months of expenses in accessible savings turns a job loss from a crisis into an inconvenience.'},
-  {name:'Net Worth Over Income',q:'Are you optimizing for a bigger paycheck, or for what you actually keep, save, and grow? Which one builds real wealth?',ex:'A high earner who spends everything can have a lower net worth than a modest earner who consistently saves and invests the difference.'},
-  {name:'Lifestyle Inflation',q:'Has your spending quietly risen to match every raise you\'ve gotten? What would happen to your savings rate if it didn\'t?',ex:'Doubling your income but also doubling your expenses leaves your savings rate exactly where it started.'},
-  {name:'Debt Snowball vs Avalanche',q:'Do you need the psychological win of clearing a small debt first, or the mathematically optimal path of killing the highest-interest debt first?',ex:'Paying off a $500 card before a $20,000 loan feels motivating (snowball), even though attacking the highest interest rate first saves more money (avalanche).'},
-  {name:'Financial Independence Number',q:'What amount, invested and left alone, could realistically cover your annual expenses indefinitely? How far are you from it?',ex:'Using a 4% safe withdrawal rate, needing $40,000/year in expenses implies a target of roughly $1,000,000 invested.'},
-  {name:'Insurance as Risk Transfer',q:'Are you paying a small, known, tolerable cost today specifically to avoid a rare but catastrophic loss you couldn\'t absorb?',ex:'A $150/month premium is a guaranteed small loss, taken on purpose to avoid a $300,000 unguaranteed one if the house burns down.'}
-];
-function shuffleArr(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
-// Returns a stable weekly subset of cards (persisted in localStorage) so the same
-// set is shown all week no matter how many times the trainer is (re)started, then
-// automatically rotates to a fresh set — drawing from unseen cards first — once a
-// new week begins (week boundary matches the rest of the app's Mon-start weeks).
-function getWeeklyCardDeck(prefix,allCards,sizePerWeek){
-  var weekKey=dk(wkStart(0));
-  var allNames=allCards.map(function(c){return c.name;});
-  // If the card set itself changed (cards added/removed), reset the rotation state so
-  // new cards enter play right away instead of waiting for the old bag to run dry.
-  var poolSizeKey=prefix+'_poolsize';
-  if(parseInt(localStorage.getItem(poolSizeKey)||'0',10)!==allNames.length){
-    localStorage.removeItem(prefix+'_week');
-    localStorage.removeItem(prefix+'_deck');
-    localStorage.removeItem(prefix+'_bag');
-    localStorage.setItem(poolSizeKey,String(allNames.length));
-  }
-  var storedWeek=localStorage.getItem(prefix+'_week');
-  var deckNames=null;
-  if(storedWeek===weekKey){
-    try{deckNames=JSON.parse(localStorage.getItem(prefix+'_deck')||'null');}catch(e){deckNames=null;}
-    if(Array.isArray(deckNames)){
-      deckNames=deckNames.filter(function(n){return allNames.indexOf(n)!==-1;});
-      if(!deckNames.length)deckNames=null;
-    }
-  }
-  if(!deckNames){
-    var bag=[];
-    try{bag=JSON.parse(localStorage.getItem(prefix+'_bag')||'[]');}catch(e){bag=[];}
-    if(!Array.isArray(bag))bag=[];
-    bag=bag.filter(function(n){return allNames.indexOf(n)!==-1;});
-    if(bag.length<sizePerWeek)bag=bag.concat(shuffleArr(allNames));
-    deckNames=bag.slice(0,Math.min(sizePerWeek,bag.length));
-    var remaining=bag.slice(deckNames.length);
-    localStorage.setItem(prefix+'_bag',JSON.stringify(remaining));
-    localStorage.setItem(prefix+'_deck',JSON.stringify(deckNames));
-    localStorage.setItem(prefix+'_week',weekKey);
-  }
-  var byName={};
-  allCards.forEach(function(c){byName[c.name]=c;});
-  return deckNames.map(function(n){return byName[n];}).filter(Boolean);
-}
-var mmIdx=0,mmFlipped=false;
-function mmStart(){
-  mmIdx=0;mmFlipped=false;
-  window._mmDeck=shuffleArr(getWeeklyCardDeck('mm_weekly',MM_CARDS,10));
-  mmRender();
-}
-function mmReset(){document.getElementById('mmTrainer').innerHTML='<button onclick="mmStart()" style="background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:0.9rem;cursor:pointer;font-weight:600;">Start Session</button>';}
-function mmRender(){
-  var deck=window._mmDeck||[];
-  if(!deck.length||mmIdx>=deck.length){
-    document.getElementById('mmTrainer').innerHTML='<div style="text-align:center;padding:20px;"><div style="font-size:1.5rem;margin-bottom:8px;">🎉</div><div style="font-weight:700;color:#6c3483;margin-bottom:12px;">Session complete! All '+(window._mmDeck||MM_CARDS).length+' cards reviewed.</div><button onclick="mmStart()" style="background:#8e44ad;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:0.9rem;cursor:pointer;font-weight:600;">Start New Session</button></div>';
-    return;
-  }
-  var card=deck[mmIdx];
-  document.getElementById('mmTrainer').innerHTML=
-    '<div style="text-align:center;font-size:0.75rem;color:#aaa;margin-bottom:8px;">Card '+(mmIdx+1)+' of '+deck.length+'</div>'
-    +'<div id="mmCard" style="background:#fff;border:2px solid #d0aaff;border-radius:12px;padding:18px;cursor:pointer;min-height:120px;" onclick="mmFlip()">'
-    +'<div style="font-size:0.7rem;text-transform:uppercase;font-weight:700;color:#8e44ad;letter-spacing:.06em;margin-bottom:6px;">'+card.name+'</div>'
-    +'<div style="font-size:0.9rem;color:#2c3e50;line-height:1.5;">'+card.q+'</div>'
-    +(mmFlipped?'<div style="margin-top:10px;padding-top:10px;border-top:1px solid #e8daef;font-size:0.82rem;color:#666;font-style:italic;"><strong>Example:</strong> '+card.ex+'</div>':'<div style="margin-top:12px;font-size:0.75rem;color:#c39bd3;text-align:center;">Tap to see example</div>')
-    +'</div>'
-    +'<div style="display:flex;gap:8px;margin-top:10px;justify-content:center;">'
-    +'<button onclick="mmNav(-1)" style="background:#f0f0f0;color:#555;border:none;border-radius:7px;padding:7px 16px;font-size:0.85rem;cursor:pointer;">'+(mmIdx>0?'← Prev':'—')+'</button>'
-    +'<button onclick="mmNav(1)" style="background:#8e44ad;color:#fff;border:none;border-radius:7px;padding:7px 20px;font-size:0.85rem;cursor:pointer;font-weight:600;">'+(mmIdx<deck.length-1?'Next →':'Finish')+'</button>'
-    +'</div>';
-}
-function mmFlip(){mmFlipped=!mmFlipped;mmRender();}
-function mmNav(dir){mmIdx=Math.max(0,mmIdx+dir);mmFlipped=false;mmRender();}
-
-// Financial Mental Models (separate deck/trainer from general Mental Models)
-var finIdx=0,finFlipped=false;
-function finStart(){
-  finIdx=0;finFlipped=false;
-  window._finDeck=shuffleArr(getWeeklyCardDeck('fin_weekly',FIN_CARDS,8));
-  finRender();
-}
-function finReset(){document.getElementById('finTrainer').innerHTML='<button onclick="finStart()" style="background:#b7791f;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:0.9rem;cursor:pointer;font-weight:600;">Start Session</button>';}
-function finRender(){
-  var deck=window._finDeck||[];
-  if(!deck.length||finIdx>=deck.length){
-    document.getElementById('finTrainer').innerHTML='<div style="text-align:center;padding:20px;"><div style="font-size:1.5rem;margin-bottom:8px;">💰</div><div style="font-weight:700;color:#92400e;margin-bottom:12px;">Session complete! All '+(window._finDeck||FIN_CARDS).length+' cards reviewed.</div><button onclick="finStart()" style="background:#b7791f;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:0.9rem;cursor:pointer;font-weight:600;">Start New Session</button></div>';
-    return;
-  }
-  var card=deck[finIdx];
-  document.getElementById('finTrainer').innerHTML=
-    '<div style="text-align:center;font-size:0.75rem;color:#aaa;margin-bottom:8px;">Card '+(finIdx+1)+' of '+deck.length+'</div>'
-    +'<div id="finCard" style="background:#fff;border:2px solid #f0d080;border-radius:12px;padding:18px;cursor:pointer;min-height:120px;" onclick="finFlip()">'
-    +'<div style="font-size:0.7rem;text-transform:uppercase;font-weight:700;color:#b7791f;letter-spacing:.06em;margin-bottom:6px;">'+card.name+'</div>'
-    +'<div style="font-size:0.9rem;color:#2c3e50;line-height:1.5;">'+card.q+'</div>'
-    +(finFlipped?'<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f6e6ba;font-size:0.82rem;color:#666;font-style:italic;"><strong>Example:</strong> '+card.ex+'</div>':'<div style="margin-top:12px;font-size:0.75rem;color:#d9b168;text-align:center;">Tap to see example</div>')
-    +'</div>'
-    +'<div style="display:flex;gap:8px;margin-top:10px;justify-content:center;">'
-    +'<button onclick="finNav(-1)" style="background:#f0f0f0;color:#555;border:none;border-radius:7px;padding:7px 16px;font-size:0.85rem;cursor:pointer;">'+(finIdx>0?'← Prev':'—')+'</button>'
-    +'<button onclick="finNav(1)" style="background:#b7791f;color:#fff;border:none;border-radius:7px;padding:7px 20px;font-size:0.85rem;cursor:pointer;font-weight:600;">'+(finIdx<deck.length-1?'Next →':'Finish')+'</button>'
-    +'</div>';
-}
-function finFlip(){finFlipped=!finFlipped;finRender();}
-function finNav(dir){finIdx=Math.max(0,finIdx+dir);finFlipped=false;finRender();}
-
-// Frameworks (Five Whys, SWOT, Six Thinking Hats — separate deck/trainer)
-var frmIdx=0,frmFlipped=false;
-function frmStart(){
-  frmIdx=0;frmFlipped=false;
-  window._frmDeck=shuffleArr(getWeeklyCardDeck('frm_weekly',FRAMEWORK_CARDS,3));
-  frmRender();
-}
-function frmReset(){document.getElementById('frmTrainer').innerHTML='<button onclick="frmStart()" style="background:#0f766e;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:0.9rem;cursor:pointer;font-weight:600;">Start Session</button>';}
-function frmRender(){
-  var deck=window._frmDeck||[];
-  if(!deck.length||frmIdx>=deck.length){
-    document.getElementById('frmTrainer').innerHTML='<div style="text-align:center;padding:20px;"><div style="font-size:1.5rem;margin-bottom:8px;">🧩</div><div style="font-weight:700;color:#0f766e;margin-bottom:12px;">Session complete! All '+(window._frmDeck||FRAMEWORK_CARDS).length+' cards reviewed.</div><button onclick="frmStart()" style="background:#0f766e;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:0.9rem;cursor:pointer;font-weight:600;">Start New Session</button></div>';
-    return;
-  }
-  var card=deck[frmIdx];
-  document.getElementById('frmTrainer').innerHTML=
-    '<div style="text-align:center;font-size:0.75rem;color:#aaa;margin-bottom:8px;">Card '+(frmIdx+1)+' of '+deck.length+'</div>'
-    +'<div id="frmCard" style="background:#fff;border:2px solid #99d8ce;border-radius:12px;padding:18px;cursor:pointer;min-height:120px;" onclick="frmFlip()">'
-    +'<div style="font-size:0.7rem;text-transform:uppercase;font-weight:700;color:#0f766e;letter-spacing:.06em;margin-bottom:6px;">'+card.name+'</div>'
-    +'<div style="font-size:0.9rem;color:#2c3e50;line-height:1.5;">'+card.q+'</div>'
-    +(frmFlipped?'<div style="margin-top:10px;padding-top:10px;border-top:1px solid #ccebe5;font-size:0.82rem;color:#666;font-style:italic;"><strong>Example:</strong> '+card.ex+'</div>':'<div style="margin-top:12px;font-size:0.75rem;color:#5eb8a8;text-align:center;">Tap to see example</div>')
-    +'</div>'
-    +'<div style="display:flex;gap:8px;margin-top:10px;justify-content:center;">'
-    +'<button onclick="frmNav(-1)" style="background:#f0f0f0;color:#555;border:none;border-radius:7px;padding:7px 16px;font-size:0.85rem;cursor:pointer;">'+(frmIdx>0?'← Prev':'—')+'</button>'
-    +'<button onclick="frmNav(1)" style="background:#0f766e;color:#fff;border:none;border-radius:7px;padding:7px 20px;font-size:0.85rem;cursor:pointer;font-weight:600;">'+(frmIdx<deck.length-1?'Next →':'Finish')+'</button>'
-    +'</div>';
-}
-function frmFlip(){frmFlipped=!frmFlipped;frmRender();}
-function frmNav(dir){frmIdx=Math.max(0,frmIdx+dir);frmFlipped=false;frmRender();}
-
-// Assumption Buster
-function runAssumptionBuster(){
-  var input=(document.getElementById('abInput').value||'').trim();
-  if(!input){alert('Describe a belief or plan first.');return;}
-  var key=journalAIKey();
-  if(!key){alert('Add your Anthropic API key in Settings first.');return;}
-  var status=document.getElementById('abStatus');
-  var out=document.getElementById('abOutput');
-  status.style.display='block';status.textContent='Analyzing assumptions...';
-  out.style.display='none';
-  fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5000,
-      messages:[{role:'user',content:'You are an expert critical thinking coach using the "Assumption Buster" mental model. The user describes a belief, plan, or decision. Your job:\n1. List 5-7 hidden assumptions embedded in this belief/plan\n2. For each assumption, challenge it: What if the opposite were true? What evidence would change your mind?\n3. Identify the 2 most dangerous assumptions\n4. Suggest 1 experiment or question to test the core assumption\n\nBe concise, sharp, and specific. No fluff.\n\nBelief/Plan: '+input}]})
-  }).then(function(r){return r.json();}).then(function(d){
-    status.style.display='none';
-    var text=(d.content&&d.content[0]&&d.content[0].text)||JSON.stringify(d.error||d);
-    out.textContent=text;out.style.display='block';
-    var sr=document.getElementById('abSaveRow');if(sr)sr.style.display='block';
-  }).catch(function(e){status.style.display='none';out.textContent='Error: '+e.message;out.style.display='block';});
-}
-
-// Second-Order Thinking
-function runSecondOrderThinking(){
-  var input=(document.getElementById('sotInput').value||'').trim();
-  if(!input){alert('Describe a decision or action first.');return;}
-  var key=journalAIKey();
-  if(!key){alert('Add your Anthropic API key in Settings first.');return;}
-  var status=document.getElementById('sotStatus');
-  var out=document.getElementById('sotOutput');
-  status.style.display='block';status.textContent='Thinking deeper...';
-  out.style.display='none';
-  fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5000,
-      messages:[{role:'user',content:'You are a strategic thinking coach specializing in Second-Order Thinking. Analyze the following decision/action by mapping its cascading consequences:\n\n1. FIRST-ORDER EFFECTS (immediate, obvious results)\n2. SECOND-ORDER EFFECTS (what happens as a result of the first-order effects?)\n3. THIRD-ORDER EFFECTS (what emerges from the second-order effects?)\n4. UNINTENDED CONSEQUENCES (what might go wrong that most people would miss?)\n5. OPPORTUNITY: What second-order benefit could you deliberately amplify?\n\nBe specific, practical, and insightful. Use bullet points.\n\nDecision/Action: '+input}]})
-  }).then(function(r){return r.json();}).then(function(d){
-    status.style.display='none';
-    var text=(d.content&&d.content[0]&&d.content[0].text)||JSON.stringify(d.error||d);
-    out.textContent=text;out.style.display='block';
-    var sr=document.getElementById('sotSaveRow');if(sr)sr.style.display='block';
-  }).catch(function(e){status.style.display='none';out.textContent='Error: '+e.message;out.style.display='block';});
-}
-
-// ── Thinking Archive ─────────────────────────────────────────────────────────
-// ── Decision Journal ─────────────────────────────────────────────────────────
-var _editingDecisionId=null;
-function getDecisionEntries(){try{return JSON.parse(localStorage.getItem('decision_journal_data')||'[]');}catch(e){return[];}}
-function saveDecisionEntries(arr){localStorage.setItem('decision_journal_data',JSON.stringify(arr));}
-
-function toggleAddDecision(){
-  var f=document.getElementById('addDecisionForm');
-  if(!f)return;
-  var isOpen=f.style.display!=='none';
-  if(isOpen){f.style.display='none';_editingDecisionId=null;return;}
-  var el=function(id){return document.getElementById(id);};
-  if(el('djDate'))el('djDate').value=dk(new Date());
-  if(el('djDecision'))el('djDecision').value='';
-  if(el('djReasoning'))el('djReasoning').value='';
-  if(el('djExpected'))el('djExpected').value='';
-  if(el('djConfidence'))el('djConfidence').value='';
-  if(el('djFollowUp'))el('djFollowUp').value='';
-  var title=document.getElementById('decisionFormTitle');if(title)title.innerHTML='&#x2795; Log a Decision';
-  var btn=document.getElementById('djSaveBtn');if(btn)btn.textContent='Save Decision';
-  f.style.display='block';
-  if(el('djDecision'))el('djDecision').focus();
-}
-
-function editDecisionEntry(id){
-  var entries=getDecisionEntries();
-  var entry=entries.find(function(e){return e.id===id;});
-  if(!entry)return;
-  _editingDecisionId=id;
-  var f=document.getElementById('addDecisionForm');if(!f)return;
-  var el=function(eid){return document.getElementById(eid);};
-  if(el('djDate'))el('djDate').value=entry.date||'';
-  if(el('djDecision'))el('djDecision').value=entry.decision||'';
-  if(el('djReasoning'))el('djReasoning').value=entry.reasoning||'';
-  if(el('djExpected'))el('djExpected').value=entry.expectedOutcome||'';
-  if(el('djConfidence'))el('djConfidence').value=entry.confidence||'';
-  if(el('djFollowUp'))el('djFollowUp').value=entry.followUpDate||'';
-  var title=document.getElementById('decisionFormTitle');if(title)title.innerHTML='&#x270F;&#xFE0F; Edit Decision';
-  var btn=document.getElementById('djSaveBtn');if(btn)btn.textContent='Update Decision';
-  f.style.display='block';
-  f.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-function saveDecisionEntry(){
-  var el=function(id){return document.getElementById(id);};
-  var date=el('djDate')&&el('djDate').value;
-  var decision=(el('djDecision')&&el('djDecision').value||'').trim();
-  if(!date){alert('Please select a date.');return;}
-  if(!decision){alert('Please describe the decision.');return;}
-  var entries=getDecisionEntries();
-  var existing=_editingDecisionId?entries.find(function(e){return e.id===_editingDecisionId;}):null;
-  var entry={
-    id:_editingDecisionId||('dj_'+Date.now()),
-    date:date,
-    decision:decision,
-    reasoning:(el('djReasoning')&&el('djReasoning').value||'').trim(),
-    expectedOutcome:(el('djExpected')&&el('djExpected').value||'').trim(),
-    confidence:(el('djConfidence')&&el('djConfidence').value||'').trim(),
-    followUpDate:(el('djFollowUp')&&el('djFollowUp').value||'').trim(),
-    status:existing?existing.status:'pending',
-    actualOutcome:existing?(existing.actualOutcome||''):'',
-    lessonLearned:existing?(existing.lessonLearned||''):'',
-    resolvedDate:existing?(existing.resolvedDate||''):''
-  };
-  if(_editingDecisionId){
-    var idx=entries.findIndex(function(e){return e.id===_editingDecisionId;});
-    if(idx>=0)entries[idx]=entry;else entries.push(entry);
-  } else {
-    entries.push(entry);
-  }
-  saveDecisionEntries(entries);
-  _editingDecisionId=null;
-  var f=document.getElementById('addDecisionForm');if(f)f.style.display='none';
-  renderDecisionJournal();
-}
-
-function deleteDecisionEntry(id){
-  if(!confirm('Delete this decision entry?'))return;
-  var entries=getDecisionEntries().filter(function(e){return e.id!==id;});
-  saveDecisionEntries(entries);
-  renderDecisionJournal();
-}
-
-function toggleReviewDecision(id){
-  var el=document.getElementById('dj_review_'+id);
-  if(!el)return;
-  el.style.display=el.style.display==='none'?'block':'none';
-}
-
-function saveDecisionReview(id){
-  var entries=getDecisionEntries();
-  var idx=entries.findIndex(function(e){return e.id===id;});
-  if(idx<0)return;
-  var outEl=document.getElementById('dj_actual_'+id);
-  var lessonEl=document.getElementById('dj_lesson_'+id);
-  entries[idx].actualOutcome=(outEl&&outEl.value||'').trim();
-  entries[idx].lessonLearned=(lessonEl&&lessonEl.value||'').trim();
-  entries[idx].status='resolved';
-  entries[idx].resolvedDate=dk(new Date());
-  saveDecisionEntries(entries);
-  renderDecisionJournal();
-}
-
-function reopenDecision(id){
-  var entries=getDecisionEntries();
-  var idx=entries.findIndex(function(e){return e.id===id;});
-  if(idx<0)return;
-  entries[idx].status='pending';
-  saveDecisionEntries(entries);
-  renderDecisionJournal();
-}
-
-function renderDecisionJournal(){
-  var container=document.getElementById('decisionJournalList');
-  if(!container)return;
-  var entries=getDecisionEntries().slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
-  var countEl=document.getElementById('djCount');
-  if(countEl){
-    var pending=entries.filter(function(e){return e.status!=='resolved';}).length;
-    countEl.textContent=entries.length+' total \xb7 '+pending+' pending review';
-  }
-  if(!entries.length){
-    container.innerHTML='<div style="text-align:center;color:#aaa;padding:20px 0;font-size:0.85rem;">No decisions logged yet. Tap <strong>+ Log Decision</strong> to record your first one.</div>';
-    return;
-  }
-  container.innerHTML=entries.map(function(e){
-    var isResolved=e.status==='resolved';
-    var dateLabel=e.date?new Date(e.date+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
-    var followUpBadge=(!isResolved&&e.followUpDate)?('<span style="background:#fdebd0;color:#d35400;border-radius:8px;padding:2px 8px;font-size:0.7rem;font-weight:700;margin-left:6px;">Revisit '+new Date(e.followUpDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</span>'):'';
-    var confBadge=e.confidence?('<span style="background:#eaf3fb;color:#1a5276;border-radius:8px;padding:2px 8px;font-size:0.7rem;font-weight:700;margin-left:6px;">Confidence '+e.confidence+'/10</span>'):'';
-    var statusBadge=isResolved?'<span style="background:#eafaf1;color:#1e8449;border-radius:8px;padding:2px 8px;font-size:0.7rem;font-weight:700;">&#x2705; Resolved</span>':'<span style="background:#fff3cd;color:#8a6d00;border-radius:8px;padding:2px 8px;font-size:0.7rem;font-weight:700;">&#x23F3; Pending</span>';
-    return '<div style="border:1px solid #f0e0c8;border-radius:9px;padding:12px;margin-bottom:10px;background:#fff;">'
-      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;flex-wrap:wrap;">'
-      +'<div style="font-size:0.75rem;color:#888;">'+dateLabel+'</div>'
-      +'<div>'+statusBadge+confBadge+followUpBadge+'</div>'
-      +'</div>'
-      +'<div style="font-size:0.9rem;font-weight:600;color:#2c3e50;margin-bottom:6px;">'+escHtml(e.decision)+'</div>'
-      +(e.reasoning?('<div style="font-size:0.82rem;color:#555;margin-bottom:4px;"><strong>Reasoning:</strong> '+escHtml(e.reasoning)+'</div>'):'')
-      +(e.expectedOutcome?('<div style="font-size:0.82rem;color:#555;margin-bottom:4px;"><strong>Expected:</strong> '+escHtml(e.expectedOutcome)+'</div>'):'')
-      +(isResolved?('<div style="font-size:0.82rem;color:#1e8449;margin-bottom:4px;"><strong>Actual outcome:</strong> '+escHtml(e.actualOutcome||'')+'</div>'+(e.lessonLearned?('<div style="font-size:0.82rem;color:#1e8449;margin-bottom:4px;"><strong>Lesson:</strong> '+escHtml(e.lessonLearned)+'</div>'):'')):'')
-      +'<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">'
-      +(!isResolved?('<button onclick="toggleReviewDecision(\''+e.id+'\')" style="background:#d35400;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;">&#x2705; Review Outcome</button>'):('<button onclick="reopenDecision(\''+e.id+'\')" style="background:#f0f0f0;color:#555;border:none;border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;">&#x21BA; Reopen</button>'))
-      +'<button onclick="editDecisionEntry(\''+e.id+'\')" style="background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;">&#x270E; Edit</button>'
-      +'<button onclick="deleteDecisionEntry(\''+e.id+'\')" style="background:#fef2f2;color:#dc2626;border:1px solid #fca5a5;border-radius:6px;padding:4px 10px;font-size:0.75rem;cursor:pointer;">&#x2715; Delete</button>'
-      +'</div>'
-      +(!isResolved?('<div id="dj_review_'+e.id+'" style="display:none;margin-top:10px;border-top:1px dashed #eee;padding-top:10px;">'
-        +'<div style="margin-bottom:6px;"><label style="font-size:0.78rem;font-weight:600;color:#555;">What actually happened?</label><textarea id="dj_actual_'+e.id+'" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px;font-size:0.82rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea></div>'
-        +'<div style="margin-bottom:8px;"><label style="font-size:0.78rem;font-weight:600;color:#555;">What did you learn?</label><textarea id="dj_lesson_'+e.id+'" rows="2" style="width:100%;border:1px solid #e9ecef;border-radius:6px;padding:6px;font-size:0.82rem;resize:vertical;font-family:inherit;box-sizing:border-box;"></textarea></div>'
-        +'<button onclick="saveDecisionReview(\''+e.id+'\')" style="background:#1e8449;color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:0.8rem;cursor:pointer;font-weight:600;">Save Review</button>'
-        +'</div>'):'')
-      +'</div>';
-  }).join('');
-}
-
-function saveThinkingEntry(type,inputId,outputId){
-  var input=(document.getElementById(inputId)||{}).value||'';
-  var output=(document.getElementById(outputId)||{}).textContent||'';
-  if(!output.trim()){alert('No output to save yet.');return;}
-  var archive=JSON.parse(localStorage.getItem('thinking_archive')||'[]');
-  var entry={id:Date.now(),type:type,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),input:input.trim(),output:output.trim()};
-  archive.unshift(entry);
-  localStorage.setItem('thinking_archive',JSON.stringify(archive));
-  renderThinkingArchive();
-  // Open archive panel
-  var panel=document.getElementById('thinkingArchivePanel');
-  if(panel&&panel.style.display==='none'){
-    panel.style.display='block';
-    var chev=panel.previousElementSibling&&panel.previousElementSibling.querySelector('.tarch-chev');
-    if(chev)chev.textContent='▾';
-  }
-  alert('Saved to Thinking Archive!');
-}
-
-function renderThinkingArchive(){
-  var list=document.getElementById('thinkingArchiveList');
-  var empty=document.getElementById('thinkingArchiveEmpty');
-  if(!list)return;
-  var archive=JSON.parse(localStorage.getItem('thinking_archive')||'[]');
-  if(!archive.length){list.innerHTML='';if(empty)empty.style.display='block';return;}
-  if(empty)empty.style.display='none';
-  list.innerHTML=archive.map(function(e){
-    var typeColor=e.type==='Assumption Buster'?'#1a4a8a':'#1e6b3a';
-    return '<div style="border:1px solid #e0e0e0;border-radius:9px;padding:12px;margin-bottom:10px;background:#fff;">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
-      +'<span style="font-weight:700;color:'+typeColor+';font-size:0.8rem;">'+e.type+'</span>'
-      +'<span style="font-size:0.75rem;color:#aaa;">'+e.date+'</span>'
-      +'</div>'
-      +(e.input?'<div style="font-size:0.78rem;color:#888;margin-bottom:5px;font-style:italic;">📝 '+e.input.slice(0,120)+(e.input.length>120?'…':'')+'</div>':'')
-      +'<div style="font-size:0.82rem;color:#2c3e50;white-space:pre-wrap;line-height:1.5;max-height:180px;overflow-y:auto;">'+e.output+'</div>'
-      +'<div style="text-align:right;margin-top:6px;">'
-      +'<button onclick="deleteThinkingEntry('+e.id+')" style="background:none;border:none;color:#e74c3c;font-size:0.75rem;cursor:pointer;">🗑 Delete</button>'
-      +'</div>'
-      +'</div>';
-  }).join('');
-}
-
-function deleteThinkingEntry(id){
-  if(!confirm('Delete this archive entry?'))return;
-  var archive=JSON.parse(localStorage.getItem('thinking_archive')||'[]');
-  archive=archive.filter(function(e){return e.id!==id;});
-  localStorage.setItem('thinking_archive',JSON.stringify(archive));
-  renderThinkingArchive();
-}
-
 
 /* ========= MEDITATION TAB JS ========= */
 var _meditTimerSecs=600,_meditTimerTotal=600,_meditTimerInterval=null,_meditRunning=false;
@@ -11098,7 +10489,7 @@ function fvRenderWeeklyGrowth(start,end,days,labels){
   host.insertAdjacentHTML('beforeend','<details class="fv-weekly"><summary class="fv-weekly-head"><span>&#x1F4FA; Financial Video Learning</span><span>'+completed.length+' completed &nbsp;&#x203A;</span></summary><div class="fv-weekly-body"><div class="fv-weekly-stats"><span>'+minutes+' learning minutes</span><span>'+takeaways+' takeaways</span><span>'+actions+' action steps</span></div>'+list+(goal?'<div class="fv-weekly-goal"><strong>Current goal:</strong> '+escHtml(goal)+'</div>':'')+'</div></details>');
 }
 
-var _hmTabs=['nutrition','habits2','meditate','bible','library','activities','skill-log','thinking','financial-videos','wellness','file-uploads'];
+var _hmTabs=['nutrition','habits2','meditate','bible','library','activities','skill-log','financial-videos','wellness','file-uploads'];
 var _cardTabs=['weekly','monthly','yearly','dashboard'].concat(_hmTabs);
 function toggleHamburger(e){
   if(e)e.stopPropagation();
@@ -11147,7 +10538,6 @@ function switchTab(tab,e){
   if(tab==='activities'){_actFirstLoad=true;collapseAllActs();resetActivityAdvancedPanels();loadCurrentPlan();refreshTrainingPreview();renderActivitySectionCharts();initTodayWorkoutCard();updateCompactSectionCounts();}
   if(tab==='bible')renderBibleTab();
   if(tab==='skill-log'){renderSkillLog();renderSkillSectionCharts();}
-  if(tab==='thinking'){if(typeof mmStart==='function')mmStart();if(typeof finStart==='function')finStart();if(typeof frmStart==='function')frmStart();renderThinkingArchive();renderDecisionJournal();}
   if(tab==='financial-videos')fvRender();
   if(tab==='nutrition'){renderFoodItems();renderFavsList();calculateDailyCalorieTarget();renderNutritionSectionCharts();}
   if(tab==='habits2')h2Render();
@@ -11424,7 +10814,7 @@ window.addEventListener('load',function(){
   var lastTab=localStorage.getItem('last_active_tab');
   if(lastTab==='habits')lastTab='habits2';
   if(lastTab==='dashboard')lastTab='weekly';
-  var validTabs=['daily','weekly','monthly','yearly','review','nutrition','habits2','meditate','bible','library','activities','skill-log','thinking','financial-videos','wellness','file-uploads'];
+  var validTabs=['daily','weekly','monthly','yearly','review','nutrition','habits2','meditate','bible','library','activities','skill-log','financial-videos','wellness','file-uploads'];
   if(lastTab&&lastTab!=='daily'&&validTabs.indexOf(lastTab)!==-1){
     if(_hmTabs.includes(lastTab)){hmSwitch(lastTab,null);}
     else{var btn=document.querySelector('[onclick*="switchTab(\''+lastTab+'\'"]');if(btn)btn.click();}
@@ -13320,7 +12710,6 @@ function journalScheduleGrowth(dateKey){
   var anySkill=skills.some(function(entry){return entry.date===dateKey;});
   var range=skills.some(function(entry){return entry.date===dateKey&&entry.category==='Gun Range';});
   var video=fvItems().some(function(item){return item.watched&&item.watchedAt&&dk(new Date(item.watchedAt))===dateKey;});
-  var thinking=['ctMentalModels','ctAssumption','ctSecondOrder','ctFinancialModels','ctFrameworks'].some(function(key){return daily[key]==='green';});
   if(weekday===0)return{label:'',done:false,tab:'daily',skip:true};
   if(weekday===2||weekday===4)return{label:'Financial YouTube learning',done:video,tab:'financial-videos'};
   if(weekday===3)return{label:'Coding / Tech',done:coding,tab:'skill-log'};
@@ -13339,8 +12728,6 @@ function renderJournalSchedule(){
   var languageDone=languageEntries.length>0;
   var languageDetail=languageDone?languageEntries.map(function(entry){return entry.name+(entry.time?' ('+entry.time+')':'');}).join(', '):'Add today\'s language practice in Skills';
   var now=new Date(),isSelectedToday=dk(now)===dateKey,currentMinutes=now.getHours()*60+now.getMinutes(),selectedDay=new Date(dateKey+'T00:00:00'),realDay=new Date(now.getFullYear(),now.getMonth(),now.getDate()),isPastDay=selectedDay<realDay;
-  var thinkingDay=Math.abs(Math.floor(selectedDay.getTime()/86400000))%2===0;
-  var thinkingDone=['ctMentalModels','ctAssumption','ctSecondOrder','ctFinancialModels','ctFrameworks'].some(function(key){return d[key]==='green';});
   function mealLogged(meal){
     meal=String(meal||'').toLowerCase();
     return foods.some(function(item){return String((item&&item.meal)||'').toLowerCase()===meal;});
@@ -13372,7 +12759,6 @@ function renderJournalSchedule(){
     {time:'5:30 PM',mins:1050,label:'Dinner',detail:'Evening meal and nutrition update',done:mealComplete('dinner',1050),tab:'nutrition'},
     {time:'6:00 PM',mins:1080,label:'Water checkpoint: 64 oz',detail:'Drink another 32 ounces by 6:00 PM',done:water>=64,tab:'nutrition'},
     {time:'6:30 PM',mins:1110,label:growth.label,detail:'Today’s rotating Growth focus',done:growth.done,tab:growth.tab,skip:!!growth.skip},
-    {time:'7:00 PM',mins:1140,label:'Thinking practice',detail:'Every-other-day Thinking category',done:thinkingDone,tab:'thinking',skip:!thinkingDay},
     {time:'8:15 PM',mins:1215,label:'Journal accomplishments and gratitude',detail:'Capture the day while it is fresh',done:reflected,tab:'daily'},
     {time:'8:30 PM',mins:1230,label:'Prepare priorities for tomorrow',detail:'Close the day intentionally',done:!!d.prepJournalCheck,tab:'daily'},
     {time:'9:00 PM',mins:1260,label:'Water checkpoint: 96 oz',detail:'Drink another 32 ounces by 9:00 PM',done:water>=96,tab:'nutrition'},
@@ -13554,7 +12940,7 @@ function journalAIKey(){
 
 // ── AI Daily Goals: scan the last 7 days for shortcomings, suggest 3 goals ──
 function journalGatherShortfalls(){
-  var totals={bible:0,prayer:0,meditation:0,stretch:0,thinking:0,library:0,training:0,waterSum:0,waterDays:0,mealsDays:0};
+  var totals={bible:0,prayer:0,meditation:0,stretch:0,library:0,training:0,waterSum:0,waterDays:0,mealsDays:0};
   var days=7;
   for(var i=days-1;i>=0;i--){
     var d=new Date();d.setDate(d.getDate()-i);var key=dk(d),row={};
@@ -13563,7 +12949,6 @@ function journalGatherShortfalls(){
     if(row.spAIPrayer==='green')totals.prayer++;
     if(row.spMeditation==='green')totals.meditation++;
     if(row.exStretch==='green')totals.stretch++;
-    if(row.ctMentalModels==='green'||row.ctAssumption==='green'||row.ctSecondOrder==='green'||row.ctFinancialModels==='green'||row.ctFrameworks==='green')totals.thinking++;
     if(parseTimedMins(row.gaAudiobookTime)>0||String(row.gaAudiobookText||'').trim())totals.library++;
     var w=parseFloat(row.waterOz)||(parseFloat(row.waterCount)*8||0);
     if(w>0){totals.waterSum+=w;totals.waterDays++;}
@@ -13581,7 +12966,6 @@ function journalGatherShortfalls(){
     'Meditation: '+totals.meditation+'/7 days',
     'Stretching: '+totals.stretch+'/7 days',
     'Training/workouts logged: '+totals.training+'/7 days',
-    'Thinking practice: '+totals.thinking+'/7 days',
     'Library learning: '+totals.library+'/7 days',
     'Language lessons: '+Object.keys(languageDays).length+'/7 days',
     'Meals logged: '+totals.mealsDays+'/7 days',
@@ -13976,6 +13360,8 @@ function journalCloudInit(){
     localStorage.setItem('journal_cloud_dirty','1');
     localStorage.removeItem('ai_archive');
     localStorage.removeItem('ai_key');
+    localStorage.removeItem('thinking_archive');
+    localStorage.removeItem('decision_journal_data');
     hydrateBibleReadingArchiveStorage().then(function(){compactBibleReadingArchiveStorage();});
     hydrateActivitiesStorage();
   }catch(e){}
