@@ -9559,6 +9559,10 @@ async function hydrateActivitiesStorage(){
   // Habits sync now that the real data is in memory, so it self-corrects instead of staying
   // wrong until the next unrelated re-render.
   try{if(typeof h2Render==='function')h2Render();}catch(ignoreH2){}
+  // My Schedule (renderJournalHome/renderJournalSchedule) also reads getActivities() directly
+  // for things like "is there a run today" — same stale-empty-list race as Habits above, so
+  // re-render it too once the real activities are in memory.
+  try{if(typeof renderJournalHome==='function')renderJournalHome();}catch(ignoreHome){}
   return merged;
 }
 async function hydrateBibleReadingArchiveStorage(){
@@ -12641,8 +12645,10 @@ function journalScheduleGrowth(dateKey){
   var anySkill=skills.some(function(entry){return entry.date===dateKey;});
   var range=skills.some(function(entry){return entry.date===dateKey&&entry.category==='Gun Range';});
   if(weekday===0)return{label:'',done:false,tab:'daily',skip:true};
+  // Gun Range has no "planned" schedule of its own (unlike training runs) — only surface it
+  // once it's actually been logged for the day, instead of forcing it onto every Saturday.
+  if(range)return{label:'Gun Range',done:true,tab:'skill-log'};
   if(weekday===3)return{label:'Coding / Tech',done:coding,tab:'skill-log'};
-  if(weekday===6)return{label:'Gun Range',done:range,tab:'skill-log'};
   return{label:weekday===5?'Skills session':'Coding / Tech',done:weekday===5?anySkill:coding,tab:'skill-log'};
 }
 function journalToggleScheduleManual(name){
@@ -12667,7 +12673,11 @@ function renderJournalSchedule(){
   }
   var reflected=['jAccomplish','jImprov','jGratitude','jNotes'].some(function(key){return String(d[key]||'').trim();});
   var restDay=/rest day|no workout scheduled/i.test(training),activityDone=hasActivityOnDate(dateKey)||restDay;
-  var runToday=/\brun\b|\brace\b/i.test(training)||getActivities().some(function(a){return a&&a.date===dateKey&&a.type==='Run';});
+  // Training-plan text doesn't always use the literal word "run" (e.g. "Secondary Long 7 mi @
+  // sustained tempo pace"), so assume any scheduled workout is a run unless it's a rest day or
+  // explicitly a non-running session — matching the same assumption journalTodayTrainingMinutesEstimate
+  // already makes when it falls back to a default duration.
+  var runToday=(!restDay&&!!training&&!/strength/i.test(training)&&!/cross[- ]training/i.test(training))||getActivities().some(function(a){return a&&a.date===dateKey&&a.type==='Run';});
   // Training duration varies a lot — a 12 mile run and a rest day shouldn't both hand off
   // to stretching 15 minutes later. Estimate real duration and push stretching/breakfast
   // back accordingly instead of using fixed slots that only work for a short easy day.
