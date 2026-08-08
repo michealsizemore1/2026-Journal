@@ -1855,7 +1855,7 @@ body{
 <button id="sndRain" onclick="meditToggleSound('rain')" class="medit-sound-btn" style="background:#f0f9ff;border-color:#7dd3fc;color:#0c4a6e;">&#x1F327;&#xFE0F; Rain</button>
       <button id="sndOcean" onclick="meditToggleSound('ocean')" class="medit-sound-btn" style="background:#f0f9ff;border-color:#7dd3fc;color:#0c4a6e;">&#x1F30A; Ocean</button>
       <button id="sndForest" onclick="meditToggleSound('forest')" class="medit-sound-btn" style="background:#f0fdf4;border-color:#86efac;color:#166534;">&#x1F333; Forest</button>
-      <button id="sndBowl" onclick="meditToggleSound('bowl')" class="medit-sound-btn" style="background:#faf5ff;border-color:#d8b4fe;color:#6b21a8;">&#x1F514; Singing Bowl</button>
+      <button id="sndBirds" onclick="meditToggleSound('birds')" class="medit-sound-btn" style="background:#fff7ed;border-color:#fdba74;color:#9a3412;">&#x1F426; Birds &amp; Ocean</button>
     </div>
     <div style="font-size:0.68rem;color:#888;margin-top:7px;">Bell plays once &amp; resets. All others toggle on/off.</div>
   </div>
@@ -9296,19 +9296,35 @@ function _meditTone(ctx){
   return {src:osc,stop:function(){try{osc.stop();}catch(e){}}};
 }
 
-function _meditBowl(ctx){
-  var nodes=[];
-  [[200,1],[314,0.5],[528,0.3],[880,0.15]].forEach(function(fq){
-    var o=ctx.createOscillator(),g=ctx.createGain();
-    o.type='sine';o.frequency.value=fq[0];
-    g.gain.value=fq[1]*0.05;
-    o.connect(g);g.connect(ctx.destination);o.start();nodes.push(o);
-  });
-  var lfo=ctx.createOscillator(),lg=ctx.createGain();
-  lfo.frequency.value=0.15;lg.gain.value=0.03;
-  lfo.connect(lg);nodes.forEach(function(n){try{lg.connect(n.frequency);}catch(e){}});
-  lfo.start();nodes.push(lfo);
-  return {stop:function(){nodes.forEach(function(n){try{n.stop();}catch(e){}});}};
+function _meditBirdChirp(ctx,baseFreq){
+  var now=ctx.currentTime;
+  var freq=baseFreq||(2200+Math.random()*1800);
+  var o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='sine';
+  o.frequency.setValueAtTime(freq,now);
+  o.frequency.exponentialRampToValueAtTime(freq*1.3,now+0.05);
+  o.frequency.exponentialRampToValueAtTime(freq*0.9,now+0.12);
+  g.gain.setValueAtTime(0.0001,now);
+  g.gain.exponentialRampToValueAtTime(0.06,now+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001,now+0.14);
+  o.connect(g);g.connect(ctx.destination);
+  o.start(now);o.stop(now+0.16);
+}
+function _meditBirdCall(ctx){
+  var base=2000+Math.random()*2000,notes=2+Math.floor(Math.random()*3);
+  for(var i=0;i<notes;i++){
+    (function(i){setTimeout(function(){try{_meditBirdChirp(ctx,base+(Math.random()*300-150));}catch(e){}},i*90);})(i);
+  }
+}
+function _meditBirdsOcean(ctx){
+  var ocean=_meditOcean(ctx);
+  var timer=null;
+  function scheduleNext(){
+    _meditBirdCall(ctx);
+    timer=setTimeout(scheduleNext,1200+Math.random()*3800);
+  }
+  timer=setTimeout(scheduleNext,600);
+  return {stop:function(){clearTimeout(timer);ocean.stop();}};
 }
 
 function _meditBinaural(ctx){
@@ -9325,7 +9341,7 @@ function _meditBinaural(ctx){
 
 function meditToggleSound(type){
   meditGetCtx();
-  var btnId={rain:'sndRain',ocean:'sndOcean',forest:'sndForest',tone:'sndTone',bowl:'sndBowl',binaural:'sndBinaural'}[type];
+  var btnId={rain:'sndRain',ocean:'sndOcean',forest:'sndForest',tone:'sndTone',birds:'sndBirds',binaural:'sndBinaural'}[type];
   var btn=document.getElementById(btnId);
   if(_meditAudioNodes[type]){
     _meditAudioNodes[type].stop();delete _meditAudioNodes[type];
@@ -9337,7 +9353,7 @@ function meditToggleSound(type){
   else if(type==='ocean')_meditAudioNodes[type]=_meditOcean(ctx);
   else if(type==='forest')_meditAudioNodes[type]=_meditForest(ctx);
   else if(type==='tone')_meditAudioNodes[type]=_meditTone(ctx);
-  else if(type==='bowl')_meditAudioNodes[type]=_meditBowl(ctx);
+  else if(type==='birds')_meditAudioNodes[type]=_meditBirdsOcean(ctx);
   else if(type==='binaural')_meditAudioNodes[type]=_meditBinaural(ctx);
   if(btn){btn.classList.add('medit-sound-on');btn.style.filter='brightness(0.82)';}
 }
