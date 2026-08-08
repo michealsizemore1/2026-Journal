@@ -7973,6 +7973,13 @@ function h2SyncFromJournal(){
     state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='stretch';});
   }
   localStorage.setItem('habits2_stretch_link_v1','1');
+  // "Retirement Videos" also gets auto-created if it doesn't exist anywhere yet (once only), so it
+  // shows up right away instead of waiting on 3+ days of logged evidence like a normal suggestion.
+  if(!state.habits.some(function(h){return h.autoSource==='retirement-videos';})&&!localStorage.getItem('habits2_retirement_videos_link_v1')){
+    state.habits.push({id:'h2-auto-retirement-videos',name:'Retirement Videos',category:'Growth',color:'#b45309',type:'check',target:1,schedule:'weekly',weeklyTarget:2,days:[0,1,2,3,4,5,6],why:'Continue retirement and investing education.',cue:'',minimum:'',created:(firstSeen['retirement-videos']||todayKey)+'T12:00:00',autoSource:'retirement-videos'});
+    state.dismissedAuto=(state.dismissedAuto||[]).filter(function(id){return id!=='retirement-videos';});
+  }
+  localStorage.setItem('habits2_retirement_videos_link_v1','1');
   // Self-healing "created" date correction — any auto-linked habit whose recorded creation
   // date is later than the earliest real evidence for its source gets backdated. This fixes
   // habits (like the ones above) that were originally stamped with "now" instead of reflecting
